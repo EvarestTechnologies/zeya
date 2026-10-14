@@ -29,11 +29,12 @@ def test_source_has_only_main_at_top_level(path):
     assert isinstance(statements[0], ast.FunctionDef) and statements[0].name == "main"
 
 
-def test_sandbox_rejects_tuple_unpacking_assignment():
-    # OCS provides _iter_unpack_sequence_ (for loops) but not _unpack_sequence_, so
-    # "a, b = ..." fails at run time inside a node. This pins that constraint.
-    from ocs.tests.sandbox import NodeHarness
-
-    harness = NodeHarness("def main(input, **kwargs):\n    a, b = 1, 2\n    return a\n")
-    with pytest.raises(NameError, match="_unpack_sequence_"):
-        harness.run("x")
+@pytest.mark.parametrize("path", NODE_FILES, ids=lambda p: p.stem)
+def test_nodes_avoid_tuple_unpacking_assignment(path):
+    # OCS before 930956ce0 (2026) has no _unpack_sequence_, so "a, b = ..." fails at run time
+    # inside a node. Avoiding it keeps the nodes working on old and new instances.
+    for node in ast.walk(ast.parse(path.read_text())):
+        if isinstance(node, ast.Assign):
+            assert not any(isinstance(t, ast.Tuple | ast.List) for t in node.targets), (
+                f"{path.name}:{node.lineno} uses tuple-unpacking assignment"
+            )
