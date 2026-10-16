@@ -65,6 +65,15 @@ def test_registered_user():
     }
 
 
+def test_identifier_is_the_wa_id_meta_sends():
+    # OCS finds an imported participant by comparing the identifier with the wa_id in
+    # Meta's webhook (digits only, OCS ADR-0043), with no normalisation. A "+" or spaces
+    # would make OCS create a second participant without the imported data.
+    row = zeya_user_to_participant({**REGISTERED_USER, "whatsapp_id": "+254 700 000 001"})
+
+    assert row["identifier"] == "254700000001"
+
+
 def test_imported_participant_skips_registration():
     data = _ocs_import_parse(zeya_user_to_participant(REGISTERED_USER))
     now = datetime.datetime(2026, 10, 3, 9, 0, tzinfo=datetime.UTC)

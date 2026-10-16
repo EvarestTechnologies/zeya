@@ -70,7 +70,10 @@ def zeya_user_to_participant(user: dict) -> dict:
         "study_group": user.get("study_group") or "intervention",
         "zeya_user_id": user["id"],
     }
-    row = {"identifier": user["whatsapp_id"], "channel": "whatsapp", "name": name}
+    # OCS matches an imported participant against the wa_id in Meta's webhook exactly,
+    # so the identifier must be digits only (OCS ADR-0043).
+    identifier = "".join(c for c in user["whatsapp_id"] if c.isdigit())
+    row = {"identifier": identifier, "channel": "whatsapp", "name": name}
     for key, value in data.items():
         # OCS parses each data.* cell as JSON and skips empty cells.
         row[f"data.{key}"] = "" if value is None else json.dumps(value)
