@@ -212,6 +212,27 @@ def test_links_existing_zeya_users_by_phone():
     assert {r["user_key"] for r in rows} == {"0f3c9a2e-0000-0000-0000-000000000001"}
 
 
+def test_never_links_whatsapp_bsuid_as_a_phone():
+    # Meta now identifies new WhatsApp users by a business-scoped user ID (BSUID), and OCS
+    # keys them by it (OCS ADR-0043). Its digits are not a phone number, even when they
+    # happen to equal one.
+    rows = convert_ocs_export(
+        _turn(
+            11,
+            "Hello",
+            "Hi",
+            "2026-09-15 10:00:00+00:00",
+            "2026-09-15 10:00:01+00:00",
+            REGISTERED,
+            participant="KE.254700000001",
+            public_id="p-7",
+        ),
+        wa_id_to_user_id={"254700000001": "0f3c9a2e-0000-0000-0000-000000000001"},
+    )
+
+    assert {r["user_key"] for r in rows} == {"ocs:p-7"}
+
+
 def test_study_ids_keep_zeya_numbering():
     zeya_user_ids = ["b0000000-0000-0000-0000-000000000000", "a0000000-0000-0000-0000-000000000000"]
     rows = [

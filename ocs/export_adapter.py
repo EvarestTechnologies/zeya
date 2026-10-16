@@ -11,8 +11,10 @@ planned analysis can read Zeya-era and OCS-era data the same way.
         --out conversations_export_ocs.csv
 
 ``--zeya-users`` links OCS participants to existing Zeya users by WhatsApp id (the
-OCS participant identifier) and
-keeps Zeya's STUDY_#### numbering. Produce it from the Zeya database with:
+OCS participant identifier) and keeps Zeya's STUDY_#### numbering. Participants
+imported with seed_participants keep their phone number as identifier. New WhatsApp
+users are keyed by Meta's business-scoped user ID (e.g. KE.1123493676705328, OCS
+ADR-0043); they are never linked and get new study ids. Produce it from the Zeya database with:
 
     \\copy (SELECT DISTINCT u.id AS user_id, u.whatsapp_id FROM users u
             JOIN conversations c ON c.user_id = u.id) TO 'zeya_users.csv' CSV HEADER
@@ -35,6 +37,7 @@ Rules, matching what Zeya logged:
 import argparse
 import csv
 import json
+import re
 import sys
 from collections.abc import Iterable
 from datetime import datetime
@@ -68,6 +71,15 @@ DIRECTIONS = {"human": "incoming", "ai": "outgoing"}
 
 def _digits(phone: str) -> str:
     return "".join(c for c in phone or "" if c.isdigit())
+
+
+# Same pattern as looks_like_bsuid() in OCS apps/channels/datamodels.py.
+_BSUID = re.compile(r"^[A-Z]{2}(?:\.ENT)?\.[A-Za-z0-9]{1,128}$")
+
+
+def _phone(identifier: str) -> str | None:
+    """The participant's phone digits, or None when OCS keys them by a WhatsApp BSUID."""
+    return None if _BSUID.match(identifier or "") else _digits(identifier)
 
 
 def _participant_data(row: dict) -> dict | None:
@@ -171,7 +183,7 @@ def convert_ocs_export(rows: Iterable[dict], wa_id_to_user_id: dict[str, str]) -
             if incoming:
                 response_time_ms = int((at - _timestamp(incoming[0])).total_seconds() * 1000) or ""
 
-        user_id = wa_id_to_user_id.get(_digits(row["Participant Identifier"]))
+        user_id = wa_id_to_user_id.get(_phone(row["Participant Identifier"]))
         output.append(
             {
                 "user_key": user_id or f"ocs:{row['Participant Public ID']}",

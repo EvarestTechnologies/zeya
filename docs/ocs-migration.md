@@ -205,6 +205,17 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
   skip registration. It leaves out consented users whom an admin deactivated and lists
   them for a study-team decision. OCS exposes `participant.name` as `name`, so
   registration tracks the name step with `name_collected`.
+- **WhatsApp identity (OCS ADR-0043).** Meta now sends a business-scoped user ID
+  (BSUID, e.g. `KE.1123493676705328`), and OCS keys new WhatsApp participants by it,
+  not by phone. The phone is kept on `participant.remote_id`, which the export does not
+  include. What this means for Zeya:
+  - Imported participants keep the phone as identifier. OCS finds them by an exact
+    match against Meta's `wa_id` (digits only), so the seed writes digits only.
+  - **Import before any seeded user messages the OCS number.** Otherwise OCS creates
+    a BSUID participant first. The oldest matching participant wins, so the imported
+    one, with consent and gestational age, would be ignored and she would register again.
+  - The export adapter links only phone identifiers to Zeya users. BSUID participants
+    are new to the study and get new `STUDY_####` ids.
 
 ## Testing
 
@@ -214,7 +225,7 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
 | Unit (real OCS sandbox) | `OCS_SOURCE=<checkout> make test-ocs` | the same, run in OCS's `RestrictedPythonExecutionMixin` |
 | Engine | `DATABASE_URL=… make test-ocs-engine OCS_SOURCE=<checkout>` | pipeline validates; 16 danger messages → emergency with 0 LLM calls; SAFE → exactly one LLM call with the Zeya prompt and context; drift check passes on what OCS stores |
 
-At the time of writing: 283 passed + 1 strict xfail (the placeholder numbers), in
+At the time of writing: 287 passed + 1 strict xfail (the placeholder numbers), in
 both sandbox modes; 26 passed in the engine suite against a throwaway
 `pgvector/pgvector:pg16` database. Install with `pip install -r ocs/requirements-dev.txt`.
 
@@ -226,10 +237,25 @@ both sandbox modes; 26 passed in the engine suite against a throwaway
 3. Build with the instance's ids:
    `python -m ocs.build_pipeline --llm-provider-id N --llm-provider-model-id M > deploy.json`.
    Load it into the pipeline (`POST /a/evarest/pipelines/data/<id>/`). Publish a version.
-4. Import `seed_participants.py` output. Test on the web channel with the corpus in
+4. Import `seed_participants.py` output **before step 5** (see WhatsApp identity
+   above). Test on the web channel with the corpus in
    `ocs/tests/danger_corpus.py`. Run
    `python -m ocs.check_drift live.json --llm-provider-id N --llm-provider-model-id M`.
    The expected ids are required, so a model switched in the UI shows up as drift.
 5. Move the WhatsApp number to OCS and switch Zeya's webhook off at the same time.
    Record the date in the study log with the methodological changes above. Keep the
    Zeya backend up for export only.
+
+### WhatsApp findings (2026-10-16, openchatstudio.co.ke)
+
+- Meta's +1 555 test numbers cannot be added as an OCS channel.
+  `WhatsappChannelForm.clean_number` requires `phonenumbers.is_valid_number`, and 555
+  is not a valid US area code. Use a real number.
+- The webhook URL that the channel dialog shows uses `localhost:8000` because the
+  instance's site domain is not set. The real one is
+  `https://openchatstudio.co.ke/channels/whatsapp/meta/incoming_message`.
+- WhatsApp location messages reach the pipeline as empty text, so nearest-facility
+  lookup cannot use a shared location.
+- First test: OCS generated all 9 replies, but 2 registration replies (the welcome and
+  the name question) did not arrive on the phone. Not yet explained. Check Meta's
+  delivery status before recruitment, because a lost welcome means no consent question.
