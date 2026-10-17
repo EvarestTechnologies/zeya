@@ -2,8 +2,8 @@
 
 **Operator:** Evarest Technologies Ltd, Kenya
 **Service:** Zeya, an antenatal education chatbot on WhatsApp for pregnant women in Migori County
-**Last updated:** [DATE]
-**Contact:** [CONTACT EMAIL] · [PHONE]
+**Last updated:** 17th October 2026
+**Contact:** contact@evarestke.com · +254183325153
 
 Zeya is part of a research study. It gives educational information about pregnancy
 based on World Health Organization and Kenya Ministry of Health guidelines. It does not
