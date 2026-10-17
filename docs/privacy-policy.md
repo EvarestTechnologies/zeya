@@ -3,7 +3,7 @@
 **Operator:** Evarest Technologies Ltd, Kenya  
 **Service:** Zeya, an antenatal education chatbot on WhatsApp  
 **Last updated:** 17 October 2026  
-**Contact:** contact@evarestke.com · +254183325153
+**Contact:** contact@evarestke.com · +254723469406
 
 ## 1. About Zeya
 
@@ -116,4 +116,4 @@ For questions about this policy, your personal information or your participation
 
 **Evarest Technologies Ltd**  
 Email: contact@evarestke.com  
-Telephone: +254183325153
+Telephone: +254723469406
