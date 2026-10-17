@@ -88,7 +88,7 @@ Subject to applicable law and any lawful limitations, you may request to:
 - Object to or request restriction of certain processing where applicable.
 - Withdraw consent to participate in the study.
 
-To exercise these rights, contact contact@evarestke.com or call +254183325153.
+To exercise these rights, contact contact@evarestke.com or call +254723469406.
 
 Requests will be handled in accordance with the Kenya Data Protection Act, 2019, and applicable regulations. Where information must be retained for a documented legal or research requirement, we will explain the applicable limitation.
 
