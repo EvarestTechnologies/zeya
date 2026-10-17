@@ -179,6 +179,11 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
    OCS they reach the pipeline: an empty message at the name step asks for the name
    again, and voice notes may be transcribed by OCS and then gated like any text.
    Check the channel's media settings at deploy time.
+8. **Save-contact tip in the welcome.** WhatsApp shows the bot's number, not "Zeya",
+   until Meta approves a display name. The welcome adds one paragraph before the
+   consent question: *Tip: save this number in your contacts as "Zeya" so you can find
+   me easily.* (Swahili: *Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya"
+   ili unipate kwa urahisi.*). The rest of the welcome is unchanged.
 
 ## Study data continuity
 
@@ -225,7 +230,7 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
 | Unit (real OCS sandbox) | `OCS_SOURCE=<checkout> make test-ocs` | the same, run in OCS's `RestrictedPythonExecutionMixin` |
 | Engine | `DATABASE_URL=… make test-ocs-engine OCS_SOURCE=<checkout>` | pipeline validates; 16 danger messages → emergency with 0 LLM calls; SAFE → exactly one LLM call with the Zeya prompt and context; drift check passes on what OCS stores |
 
-At the time of writing: 287 passed + 1 strict xfail (the placeholder numbers), in
+At the time of writing: 288 passed + 1 strict xfail (the placeholder numbers), in
 both sandbox modes; 26 passed in the engine suite against a throwaway
 `pgvector/pgvector:pg16` database. Install with `pip install -r ocs/requirements-dev.txt`.
 

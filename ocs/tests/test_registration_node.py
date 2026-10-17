@@ -16,8 +16,22 @@ from ocs.tests.sandbox import NodeHarness
 
 NOW = datetime.datetime(2026, 10, 3, 9, 30, tzinfo=datetime.UTC)
 
-WELCOME_EN = module_constant("app/services/conversation_handler.py", "WELCOME_MESSAGE_EN")
-WELCOME_SW = module_constant("app/services/conversation_handler.py", "WELCOME_MESSAGE_SW")
+ZEYA_WELCOME_EN = module_constant("app/services/conversation_handler.py", "WELCOME_MESSAGE_EN")
+ZEYA_WELCOME_SW = module_constant("app/services/conversation_handler.py", "WELCOME_MESSAGE_SW")
+
+# WhatsApp shows the bot's number, not "Zeya", until Meta approves a display name. The
+# OCS welcome adds one tip before the consent question (methodological change 8).
+SAVE_CONTACT_EN = 'Tip: save this number in your contacts as "Zeya" so you can find me easily.'
+SAVE_CONTACT_SW = 'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.'
+
+
+def _with_tip(welcome: str, tip: str) -> str:
+    paragraphs = welcome.split("\n\n")
+    return "\n\n".join(paragraphs[:-1] + [tip] + paragraphs[-1:])
+
+
+WELCOME_EN = _with_tip(ZEYA_WELCOME_EN, SAVE_CONTACT_EN)
+WELCOME_SW = _with_tip(ZEYA_WELCOME_SW, SAVE_CONTACT_SW)
 GESTATIONAL_GUIDANCE = module_constant("app/services/ai_engine.py", "GESTATIONAL_GUIDANCE")
 
 CONSENTED_MSG = "Thank you for consenting to participate! What is your name?"
@@ -70,6 +84,12 @@ def test_reply_strings_exist_in_zeya_source():
 
 
 class TestFirstContact:
+    def test_welcome_is_zeyas_plus_save_contact_tip(self):
+        assert WELCOME_EN.endswith("Please reply YES or NO.")
+        assert WELCOME_SW.endswith("Tafadhali jibu NDIYO au HAPANA.")
+        assert WELCOME_EN.replace(SAVE_CONTACT_EN + "\n\n", "") == ZEYA_WELCOME_EN
+        assert WELCOME_SW.replace(SAVE_CONTACT_SW + "\n\n", "") == ZEYA_WELCOME_SW
+
     def test_sends_english_welcome_and_enrols(self):
         harness = _run("Hi")
 

@@ -27,6 +27,7 @@ def main(input: str, **kwargs) -> str:
         "maternal health based on WHO and Kenya Ministry of Health guidelines.\n\n"
         "Important: This is educational information, not medical diagnosis. Always "
         "consult your healthcare provider for medical advice.\n\n"
+        'Tip: save this number in your contacts as "Zeya" so you can find me easily.\n\n'
         "Do you consent to participate in this study and receive antenatal education "
         "messages? Please reply YES or NO."
     )
@@ -37,6 +38,7 @@ def main(input: str, **kwargs) -> str:
         "kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya.\n\n"
         "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima "
         "wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
+        'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.\n\n'
         "Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya "
         "ujauzito? Tafadhali jibu NDIYO au HAPANA."
     )
