@@ -42,7 +42,7 @@ An AI-powered WhatsApp chatbot providing personalized antenatal education to pre
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Stella-Achar-Oiro/zeya.git
+git clone https://github.com/EvarestTechnologies/zeya.git
 cd zeya
 ```
 
@@ -196,6 +196,8 @@ docker-compose exec backend pytest tests/unit/test_danger_signs.py -v
 | `JWT_SECRET_KEY` | Secret key for JWT tokens |
 
 ## License
+
+Copyright 2026 Evarest Technologies Ltd. Licensed under the [Apache License, Version 2.0](LICENSE).
 
 This project is part of a research study on maternal health education in Kenya.
 
