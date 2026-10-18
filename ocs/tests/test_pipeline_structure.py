@@ -140,8 +140,12 @@ def test_code_nodes_match_repository_sources(graph, name):
     assert node["data"]["params"]["code"] == (NODES / f"{name}.py").read_text()
 
 
-def test_system_prompt_is_zeya_prompt():
-    assert SYSTEM_PROMPT_FILE.read_text() == module_constant("app/services/ai_engine.py", "SYSTEM_PROMPT")
+def test_system_prompt_is_zeya_prompt_for_all_of_kenya():
+    # ZEYA serves women anywhere in Kenya, so "rural Kenya" became "Kenya" (methodological
+    # change 10). Nothing else in Zeya's prompt changed.
+    zeya = module_constant("app/services/ai_engine.py", "SYSTEM_PROMPT")
+    assert zeya.count("rural Kenya") == 2
+    assert SYSTEM_PROMPT_FILE.read_text() == zeya.replace("rural Kenya", "Kenya")
 
 
 def test_system_prompt_has_no_template_braces():

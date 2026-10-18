@@ -92,7 +92,7 @@ def test_danger_message_never_reaches_llm(run, fake_llm, category, language, mes
 
     reply = output["messages"][-1]
     assert reply.startswith("DHARURA:" if language == "sw" else "URGENT:")
-    assert "Migori County Referral Hospital: 0800 723 253" in reply
+    assert "999" in reply and "922" in reply and "1199" in reply
     assert f"danger_sign:{category}" in _tags(output)
     assert "danger_router:EMERGENCY" in _tags(output)
     assert llm.calls == []

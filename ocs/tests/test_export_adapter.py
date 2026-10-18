@@ -12,6 +12,7 @@ import pytest
 from ocs.export_adapter import ZEYA_COLUMNS, assign_study_ids, convert_ocs_export, main
 
 REGISTERED = {
+    "study_participant": True,
     "consent_given": True,
     "registration_complete": True,
     "gestational_age_at_enrollment": 20,
@@ -169,6 +170,20 @@ def test_drops_participants_who_never_consented():
             public_id="p-2",
         )
         + _turn(7, "Hello", "Hi", "2026-09-15 10:00:00+00:00", "2026-09-15 10:00:01+00:00", REGISTERED),
+        wa_id_to_user_id={},
+    )
+
+    assert {r["user_key"] for r in rows} == {"ocs:p-1"}
+
+
+def test_drops_public_users_who_are_not_trial_participants():
+    # ZEYA is open to anyone in Kenya. Only participants imported from the trial's
+    # enrolment list (seed_participants.py sets study_participant) belong in the study
+    # export (methodological change 11).
+    public = {k: v for k, v in REGISTERED.items() if k != "study_participant"}
+    rows = convert_ocs_export(
+        _turn(8, "Hello", "Hi", "2026-09-15 10:00:00+00:00", "2026-09-15 10:00:01+00:00", public, public_id="p-3")
+        + _turn(9, "Hello", "Hi", "2026-09-15 11:00:00+00:00", "2026-09-15 11:00:01+00:00", REGISTERED),
         wa_id_to_user_id={},
     )
 

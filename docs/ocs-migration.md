@@ -3,20 +3,16 @@
 Status: implemented, not deployed · Target: `https://openchatstudio.co.ke/` (team `evarest`) ·
 OCS reference commit `7df40d8a4`
 
-> **Go-live blocker:** the seed phone numbers for 4 of the 5 emergency facilities
-> (`0722 123 456`, `0733 456 789`, `0744 567 890`, `0755 678 901`) look like
-> placeholders. The emergency message sends them as they are, as Zeya does today.
-> Verify them with Migori County Health before go-live.
-> `test_facility_numbers_are_not_placeholders` is a strict xfail until then.
-> The node is checked against the **seed file**, not the live `health_facilities`
-> table, which admins can edit. Compare the node with production's table at the
-> same time.
+> **Go-live check:** before each release, someone calls each emergency number in the
+> message (999, 112, 922, 1199) and records the date and result under
+> [Emergency numbers](#emergency-numbers). 922 (the SHA national ambulance line) was
+> launched in August 2026 and was found in only one source when it was added.
 
 ## Summary
 
 OCS takes over the WhatsApp channel, sessions and history, LLM calls, participants and
 admin. Zeya keeps, **in this repository**, the safety-critical and study-critical code:
-the danger-sign gate, the emergency message with Migori facility contacts, the
+the danger-sign gate, the emergency message with national emergency numbers, the
 registration flow, and the export adapter. These are written as OCS Python-node
 sources under `ocs/nodes/`, tested here against the real OCS sandbox and engine, and
 assembled into `ocs/pipeline/zeya_pipeline.json` by `ocs/build_pipeline.py`.
@@ -113,22 +109,35 @@ generated pipeline as a graph. They assert that no LLM-type node is reachable fr
 The engine test runs all 8 categories × {en, sw} through OCS's real `PipelineGraph` with
 a recording fake LLM and asserts zero LLM calls.
 
-## Health facilities
+## Emergency numbers
 
-The node holds a **static table built in at build time**: the top 5 verified, active,
-emergency-capable Migori facilities by `display_priority`. This is the same filter as
-`get_emergency_facilities`. The test rebuilds Zeya's message from the seed data with
-`format_emergency_message` and requires byte-for-byte equality in both languages.
+ZEYA is open to women anywhere in Kenya, and the trial runs in Migori County. Zeya's
+message listed five Migori facilities, four of them with placeholder numbers, and a
+verified per-county list was not obtainable. The OCS message keeps Zeya's header and
+footer and lists national numbers instead (methodological change 9):
 
-Reasoning: the emergency path should have no runtime dependency (database, HTTP,
-participant-data lookup) that could fail. A participant-data copy would go stale for
-people already enrolled. Changes to facility contacts go through code review.
+| Number | Service | Source when added (2026-10-18) |
+|---|---|---|
+| 999, 112 | Emergency services | [Standard](https://standardmedia.co.ke/ureport/story/2001257538/emergency-lines-for-kenya), [HapaKenya](https://hapakenya.com/2026/03/09/how-to-contact-emergency-services-in-nairobi-nationwide), [Jambo Nairobi](https://jambonairobi.co.ke/directory/services/emergency/) |
+| 922 | National ambulance (SHA 922 Lifeline) | [Dawan Africa](https://www.dawan.africa/news/president-ruto-launches-922-lifeline-to-cut-emergency-response-times-nationwide), one source only |
+| 1199 | Kenya Red Cross toll-free line | the same three directories as 999 |
 
-The tests only prove the node matches the seed file. Production's table may have been
-edited through the admin API since seeding. Before go-live, compare the node with
-`SELECT name, phone_number, emergency_line FROM health_facilities WHERE is_active AND
-has_emergency_services AND is_verified AND lower(county) = 'migori' ORDER BY
-display_priority, name LIMIT 5`, and update the seed file and the node if they differ.
+These are directories and news reports, not official pages. One source also lists 1199
+as a mental-health line.
+
+**Call log** (fill in before each release):
+
+| Date | Number | Answered? | Sends ambulances or dispatches help? | Checked by |
+|---|---|---|---|---|
+| | 999 | | | |
+| | 112 | | | |
+| | 922 | | | |
+| | 1199 | | | |
+
+The numbers are written into the node, so the emergency path has no runtime
+dependency (database, HTTP, participant-data lookup) that could fail, and any change
+goes through code review. Nearest-facility lists per county can be added later on top
+of these numbers.
 
 ## LLM provider
 
@@ -184,6 +193,15 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
    consent question: *Tip: save this number in your contacts as "Zeya" so you can find
    me easily.* (Swahili: *Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya"
    ili unipate kwa urahisi.*). The rest of the welcome is unchanged.
+9. **National emergency numbers instead of Migori facilities.** The emergency message
+   keeps Zeya's header and footer but lists 999 or 112, 922 and 1199 instead of five
+   Migori facilities. See [Emergency numbers](#emergency-numbers).
+10. **The prompt says "Kenya", not "rural Kenya".** Both occurrences changed, because
+    ZEYA is open to women anywhere in Kenya. The rest of the prompt is verbatim.
+11. **Only trial participants are exported.** Anyone in Kenya can use ZEYA.
+    `seed_participants.py` marks people imported from the trial's enrolment list with
+    `study_participant: true`, and the export adapter keeps only those. Someone who
+    starts using ZEYA on her own is never in the study export, even if she consents.
 
 ## Study data continuity
 
@@ -230,13 +248,13 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
 | Unit (real OCS sandbox) | `OCS_SOURCE=<checkout> make test-ocs` | the same, run in OCS's `RestrictedPythonExecutionMixin` |
 | Engine | `DATABASE_URL=… make test-ocs-engine OCS_SOURCE=<checkout>` | pipeline validates; 16 danger messages → emergency with 0 LLM calls; SAFE → exactly one LLM call with the Zeya prompt and context; drift check passes on what OCS stores |
 
-At the time of writing: 288 passed + 1 strict xfail (the placeholder numbers), in
+At the time of writing: 298 passed, in
 both sandbox modes; 26 passed in the engine suite against a throwaway
 `pgvector/pgvector:pg16` database. Install with `pip install -r ocs/requirements-dev.txt`.
 
 ## Rollout
 
-1. Verify the facility numbers (blocker above).
+1. Call the emergency numbers and fill in the call log (check above).
 2. On the instance: add the Gemini provider and the `gemini-3-flash-preview` custom
    model. Create the chatbot and pipeline. Restrict roles as in rule 3.
 3. Build with the instance's ids:

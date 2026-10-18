@@ -40,6 +40,7 @@ OCS_COLUMNS = [
     "data.language_preference",
     "data.study_group",
     "data.zeya_user_id",
+    "data.study_participant",
 ]
 
 
@@ -69,6 +70,8 @@ def zeya_user_to_participant(user: dict) -> dict:
         "language_preference": user.get("language_preference") or "en",
         "study_group": user.get("study_group") or "intervention",
         "zeya_user_id": user["id"],
+        # Marks trial participants; the export keeps only these (ZEYA is open to anyone).
+        "study_participant": True,
     }
     # OCS matches an imported participant against the wa_id in Meta's webhook exactly,
     # so the identifier must be digits only (OCS ADR-0043).

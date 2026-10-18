@@ -4,11 +4,11 @@ Open Chat Studio Python node: emergency response for detected danger signs.
 Runs on the EMERGENCY branch of the danger router. There is no LLM on this branch,
 so the message never waits on model latency or availability.
 
-The text is the same as backend/app/services/danger_signs.py get_emergency_response():
-header, nearest facilities, footer. The facility list is a static copy of the top 5
-verified, active, emergency-capable Migori facilities in
-backend/app/seeds/health_facilities.py, ordered by display_priority then name.
-ocs/tests/test_emergency_response_node.py fails if this copy and the seed differ.
+The header and footer are the same as backend/app/services/danger_signs.py
+get_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is
+open to women anywhere in Kenya, so this lists national emergency numbers instead
+(methodological change 9). Each number must be confirmed by calling it before a
+release; see docs/ocs-migration.md.
 
 Language comes from participant data ``language_preference``; anything other than
 "sw" gets English, as in Zeya.
@@ -39,26 +39,20 @@ def main(input: str, **kwargs) -> str:
         "Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu."
     )
 
-    # (name, phone) in display order.
-    facilities = [
-        ("Migori County Referral Hospital", "0800 723 253"),
-        ("Ombo Mission Hospital", "0722 123 456"),
-        ("Isebania Sub-County Hospital", "0733 456 789"),
-        ("Awendo Sub-County Hospital", "0744 567 890"),
-        ("Rongo Sub-County Hospital", "0755 678 901"),
-    ]
+    numbers_en = (
+        "Emergency numbers (anywhere in Kenya):\n"
+        "- Emergency services: 999 or 112\n"
+        "- National ambulance: 922\n"
+        "- Kenya Red Cross: 1199"
+    )
+    numbers_sw = (
+        "Nambari za dharura (popote nchini Kenya):\n"
+        "- Huduma za dharura: 999 au 112\n"
+        "- Ambulensi ya kitaifa: 922\n"
+        "- Shirika la Msalaba Mwekundu Kenya: 1199"
+    )
 
-    # The OCS sandbox does not support tuple-unpacking assignment (no _unpack_sequence_),
-    # so each value is assigned separately.
     language = (get_participant_data() or {}).get("language_preference")
     if language == "sw":
-        header = header_sw
-        facilities_title = "Hospitali za karibu:\n"
-        footer = footer_sw
-    else:
-        header = header_en
-        facilities_title = "Nearest facilities:\n"
-        footer = footer_en
-
-    facility_lines = ["- " + name + ": " + phone for name, phone in facilities]
-    return header + facilities_title + "\n".join(facility_lines) + footer
+        return header_sw + numbers_sw + footer_sw
+    return header_en + numbers_en + footer_en
