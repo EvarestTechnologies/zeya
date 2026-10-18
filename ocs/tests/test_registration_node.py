@@ -37,6 +37,33 @@ GESTATIONAL_GUIDANCE = module_constant("app/services/ai_engine.py", "GESTATIONAL
 CONSENTED_MSG = "Thank you for consenting to participate! What is your name?"
 DECLINED_MSG = "Thank you for your response. You can message us anytime if you change your mind. Take care, Mama!"
 CONSENT_RETRY_MSG = "Please reply YES or NO to consent to participate in the study."
+
+# Anyone in Kenya can use ZEYA. Only participants imported from the trial's enrolment list
+# (study_participant) get Zeya's study wording; everyone else is asked to consent to using
+# ZEYA and having messages stored (methodological change 12).
+STUDY = {"study_participant": True}
+PUBLIC_WELCOME_EN = (
+    "Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\n\n"
+    "I share educational information about maternal health based on WHO and Kenya Ministry "
+    "of Health guidelines.\n\n"
+    "Important: This is educational information, not medical diagnosis. Always consult your "
+    "healthcare provider for medical advice.\n\n"
+    "Your messages are stored securely so that ZEYA can reply to you. "
+    "Privacy policy: https://evarestke.com/zeya/\n\n" + SAVE_CONTACT_EN + "\n\n"
+    "Do you agree to use ZEYA and to have your messages stored? Please reply YES or NO."
+)
+PUBLIC_WELCOME_SW = (
+    "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
+    "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na "
+    "Wizara ya Afya ya Kenya.\n\n"
+    "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
+    "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
+    "Ujumbe wako huhifadhiwa kwa usalama ili ZEYA iweze kukujibu. "
+    "Sera ya faragha: https://evarestke.com/zeya/\n\n" + SAVE_CONTACT_SW + "\n\n"
+    "Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA."
+)
+PUBLIC_CONSENTED_MSG = "Thank you! What is your name?"
+PUBLIC_CONSENT_RETRY_MSG = "Please reply YES to start using ZEYA, or NO if you do not want to."
 GA_RETRY_MSG = "Please enter a valid number of weeks (between 1 and 42). For example: 20"
 
 REGISTERED = {
@@ -58,8 +85,8 @@ def _run(message: str, participant_data: dict | None = None) -> NodeHarness:
     return harness
 
 
-def _after(*messages: str) -> NodeHarness:
-    data: dict = {}
+def _after(*messages: str, data: dict | None = None) -> NodeHarness:
+    data = dict(data or {})
     harness = None
     for message in messages:
         harness = _run(message, data)
@@ -91,11 +118,12 @@ class TestFirstContact:
         assert WELCOME_SW.replace(SAVE_CONTACT_SW + "\n\n", "") == ZEYA_WELCOME_SW
 
     def test_sends_english_welcome_and_enrols(self):
-        harness = _run("Hi")
+        harness = _run("Hi", STUDY)
 
         assert harness.output == WELCOME_EN
         assert harness.temp_state["registration_route"] == "REPLY"
         assert harness.participant_data == {
+            "study_participant": True,
             "welcome_sent": True,
             "enrolled_at": NOW.isoformat(),
             "consent_given": False,
@@ -107,12 +135,12 @@ class TestFirstContact:
 
     def test_message_content_is_ignored(self):
         # Zeya ignored the first message, even "yes".
-        harness = _run("yes")
+        harness = _run("yes", STUDY)
         assert harness.output == WELCOME_EN
         assert harness.participant_data["consent_given"] is False
 
     def test_keeps_seeded_language_and_group(self):
-        harness = _run("Habari", {"language_preference": "sw", "study_group": "control"})
+        harness = _run("Habari", STUDY | {"language_preference": "sw", "study_group": "control"})
 
         assert harness.output == WELCOME_SW
         assert harness.participant_data["language_preference"] == "sw"
@@ -122,7 +150,7 @@ class TestFirstContact:
 class TestConsent:
     @pytest.mark.parametrize("answer", ["yes", "YES", " Ndiyo ", "ndio"])
     def test_accepts(self, answer):
-        harness = _after("Hi", answer)
+        harness = _after("Hi", answer, data=STUDY)
 
         assert harness.output == CONSENTED_MSG
         assert harness.participant_data["consent_given"] is True
@@ -131,14 +159,14 @@ class TestConsent:
 
     @pytest.mark.parametrize("answer", ["no", "Hapana"])
     def test_declines(self, answer):
-        harness = _after("Hi", answer)
+        harness = _after("Hi", answer, data=STUDY)
 
         assert harness.output == DECLINED_MSG
         assert harness.participant_data["consent_given"] is False
         assert harness.participant_data["consent_declined"] is True
 
     def test_can_consent_after_declining(self):
-        harness = _after("Hi", "no", "yes")
+        harness = _after("Hi", "no", "yes", data=STUDY)
 
         assert harness.output == CONSENTED_MSG
         assert harness.participant_data["consent_given"] is True
@@ -146,10 +174,51 @@ class TestConsent:
 
     @pytest.mark.parametrize("answer", ["maybe", "yes please", ""])
     def test_reprompts_on_anything_else(self, answer):
-        harness = _after("Hi", answer)
+        harness = _after("Hi", answer, data=STUDY)
 
         assert harness.output == CONSENT_RETRY_MSG
         assert harness.participant_data["consent_given"] is False
+
+
+class TestPublicUser:
+    """Someone who messages ZEYA without being imported from the trial enrolment list."""
+
+    def test_english_welcome(self):
+        harness = _run("Hi")
+
+        assert harness.output == PUBLIC_WELCOME_EN
+        assert "study_participant" not in harness.participant_data
+        assert harness.message_tags == ["registration", "registration:first_contact"]
+
+    def test_swahili_welcome(self):
+        assert _run("Habari", {"language_preference": "sw"}).output == PUBLIC_WELCOME_SW
+
+    @pytest.mark.parametrize("welcome", [PUBLIC_WELCOME_EN, PUBLIC_WELCOME_SW], ids=["en", "sw"])
+    def test_welcome_does_not_mention_a_study(self, welcome):
+        assert "study" not in welcome.lower() and "utafiti" not in welcome.lower()
+
+    def test_welcome_keeps_zeyas_disclaimer(self):
+        disclaimer = ZEYA_WELCOME_EN.split("\n\n")[2]
+        assert disclaimer.startswith("Important:")
+        assert disclaimer in PUBLIC_WELCOME_EN
+
+    def test_accepts(self):
+        harness = _after("Hi", "yes")
+
+        assert harness.output == PUBLIC_CONSENTED_MSG
+        assert harness.participant_data["consent_given"] is True
+
+    def test_declines_with_zeyas_message(self):
+        assert _after("Hi", "no").output == DECLINED_MSG
+
+    def test_reprompts_without_mentioning_a_study(self):
+        assert _after("Hi", "maybe").output == PUBLIC_CONSENT_RETRY_MSG
+
+    def test_registers_like_a_study_participant(self):
+        harness = _after("Hi", "yes", "Achieng", "23")
+
+        assert harness.participant_data["registration_complete"] is True
+        assert harness.participant_data["gestational_age_at_enrollment"] == 23
 
 
 class TestName:
