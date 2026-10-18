@@ -21,6 +21,8 @@ ADR-0043); they are never linked and get new study ids. Produce it from the Zeya
 
 Rules, matching what Zeya logged:
 - Participants whose latest participant data does not have consent_given are left out.
+- So are public users: ZEYA is open to anyone in Kenya, and only participants imported
+  from the trial's enrolment list (seed_participants.py) have study_participant.
 - Turns tagged "registration:first_contact" are left out (Zeya did not log the first
   message). On other "registration" turns only the user's message is kept (Zeya
   logged registration answers but not its replies).
@@ -126,7 +128,11 @@ def _consented_participants(rows: list[dict]) -> set[str]:
         at = _timestamp(row)
         if key not in latest or at >= latest[key][0]:
             latest[key] = (at, data)
-    return {key for key, (_, data) in latest.items() if data.get("consent_given") is True}
+    return {
+        key
+        for key, (_, data) in latest.items()
+        if data.get("consent_given") is True and data.get("study_participant") is True
+    }
 
 
 def _pair_turns(rows: list[dict]) -> dict[int, list[dict]]:
