@@ -6,7 +6,11 @@ also checked for danger signs.
 
 Ports ConversationHandler._handle_registration (consent -> name -> gestational
 age) and AIEngine._build_context from the Zeya backend, using participant data in
-place of the User table. Reply wording is unchanged.
+place of the User table. Reply wording is unchanged for trial participants.
+
+Anyone in Kenya can use ZEYA. Only participants imported from the trial's enrolment
+list have ``study_participant`` and get Zeya's study welcome and consent wording.
+Everyone else is asked to consent to using ZEYA and having messages stored.
 
 Outputs (temp state):
     registration_route: "REPLY" (return this node's text to the user) or
@@ -42,6 +46,28 @@ def main(input: str, **kwargs) -> str:
         "Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya "
         "ujauzito? Tafadhali jibu NDIYO au HAPANA."
     )
+    public_welcome_en = (
+        "Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\n\n"
+        "I share educational information about maternal health based on WHO and Kenya Ministry "
+        "of Health guidelines.\n\n"
+        "Important: This is educational information, not medical diagnosis. Always consult your "
+        "healthcare provider for medical advice.\n\n"
+        "Your messages are stored securely so that ZEYA can reply to you. "
+        "Privacy policy: https://evarestke.com/zeya/\n\n"
+        'Tip: save this number in your contacts as "Zeya" so you can find me easily.\n\n'
+        "Do you agree to use ZEYA and to have your messages stored? Please reply YES or NO."
+    )
+    public_welcome_sw = (
+        "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
+        "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na "
+        "Wizara ya Afya ya Kenya.\n\n"
+        "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
+        "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
+        "Ujumbe wako huhifadhiwa kwa usalama ili ZEYA iweze kukujibu. "
+        "Sera ya faragha: https://evarestke.com/zeya/\n\n"
+        'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.\n\n'
+        "Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA."
+    )
     gestational_guidance = [
         (
             1,
@@ -67,6 +93,7 @@ def main(input: str, **kwargs) -> str:
     now = datetime.datetime.now(datetime.timezone.utc)
     text = input or ""
     text_lower = text.strip().lower()
+    is_study = data.get("study_participant") is True
 
     def reply(message):
         set_temp_state_key("registration_route", "REPLY")
@@ -104,7 +131,11 @@ def main(input: str, **kwargs) -> str:
         set_participant_data_key("registration_complete", False)
         set_participant_data_key("language_preference", language)
         set_participant_data_key("study_group", data.get("study_group") or "intervention")
-        message = reply(welcome_sw if language == "sw" else welcome_en)
+        if is_study:
+            welcome = welcome_sw if language == "sw" else welcome_en
+        else:
+            welcome = public_welcome_sw if language == "sw" else public_welcome_en
+        message = reply(welcome)
         add_message_tag("registration:first_contact")
         return message
 
@@ -113,7 +144,9 @@ def main(input: str, **kwargs) -> str:
             set_participant_data_key("consent_given", True)
             set_participant_data_key("consent_given_at", now.isoformat())
             set_participant_data_key("consent_declined", False)
-            return reply("Thank you for consenting to participate! What is your name?")
+            if is_study:
+                return reply("Thank you for consenting to participate! What is your name?")
+            return reply("Thank you! What is your name?")
         if text_lower in ("no", "hapana"):
             # Zeya deactivated the user here. We record the decision instead, so a later
             # YES re-enrols them, as the reply promises.
@@ -121,7 +154,9 @@ def main(input: str, **kwargs) -> str:
             return reply(
                 "Thank you for your response. You can message us anytime if you change your mind. Take care, Mama!"
             )
-        return reply("Please reply YES or NO to consent to participate in the study.")
+        if is_study:
+            return reply("Please reply YES or NO to consent to participate in the study.")
+        return reply("Please reply YES to start using ZEYA, or NO if you do not want to.")
 
     # OCS merges participant.name into participant data as "name", so a name may already
     # be present (e.g. from the channel). Track this step separately.

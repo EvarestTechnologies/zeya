@@ -60,6 +60,8 @@ Zeya asks for your consent before enrolling you in the research study or collect
 
 Participation is voluntary. If you decline consent, Zeya will not enrol you in the study.
 
+Zeya is open to pregnant women anywhere in Kenya, and only women enrolled through the study team take part in the research study. If you start using Zeya on your own, Zeya asks for your consent to use the service and to store your messages. Your messages are then not included in the research study.
+
 You may withdraw from the study at any time by contacting the study team. Withdrawal stops further research participation and collection as applicable. Information already collected may be retained where required or justified by an applicable legal obligation, an approved research protocol or a documented research-integrity requirement. The study team will explain any applicable limitations on deletion.
 
 Withdrawing from the study does not affect your access to care at a health facility.

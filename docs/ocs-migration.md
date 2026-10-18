@@ -202,6 +202,13 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
     `seed_participants.py` marks people imported from the trial's enrolment list with
     `study_participant: true`, and the export adapter keeps only those. Someone who
     starts using ZEYA on her own is never in the study export, even if she consents.
+12. **Two welcomes.** Trial participants (`study_participant`) get Zeya's study welcome
+    and consent wording, plus the save-contact tip. Everyone else gets a general
+    welcome that asks her to agree to use ZEYA and have her messages stored, links the
+    privacy page, and keeps Zeya's disclaimer. Her consent reply and reminder do not
+    mention a study ("Thank you! What is your name?", "Please reply YES to start using
+    ZEYA, or NO if you do not want to."). The Swahili public welcome needs review by a
+    native speaker before release.
 
 ## Study data continuity
 
@@ -248,7 +255,7 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
 | Unit (real OCS sandbox) | `OCS_SOURCE=<checkout> make test-ocs` | the same, run in OCS's `RestrictedPythonExecutionMixin` |
 | Engine | `DATABASE_URL=… make test-ocs-engine OCS_SOURCE=<checkout>` | pipeline validates; 16 danger messages → emergency with 0 LLM calls; SAFE → exactly one LLM call with the Zeya prompt and context; drift check passes on what OCS stores |
 
-At the time of writing: 298 passed, in
+At the time of writing: 307 passed, in
 both sandbox modes; 26 passed in the engine suite against a throwaway
 `pgvector/pgvector:pg16` database. Install with `pip install -r ocs/requirements-dev.txt`.
 
