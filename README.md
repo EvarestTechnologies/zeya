@@ -1,206 +1,118 @@
-# Zeya - WhatsApp AI Antenatal Education Chatbot
+# ZEYA
 
-An AI-powered WhatsApp chatbot providing personalized antenatal education to pregnant women in Migori County, Kenya. Built for a research study comparing chatbot-based education against standard SMS reminders.
+A pregnancy companion on WhatsApp for women in Kenya, built by
+[Evarest Technologies](https://evarestke.com/zeya/) on
+[Open Chat Studio](https://github.com/dimagi/open-chat-studio).
 
-## Features
+ZEYA answers questions about pregnancy in English and Kiswahili, using World Health
+Organization and Kenya Ministry of Health guidelines, and fits each answer to the
+woman's week of pregnancy. When a message describes a danger sign, she gets an
+emergency message at once, before any AI runs.
 
-- **AI-Powered Responses**: Uses Google Gemini to provide accurate maternal health information based on WHO and Kenya Ministry of Health guidelines
-- **Danger Sign Detection**: Automatically detects 8 categories of obstetric emergencies in both English and Swahili, triggering immediate emergency responses with local hospital contacts
-- **Multilingual Support**: Responds in English or Swahili based on user preference
-- **Gestational Age Tracking**: Provides trimester-specific advice based on pregnancy stage
-- **Admin Dashboard**: React-based dashboard for monitoring users, conversations, and danger sign alerts
-- **Data Export**: Export conversation and engagement data to CSV for research analysis
+**Status:** preparing for a randomised controlled trial in Migori County. Not yet open
+to users.
 
-## Tech Stack
+## How it works
 
-**Backend**
-- Python 3.11 / FastAPI
-- PostgreSQL 15 (database)
-- Redis 7 (conversation history cache)
-- Google Gemini AI (gemini-2.0-flash-exp)
-- WhatsApp Cloud API
+Every WhatsApp message goes through one Open Chat Studio pipeline:
 
-**Frontend**
-- React 18 / Vite
-- TailwindCSS
-- Recharts (analytics)
+```
+WhatsApp message
+   └─> danger-sign gate (Python node, 39 fixed rules for 8 danger signs, English and Kiswahili)
+          ├─ danger sign ─> emergency message (no AI): 999 or 112, ambulance 922, Kenya Red Cross 1199
+          └─ safe ─> registration (consent, name, weeks of pregnancy)
+                        └─ registered ─> Gemini, with her week of pregnancy as context
+```
 
-**Infrastructure**
-- Docker / Docker Compose
-- Nginx (frontend serving)
+The eight danger signs are bleeding, severe headache or blurred vision, fever,
+reduced fetal movement, severe abdominal pain, water breaking, convulsions and
+swelling.
 
-## Quick Start
+Open Chat Studio provides the WhatsApp channel, sessions, history, participants and
+the transcript export. The safety-critical and study-critical logic lives in this
+repository.
 
-### Prerequisites
+## Safety by design
 
-- Docker and Docker Compose
-- ngrok (for WhatsApp webhook)
-- WhatsApp Business API credentials
-- Google Gemini API key
+- **Danger signs never wait for AI.** The gate is fixed rules in code, and the
+  emergency branch has no model call.
+- **The pipeline is generated from this repository** (`ocs/build_pipeline.py`).
+  Nobody edits the danger rules in the Open Chat Studio screen.
+- **Tested under Open Chat Studio's sandbox rules.** `make test-ocs` runs 307 tests
+  with a copy of Open Chat Studio's RestrictedPython sandbox, or with the real one
+  when `OCS_SOURCE` points to a checkout.
+- **Drift check.** `ocs/check_drift.py` compares the live pipeline with the
+  repository before each release.
+- **Every behaviour change is logged** for the study, with its reason, in
+  [docs/ocs-migration.md](docs/ocs-migration.md).
 
-### Installation
+## Research use
 
-1. Clone the repository:
+Anyone in Kenya can use ZEYA. Only women enrolled by the study team, imported with
+`ocs/seed_participants.py`, are trial participants. Everyone else gets a general
+welcome and never appears in the study export. `ocs/export_adapter.py` converts Open
+Chat Studio transcripts into the study's columns, with study numbers instead of names
+or phone numbers.
+
+## Repository
+
+```
+ocs/                   The live system on Open Chat Studio
+  nodes/               Python nodes: danger_gate, emergency_response, registration
+  prompts/             The system prompt
+  pipeline/            The generated pipeline (zeya_pipeline.json)
+  build_pipeline.py    Builds the pipeline from the nodes and prompt
+  check_drift.py       Compares a live pipeline with the repository
+  export_adapter.py    Open Chat Studio export to the study's columns
+  seed_participants.py Trial enrolment list to an Open Chat Studio import
+  tests/, integration/ Unit, parity and engine tests
+docs/
+  ocs-migration.md     Design, decisions and the study's methodological changes
+  privacy-policy.md    ZEYA privacy policy
+  whatsapp-scale-up.md Meta verification, display name and message templates
+website/zeya/          The evarestke.com/zeya page
+backend/, frontend/    The original FastAPI and React app, kept for exporting
+                       data collected before the move to Open Chat Studio
+```
+
+## Development
+
 ```bash
 git clone https://github.com/EvarestTechnologies/zeya.git
 cd zeya
+python3 -m venv .venv && .venv/bin/pip install -r ocs/requirements-dev.txt
+make test-ocs PYTHON=.venv/bin/python   # 307 tests
+make lint-ocs PYTHON=.venv/bin/python
 ```
 
-2. Create environment file:
-```bash
-cp backend/.env.example backend/.env
-```
-
-3. Edit `backend/.env` with your credentials:
-```
-GEMINI_API_KEY=your_gemini_api_key
-WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
-WHATSAPP_ACCESS_TOKEN=your_access_token
-WHATSAPP_VERIFY_TOKEN=your_verify_token
-```
-
-4. Start the application:
-```bash
-make up
-make migrate
-```
-
-5. Access the services:
-- Backend API: http://localhost:8001/docs
-- Frontend Dashboard: http://localhost:3000
-
-### Available Commands
-
-Run `make help` to see all available commands:
-
-```
-make up        - Start all services
-make down      - Stop all services
-make restart   - Restart backend service
-make logs      - View backend logs
-make migrate   - Run database migrations
-make test      - Run all tests
-make test-cov  - Run tests with coverage
-make reset     - Clean reset (removes data)
-make ngrok     - Start ngrok tunnel
-make shell     - Open backend shell
-make db-shell  - Open PostgreSQL shell
-```
-
-## Open Chat Studio migration
-
-Zeya is moving onto Open Chat Studio. The design, decisions and study-log items are in
-[docs/ocs-migration.md](docs/ocs-migration.md). The pipeline nodes (including the danger-sign gate),
-build script, export adapter and tests are in [ocs/](ocs/). Run them with `make test-ocs`.
-
-## WhatsApp Integration
-
-1. Start ngrok tunnel:
-```bash
-make ngrok
-```
-
-2. Configure webhook in Meta Developer Console:
-   - Callback URL: `https://<ngrok-url>/api/v1/webhook`
-   - Verify Token: Use the value from your `.env` file
-   - Subscribe to: `messages`
-
-See [WHATSAPP_SETUP.md](WHATSAPP_SETUP.md) for detailed configuration instructions.
-
-## Project Structure
-
-```
-zeya/
-├── backend/
-│   ├── app/
-│   │   ├── api/endpoints/     # API route handlers
-│   │   ├── core/              # Config, database, security
-│   │   ├── models/            # SQLAlchemy models
-│   │   ├── schemas/           # Pydantic schemas
-│   │   └── services/          # Business logic
-│   │       ├── ai_engine.py           # Gemini AI integration
-│   │       ├── conversation_handler.py # Message orchestration
-│   │       ├── danger_signs.py        # Emergency detection
-│   │       ├── whatsapp.py            # WhatsApp API client
-│   │       └── ...
-│   ├── alembic/               # Database migrations
-│   └── tests/                 # Unit and integration tests
-├── frontend/
-│   └── src/
-│       ├── pages/             # Dashboard pages
-│       ├── components/        # React components
-│       └── services/          # API client
-├── docker-compose.yml
-├── Makefile
-└── CLAUDE.md                  # AI assistant guidance
-```
-
-## How It Works
-
-1. **User Registration**: New users go through a 3-step registration flow:
-   - Consent to participate in the study
-   - Provide their name
-   - Enter gestational age (weeks pregnant)
-
-2. **Message Processing**: For registered users, each message is:
-   - Scanned for danger sign keywords (8 categories, English + Swahili)
-   - If danger signs detected: Immediate emergency response with hospital contacts
-   - If normal: AI-generated response with gestational age context
-
-3. **Danger Sign Categories**:
-   - Bleeding
-   - Severe headache / blurred vision
-   - High fever / chills
-   - Reduced fetal movement
-   - Severe abdominal pain
-   - Water breaking
-   - Convulsions / fainting
-   - Severe swelling
-
-## API Endpoints
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/v1/health` | Health check |
-| `GET/POST /api/v1/webhook` | WhatsApp webhook |
-| `POST /api/v1/auth/login` | Admin login |
-| `GET /api/v1/users` | List users (protected) |
-| `GET /api/v1/conversations` | List conversations (protected) |
-| `GET /api/v1/analytics/dashboard` | Dashboard stats (protected) |
-| `GET /api/v1/analytics/export` | Export data (protected) |
-
-## Testing
+The engine suite runs the pipeline in a real Open Chat Studio checkout with a
+database:
 
 ```bash
-# Run all tests
-make test
-
-# Run with coverage report
-make test-cov
-
-# Run specific test file
-docker-compose exec backend pytest tests/unit/test_danger_signs.py -v
+DATABASE_URL=... make test-ocs-engine OCS_SOURCE=/path/to/open-chat-studio
 ```
 
-## Environment Variables
+To deploy, build the pipeline with the instance's provider and model ids, load it,
+run the drift check and publish a version. The steps are in
+[docs/ocs-migration.md](docs/ocs-migration.md), under "Rollout":
 
-| Variable | Description |
-|----------|-------------|
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `GEMINI_MODEL` | Gemini model (default: gemini-2.0-flash-exp) |
-| `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp Business phone number ID |
-| `WHATSAPP_ACCESS_TOKEN` | WhatsApp API access token |
-| `WHATSAPP_VERIFY_TOKEN` | Webhook verification token |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `REDIS_URL` | Redis connection string |
-| `JWT_SECRET_KEY` | Secret key for JWT tokens |
+```bash
+python -m ocs.build_pipeline --llm-provider-id N --llm-provider-model-id M > deploy.json
+python -m ocs.check_drift live.json --llm-provider-id N --llm-provider-model-id M
+```
+
+### The original app
+
+`backend/` and `frontend/` are the FastAPI, PostgreSQL, Redis and React app that ran
+ZEYA before Open Chat Studio. They stay available for exporting earlier data. See
+[CLAUDE.md](CLAUDE.md) for its commands (`make up`, `make migrate`, `make test`).
+
+## Privacy
+
+See the [ZEYA privacy policy](docs/privacy-policy.md). Contact:
+contact@evarestke.com.
 
 ## License
 
-Copyright 2026 Evarest Technologies Ltd. Licensed under the [Apache License, Version 2.0](LICENSE).
-
-This project is part of a research study on maternal health education in Kenya.
-
-## Author
-
-Stella Achar Oiro
+Copyright 2026 Evarest Technologies Ltd. Licensed under the
+[Apache License, Version 2.0](LICENSE).
