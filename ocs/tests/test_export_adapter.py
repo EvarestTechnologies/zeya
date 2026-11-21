@@ -249,19 +249,12 @@ def test_never_links_whatsapp_bsuid_as_a_phone():
 
 
 def test_study_ids_keep_zeya_numbering():
-    zeya_user_ids = ["b0000000-0000-0000-0000-000000000000", "a0000000-0000-0000-0000-000000000000"]
-    rows = [
-        {"user_key": "ocs:p-9"},
-        {"user_key": "b0000000-0000-0000-0000-000000000000"},
-        {"user_key": "ocs:p-1"},
-    ]
-
-    numbered = assign_study_ids(rows, zeya_user_ids)
-
-    # Zeya numbers sorted user ids; OCS-only keys ("ocs:...") sort after every UUID,
-    # so existing study ids do not change.
-    assert [r["study_id"] for r in numbered] == ["STUDY_0004", "STUDY_0002", "STUDY_0003"]
-    assert "user_key" not in numbered[0]
+    # assign_study_ids is removed (raises TypeError); this test verifies the removal.
+    # Historical context: the old function re-sorted all keys on every call, so adding
+    # a new earlier-sorting key would shift every later participant's STUDY_#### number.
+    # The correct path is --study-id-registry (ocs.study_ids.locked_registry).
+    with pytest.raises(TypeError, match="assign_study_ids"):
+        assign_study_ids([], [])
 
 
 def test_cli_writes_zeya_csv(tmp_path):
@@ -275,12 +268,32 @@ def test_cli_writes_zeya_csv(tmp_path):
     zeya_users.write_text("user_id,whatsapp_id\na0000000-0000-0000-0000-000000000000,254711111111\n")
     out = tmp_path / "out.csv"
 
-    assert main(["--ocs-export", str(ocs_csv), "--zeya-users", str(zeya_users), "--out", str(out)]) == 0
+    # Create a registry seeded with the legacy user; OCS participant p-1 appends after.
+    from ocs.study_ids import create_registry
+
+    reg_path = tmp_path / "study_ids.json"
+    create_registry(reg_path, ["a0000000-0000-0000-0000-000000000000"])
+
+    assert (
+        main(
+            [
+                "--ocs-export",
+                str(ocs_csv),
+                "--zeya-users",
+                str(zeya_users),
+                "--study-id-registry",
+                str(reg_path),
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
 
     result = list(csv.reader(io.StringIO(out.read_text())))
     assert result[0] == ZEYA_COLUMNS
     assert result[1] == [
-        "STUDY_0002",
+        "STUDY_0002",  # ocs:p-1 appends after the seeded legacy user
         "intervention",
         "incoming",
         "Hello",

@@ -227,6 +227,24 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
     are retained for consented trial participants. These additional onboarding turns
     did not exist before this change and must be distinguished in study analysis.
 
+14. **Persistent study-ID registry for new OCS exports.** Export IDs are now allocated
+    from an explicit private registry rather than recomputed from each export's sorted
+    participant list. New earlier-sorting participants, subsets and later exports must
+    not renumber existing assignments. Bootstrap legacy IDs from the same authoritative
+    legacy roster/mapping used for the earlier analysis; later allocations append.
+    The export CLI requires `--study-id-registry`, and the old in-memory
+    `assign_study_ids()` interface refuses unsafe use with migration guidance. Missing
+    registry files fail closed rather than starting a fresh namespace. Existing
+    distributed OCS-only IDs cannot be reconstructed from a study-ID-only CSV; use an
+    authoritative mapping/backup and a study-team reconciliation before migration.
+    Registry commit precedes CSV publication; a failed later CSV write may retain an
+    unused committed allocation, which is never recycled. The nine analysis columns,
+    consent/study filters and emergency/registration behavior remain unchanged by
+    this ID fix. The registry is private operational data, not anonymisation or legal
+    compliance evidence. See `docs/study-export-operations.md` for supported local-file
+    operations and recovery limits. Code change only: no production data migration,
+    retrospective export rewrite or hosted publication is performed by the merge.
+
 ## Study data continuity
 
 - **Existing transcripts are not migrated.** The Zeya database and
@@ -245,9 +263,13 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
   - It drops what Zeya never logged: the first-contact turn, and registration replies.
     Registration answers are kept.
   - It drops participants who never consented (see change 5).
-  - `study_id` uses Zeya's `STUDY_####` numbering, linked by `whatsapp_id`. OCS-only
-    participants sort after every Zeya UUID, so existing IDs are unchanged. As in Zeya,
-    numbering is over the unfiltered set.
+  - `study_id` uses a private persistent `STUDY_####` registry, linked to legacy Zeya
+    users by the existing `whatsapp_id` logic. Explicit initial bootstrap preserves the
+    authoritative legacy roster's sorted numbering; later legacy/OCS-only allocations
+    append and existing assignments never shift. Keep registry entries for participants
+    absent from a later export. The required `--study-id-registry` option prevents a
+    silent return to per-export sorting. See methodological change 14 and the operator
+    guide before migrating earlier exports.
 - `ocs/seed_participants.py` imports existing users into OCS participant data, so they
   skip registration. It leaves out consented users whom an admin deactivated and lists
   them for a study-team decision. OCS exposes `participant.name` as `name`, so
