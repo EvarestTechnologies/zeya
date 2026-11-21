@@ -118,11 +118,185 @@
         }
       },
       {
-        "id": "llm",
+        "id": "kb_context",
         "type": "pipelineNode",
         "position": {
           "x": 1500,
-          "y": 450
+          "y": 350
+        },
+        "data": {
+          "id": "kb_context",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "kb_context",
+            "code": "\"\"\"\nOpen Chat Studio Python node: knowledge-base context selector.\n\nReads participant saved language preference and computes current gestational\nweek from enrollment data.  Selects approved (or explicitly staged-eligible)\nknowledge-base entries within the UTF-8 byte budget and writes three temp-state\nkeys for downstream nodes:\n\n  kb_section   – bounded concatenation of selected entry texts (str)\n  kb_ids       – stable IDs of selected entries (list[str])\n  kb_available – True when at least one entry was selected (bool)\n\nNo approved content => empty section and kb_available=False; the pipeline\nroutes to a fixed health-worker referral before any LLM call.\n\nParticipant data keys read (set by the registration node):\n  language_preference           'en' | 'sw'  — no silent default to either\n  gestational_age_at_enrollment int          — weeks pregnant at enrollment\n  enrolled_at                   str          — ISO-8601 UTC datetime of enrollment\n\nWeek computation mirrors registration.py:\n  current_week = gestational_age_at_enrollment + (now - enrolled_at).days // 7\n\nUnknown or uncomputable week => entries with any week bound are excluded;\ngeneral (unbounded) entries remain eligible.\n\nThe KB_JSON string is replaced by build_pipeline with the validated JSON\nexport of approved entries from docs/zeya-knowledge-base.md.\nUntil entries pass clinical and language review, KB_JSON is '[]'\nand the node will always set kb_available=False.\n\nReturns the original participant message unchanged.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    import json\n\n    # Approved knowledge-base entries injected by build_pipeline.\n    # All public entries require review_status == 'approved'.\n    # Pending entries are excluded at load time; this list is empty until\n    # entries pass clinical and language review.\n    # In synthetic staging, pending entries may carry eligible=True; the node\n    # checks both review_status and eligible without relabelling pending content.\n    KB_JSON = '[]'\n\n    entries = json.loads(KB_JSON)\n\n    # Read participant saved state; do not mutate it.\n    participant = get_participant_data()\n\n    # Language preference set by the registration node.\n    # No silent default: an absent or unsupported value means no entries match.\n    saved_language = participant.get(\"language_preference\")\n\n    # Compute current gestational week from enrollment data.\n    # Mirrors registration.py: (now - enrolled_at).days // 7 + ga_at_enrollment.\n    # On any parse or arithmetic error current_week stays None.\n    # None → exclude all week-ranged entries (unknown week must not include\n    # week-restricted content).\n    current_week = None\n    ga_raw = participant.get(\"gestational_age_at_enrollment\")\n    enrolled_at_str = participant.get(\"enrolled_at\")\n    if ga_raw is not None and enrolled_at_str is not None:\n        try:\n            ga = int(ga_raw)\n            enrolled_dt = datetime.datetime.fromisoformat(enrolled_at_str)\n            now_utc = datetime.datetime.now(datetime.timezone.utc)\n            days_since = (now_utc - enrolled_dt).days\n            if days_since >= 0:\n                current_week = ga + (days_since // 7)\n        except Exception:\n            current_week = None\n\n    # Select eligible entries: approved (or staged-eligible), matching language,\n    # within week range.  Exact UTF-8 byte count with separator bytes included.\n    max_context_bytes = 2000\n    used_bytes = 0\n    eligible_texts = []\n    eligible_ids = []\n\n    for entry in entries:\n        # Eligibility: approved status or explicit staging flag (eligible=True).\n        # Staging flag is added by render_kb_node(include_pending=True) without\n        # changing review_status; never relabels pending content as approved.\n        is_eligible = entry.get(\"review_status\") == \"approved\" or entry.get(\"eligible\") is True\n        if not is_eligible:\n            continue\n\n        if entry.get(\"language\") != saved_language:\n            continue\n\n        min_week = entry.get(\"min_week\")\n        max_week = entry.get(\"max_week\")\n\n        # Unknown week: exclude any entry that carries a week bound.\n        if current_week is None:\n            if min_week is not None or max_week is not None:\n                continue\n        else:\n            if min_week is not None and current_week < min_week:\n                continue\n            if max_week is not None and current_week > max_week:\n                continue\n\n        text = entry.get(\"text\", \"\")\n        # Exact UTF-8 byte count; separator '\\n\\n' = 2 bytes per join.\n        text_bytes = len(text.encode(\"utf-8\"))\n        sep_bytes = 2 if len(eligible_texts) > 0 else 0\n        if used_bytes + sep_bytes + text_bytes > max_context_bytes:\n            break\n\n        eligible_texts.append(text)\n        eligible_ids.append(entry.get(\"id\", \"\"))\n        used_bytes = used_bytes + sep_bytes + text_bytes\n\n    kb_section = \"\\n\\n\".join(eligible_texts)\n    kb_available = len(eligible_ids) > 0\n\n    set_temp_state_key(\"kb_section\", kb_section)\n    set_temp_state_key(\"kb_ids\", eligible_ids)\n    set_temp_state_key(\"kb_available\", kb_available)\n\n    return input\n"
+          }
+        }
+      },
+      {
+        "id": "kb_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 1800,
+          "y": 350
+        },
+        "data": {
+          "id": "kb_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "kb_router",
+            "data_source": "temp_state",
+            "route_key": "kb_available",
+            "keywords": [
+              "FALSE",
+              "TRUE"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "knowledge_referral",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2100,
+          "y": 150
+        },
+        "data": {
+          "id": "knowledge_referral",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "knowledge_referral",
+            "code": "\"\"\"\nOpen Chat Studio Python node: fixed health-worker referral when no approved KB content.\n\nReached via the kb_router FALSE output when kb_available=False — i.e. the approved\nknowledge base returned no entries eligible for this participant's language and\ngestational week.  Returns a fixed, source-free referral to the participant's\nhealthcare provider WITHOUT calling any AI model.\n\nNo model, network, file I/O or credentials.\nNo participant data mutation; reads saved language preference only.\nNon-sensitive route tag emitted for completed-observation evaluation (#28).\n\nLanguage copies:\n  English — suitable for review / production use.\n  Swahili  — DRAFT, pending fluent-speaker and clinical review.  Not approved\n              for public use; shown only while approved SW content is unavailable.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    # Read the participant's saved language preference.\n    # Set by the registration node; absent or unrecognised value → English default.\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\", \"en\")\n\n    if lang == \"sw\":\n        # Draft Swahili referral — pending fluent-speaker and clinical review.\n        referral = \"Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya.\"\n    else:\n        # English referral — default for all non-Swahili or absent preferences.\n        referral = \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\"\n\n    set_temp_state_key(\"knowledge_referral_route\", \"REFERRAL\")\n    add_message_tag(\"route:knowledge_referral\")\n    return referral\n"
+          }
+        }
+      },
+      {
+        "id": "answer_match",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2100,
+          "y": 500
+        },
+        "data": {
+          "id": "answer_match",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "answer_match",
+            "code": "\"\"\"\nOpen Chat Studio Python node: deterministic answer-card matcher.\n\nReads kb_ids and kb_available written by the #22 kb_context node.  Returns the\nexact card answer text when a card is clearly matched, or routes to the LLM for\neverything else.\n\nCard data is injected at build time by render_answer_match() in\nocs/answer_cards.py, which replaces the ##CARDS_PLACEHOLDER## string literal\ninside main() with a double-encoded JSON string of the baked data structure:\n\n    {\"cards\": [...], \"allow_pending\": bool}\n\nThe runtime node unpacks this structure and independently re-checks\nreview_status so that eligibility cannot be bypassed in production:\n\n    allow_pending == True  (exact bool, explicit staging): pending cards eligible.\n    allow_pending == False (default / production): only approved cards eligible.\n\nPending review_status is never relabelled as approved.\n\nOutputs (returned value):\n    CARD route:   the exact card answer text (returned directly).\n    ASK_AI route: the original user input (passed through to downstream LLM).\n\nOutputs (temp state):\n    answer_route:  \"CARD\" or \"ASK_AI\".\n    matched_card:  stable card slug on CARD route; \"\" on ASK_AI.\n    card_text:     answer text on CARD route (not set on ASK_AI).\n\nOutputs (message tags — for completed-observation evaluator, see #28):\n    CARD:   answer_route:CARD  +  answer_card:<stable-slug>\n    ASK_AI: answer_route:ASK_AI  (all abstention paths)\n    No user text, no PII in tags.  Card ID is validated as a safe slug before\n    embedding so the tag cannot contain arbitrary content.\n\nMatching algorithm:\n    Pure-Python word overlap (Jaccard similarity) with light suffix stemming\n    (strips -ing, -tion, -ed, -ly, -es, -s) and English stopword removal.\n    \"pregnancy\" and \"dur\" (from \"during\") are treated as domain-agnostic\n    function-words in maternal health (they appear in almost every question\n    and add no topic discrimination) and are included in STOPWORDS.\n    Scores each card as the maximum Jaccard score over all its trigger strings.\n    Routes to CARD only when the best score > THRESHOLD (0.25, strict greater-\n    than) AND the gap between first and second best is >= TIE_MARGIN (0.10).\n\nLimitations (documented per contract):\n    - No semantic understanding.  Near-synonyms without shared word stems\n      (e.g. \"clinic\" vs \"ANC\") may miss without an explicit synonym trigger.\n    - Typos in content words reduce overlap but do not change routing unless\n      the score drops below threshold.\n    - Very short inputs (<2 raw tokens) are caught by the trivial-input guard.\n    - No Swahili or Sheng matching in v0; all starter cards are English-only\n      pending Kiswahili translation review.\n    - All five v0 cards are pending clinical review; the production build passes\n      include_pending=False so the node bakes in an empty list and always routes\n      ASK_AI until cards are explicitly approved.\n    - += is disallowed in RestrictedPython; use explicit a = a + 1.\n    - Known near-tie false positives are documented and tested in\n      TestMatcherKnownFalsePositives / TestFormerFalsePositivesNowRegressions.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    import json\n    import re\n\n    # ------------------------------------------------------------------\n    # Card data injected by render_answer_match() in ocs/answer_cards.py.\n    # Baked structure: {\"cards\": [...], \"allow_pending\": bool}.\n    # review_status is independently re-checked below.\n    # ------------------------------------------------------------------\n    baked_json = \"{\\\"cards\\\": [], \\\"allow_pending\\\": false}\"\n    baked = json.loads(baked_json)\n    cards = baked[\"cards\"]\n    allow_pending = baked.get(\"allow_pending\", False)\n\n    # ------------------------------------------------------------------\n    # Read KB context written by the #22 kb_context node.\n    # ------------------------------------------------------------------\n    kb_ids = get_temp_state_key(\"kb_ids\") or []\n    kb_available = get_temp_state_key(\"kb_available\") or False\n\n    if not kb_available or not kb_ids:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # ------------------------------------------------------------------\n    # Participant language from registration data.\n    # ------------------------------------------------------------------\n    data = get_participant_data() or {}\n    language = data.get(\"language_preference\") or \"en\"\n\n    # ------------------------------------------------------------------\n    # Independent runtime eligibility:\n    #   - kb_ref must be in selected KB IDs\n    #   - language must match participant\n    #   - review_status must be \"approved\", OR \"pending\" with allow_pending == True\n    #     (exact bool True — not just truthy — only the production-baked bool passes)\n    # ------------------------------------------------------------------\n    eligible = []\n    for c in cards:\n        if c.get(\"kb_ref\") not in kb_ids:\n            continue\n        if c.get(\"language\") != language:\n            continue\n        status = c.get(\"review_status\")\n        if status == \"approved\":\n            pass\n        elif status == \"pending\" and allow_pending == True:  # noqa: E712 — strict bool check\n            pass\n        else:\n            continue\n        eligible.append(c)\n\n    if not eligible:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # ------------------------------------------------------------------\n    # Pure-Python word-overlap matcher\n    # ------------------------------------------------------------------\n\n    STOPWORDS = {\n        \"the\",\n        \"and\",\n        \"for\",\n        \"are\",\n        \"was\",\n        \"you\",\n        \"this\",\n        \"that\",\n        \"with\",\n        \"have\",\n        \"not\",\n        \"can\",\n        \"what\",\n        \"why\",\n        \"how\",\n        \"should\",\n        \"would\",\n        \"could\",\n        \"will\",\n        \"when\",\n        \"where\",\n        \"who\",\n        \"which\",\n        \"from\",\n        \"into\",\n        \"out\",\n        \"its\",\n        \"your\",\n        \"our\",\n        \"their\",\n        \"about\",\n        \"also\",\n        \"been\",\n        \"does\",\n        \"did\",\n        \"get\",\n        \"got\",\n        \"had\",\n        \"has\",\n        \"her\",\n        \"him\",\n        \"his\",\n        \"just\",\n        \"let\",\n        \"may\",\n        \"more\",\n        \"much\",\n        \"must\",\n        \"now\",\n        \"one\",\n        \"own\",\n        \"she\",\n        \"than\",\n        \"then\",\n        \"they\",\n        \"too\",\n        \"two\",\n        \"use\",\n        \"yet\",\n        # Domain-agnostic maternal-health function-words: appear in almost every\n        # maternal question/trigger without discriminating between card topics.\n        \"pregnancy\",  # universal context word; replaced by topic-specific vocabulary\n        \"dur\",  # stem of \"during\" (preposition); adds no content information\n    }\n\n    def stem_word(word):\n        # Light suffix stripping — preserves medical vocabulary roots.\n        for suffix in (\"ing\", \"tion\", \"ed\", \"ly\", \"es\", \"s\"):\n            if len(word) > len(suffix) + 2 and word.endswith(suffix):\n                return word[: -len(suffix)]\n        return word\n\n    def topic_eligible(q_toks, card_anchors):\n        \"\"\"Return True if at least one stemmed anchor appears in q_toks.\n\n        Each anchor string from card['topic_anchors'] is stemmed with the same\n        stem_word function used on question tokens.  Generic words like 'safe',\n        'pregnancy', or 'during' that are not in any card's anchor list cannot\n        confer eligibility, regardless of their Jaccard score against triggers.\n        An empty anchor list always returns False (absent topic abstains).\n        \"\"\"\n        if not card_anchors:\n            return False\n        for anchor in card_anchors:\n            if stem_word(anchor.lower()) in q_toks:\n                return True\n        return False\n\n    def tokenize(text):\n        raw = re.findall(r\"[a-z]+\", text.lower())\n        tokens = set()\n        for w in raw:\n            if len(w) > 2:\n                s = stem_word(w)\n                if s not in STOPWORDS:\n                    tokens.add(s)\n        return tokens\n\n    def jaccard_score(a_tokens, b_tokens):\n        if not a_tokens or not b_tokens:\n            return 0.0\n        overlap = 0\n        for x in a_tokens:\n            if x in b_tokens:\n                overlap = overlap + 1  # += disallowed in RestrictedPython\n        union = len(a_tokens) + len(b_tokens) - overlap\n        return overlap / union if union > 0 else 0.0\n\n    # Threshold: strict greater-than (scores == THRESHOLD are rejected as\n    # insufficiently confident, preventing borderline vocabulary-overlap matches\n    # on domain-agnostic words like \"safe\" appearing in unrelated questions).\n    THRESHOLD = 0.25\n    TIE_MARGIN = 0.10\n\n    # Guard on raw (pre-stopword) token count to catch truly empty/trivial inputs\n    # without discarding short but specific questions like \"Why should I go to ANC?\"\n    # (which produces only {\"anc\"} after stopword removal but is a clear question).\n    raw_tokens = re.findall(r\"[a-z]+\", input.lower())\n    if len(raw_tokens) < 2:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    q_tokens = tokenize(input)\n    if not q_tokens:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Topic eligibility: at least one stemmed anchor from the card's topic_anchors\n    # must appear in q_tokens before the card is scored.\n    # This prevents generic words like \"safe\", \"pregnancy\", or \"during\" from\n    # conferring eligibility solely through Jaccard overlap on trigger text.\n    # A card with absent/unrecognised anchors abstains (topic_eligible returns False).\n    topic_checked = []\n    for card in eligible:\n        if topic_eligible(q_tokens, card.get(\"topic_anchors\", [])):\n            topic_checked.append(card)\n\n    if not topic_checked:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Score each topic-eligible card as max Jaccard over all its triggers.\n    best_score = 0.0\n    best_card = None\n    second_score = 0.0\n\n    for card in topic_checked:\n        card_best = 0.0\n        for trigger in card.get(\"triggers\", []):\n            t_tokens = tokenize(trigger)\n            s = jaccard_score(q_tokens, t_tokens)\n            if s > card_best:\n                card_best = s\n        if card_best > best_score:\n            second_score = best_score\n            best_score = card_best\n            best_card = card\n        elif card_best > second_score:\n            second_score = card_best\n\n    # Low confidence — strict threshold: scores exactly at THRESHOLD are rejected.\n    if best_score <= THRESHOLD or best_card is None:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Ambiguous tie — no match.\n    if best_score - second_score < TIE_MARGIN:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Clear match — validate card ID is a safe slug before embedding in tag.\n    # Defence-in-depth: validate_cards enforces the slug at load time;\n    # this prevents any malformed ID from reaching the OCS message tag.\n    card_id = best_card.get(\"id\", \"\")\n    if not re.match(r\"^[a-z0-9_-]+$\", card_id):\n        # Slug check failed: fail closed, do not emit a potentially unsafe tag.\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    set_temp_state_key(\"answer_route\", \"CARD\")\n    set_temp_state_key(\"matched_card\", card_id)\n    set_temp_state_key(\"card_text\", best_card[\"answer\"])\n    add_message_tag(\"answer_route:CARD\")\n    add_message_tag(\"answer_card:\" + card_id)\n    return best_card[\"answer\"]\n"
+          }
+        }
+      },
+      {
+        "id": "answer_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2400,
+          "y": 500
+        },
+        "data": {
+          "id": "answer_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "answer_router",
+            "data_source": "temp_state",
+            "route_key": "answer_route",
+            "keywords": [
+              "CARD",
+              "ASK_AI"
+            ],
+            "default_keyword_index": 1,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "llm_input",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2700,
+          "y": 600
+        },
+        "data": {
+          "id": "llm_input",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "llm_input",
+            "code": "\"\"\"\nOpen Chat Studio Python node: privacy-preserving LLM input.\n\nSanitizes the question before it reaches the language model by removing:\n  - The exact saved participant name (whole-word, case-insensitive)\n  - Phone numbers: any +CC international prefix, plus Kenya-local prefixes\n    254 / 07 / 01 without +, contiguous or with space/hyphen/parenthesis\n    separators, fullwidth digit encoding, or zero-width characters inserted\n    between groups\n  - Email addresses (RFC-5321 local-part @ domain pattern)\n\nOrdinary text, pregnancy-week numbers, dates, and all other content are\npreserved. Fullwidth ASCII digits (U+FF10–U+FF19) are normalised to ASCII\nbefore matching; zero-width characters (U+200B/C/D, U+FEFF, U+00AD) are\nstripped before matching and do not appear in the output.\n\nLIMITATIONS — this is best-effort sanitization, not a universal PII filter:\n  - Name: only the exact value stored in participant_data.name is matched.\n    Names shared verbally but not registered, names corrected by an operator\n    after registration, common words that happen to equal the saved name,\n    and very short names may cause under- or over-removal.\n  - Phone: the generic +CC branch covers any number starting with +.\n    Kenya-local bare prefixes (254, 07, 01) are also covered.\n    Numbers written without any country-code or local prefix are not matched.\n  - Email: basic pattern; unusual local-part quoting not covered.\n  - Historical turns already in LLM node context are not re-sanitized.\n    See docs/review/system-prompt.md for the history_type=none requirement\n    that eliminates that channel.\n\nNo temp-state keys are written. Participant data is read-only.\nAllowed imports: re (stdlib, in OCS allowed set).\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import re\n\n    text = input or \"\"\n    data = get_participant_data() or {}\n\n    # --- 1. Normalise fullwidth ASCII digits (U+FF10–U+FF19 → 0–9) ---\n    # Chain of .replace() calls avoids str.translate / str.maketrans.\n    text = (\n        text.replace(\"\\uff10\", \"0\")\n        .replace(\"\\uff11\", \"1\")\n        .replace(\"\\uff12\", \"2\")\n        .replace(\"\\uff13\", \"3\")\n        .replace(\"\\uff14\", \"4\")\n        .replace(\"\\uff15\", \"5\")\n        .replace(\"\\uff16\", \"6\")\n        .replace(\"\\uff17\", \"7\")\n        .replace(\"\\uff18\", \"8\")\n        .replace(\"\\uff19\", \"9\")\n    )\n\n    # --- 2. Strip zero-width characters ---\n    # U+200B zero-width space, U+200C ZWNJ, U+200D ZWJ,\n    # U+FEFF BOM/ZWNBSP, U+00AD soft hyphen\n    text = re.sub(r\"[\\u200b\\u200c\\u200d\\ufeff\\u00ad]\", \"\", text)\n\n    # --- 3. Name sanitisation ---\n    # Removes exact saved name only (whole-word, case-insensitive).\n    # Empty or missing name: skip entirely.\n    name = (data.get(\"name\") or \"\").strip()\n    if name:\n        text = re.sub(r\"(?i)\\b\" + re.escape(name) + r\"\\b\", \"[name]\", text)\n\n    # --- 4. Phone sanitisation ---\n    #\n    # Two branches in one compiled pattern:\n    #\n    # Branch A — generic +CC international:\n    #   (?<!\\w)                not preceded by a word character\n    #   \\+\\d{1,3}              + followed by 1-3 digit country code (greedy)\n    #   (?:[\\s\\-\\(\\)]*\\d){6,13} 6-13 more digit positions; zero-or-more\n    #                          space/hyphen/paren separators allowed before\n    #                          each digit to handle \"+1 (202) 555-0100\"\n    #   (?!\\d)                 not followed by a digit\n    #\n    # Branch B — Kenya local bare prefix (no +):\n    #   (?<!\\w)\n    #   (?:254|07|01)          Kenya prefix without +\n    #   (?:[\\s\\-]?\\d){7,11}   7-11 more digit positions, one optional sep\n    #   (?!\\d)\n    #\n    # +254 is covered by Branch A (the \\d{1,3} matches \"254\").\n    #\n    # Preservation guarantee (both branches):\n    #   \"+20 weeks\"   → '+20' prefix; ' w' fails [\\s\\-\\(\\)]*\\d → 0 reps < 6\n    #   \"+2024\"       → greedy takes '+202'; '4' = 1 rep < 6 → no match\n    #   \"07 weeks\"    → '07' prefix; ' w' fails [\\s\\-]?\\d → no match\n    #   \"07/08/2025\"  → '/' not in [\\s\\-]; no match\n    #   \"(Kisumu)\"    → no matching prefix → no match\n    #\n    # Callback strips separators/+ then requires ≥8 total digits so short\n    # sequences (PIN codes, etc.) are not affected.\n    phone_re = re.compile(\n        r\"(?<!\\w)\"\n        r\"(?:\"\n        r\"\\+\\d{1,3}(?:[\\s\\-\\(\\)]*\\d){6,13}\"\n        r\"|\"\n        r\"(?:254|07|01)(?:[\\s\\-]?\\d){7,11}\"\n        r\")\"\n        r\"(?!\\d)\"\n    )\n\n    def replace_phone(m):\n        clean = re.sub(r\"[\\s\\-+\\(\\)]\", \"\", m.group())\n        return \"[phone]\" if len(clean) >= 8 else m.group()\n\n    text = phone_re.sub(replace_phone, text)\n\n    # --- 5. Email sanitisation ---\n    text = re.sub(\n        r\"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}\",\n        \"[email]\",\n        text,\n    )\n\n    return text\n"
+          }
+        }
+      },
+      {
+        "id": "prompt_budget",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 750
+        },
+        "data": {
+          "id": "prompt_budget",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "prompt_budget",
+            "code": "def main(input, **kwargs):\n    import re\n\n    # System prompt template baked in at build time by ocs/prompt_budget.py.\n    # Changes to ocs/prompts/system_prompt.txt are picked up at next build.\n    SYSTEM_PROMPT = 'You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.\\n\\nAnswer using ONLY the knowledge entries supplied below. If a question is not covered, reply: \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\" Do not diagnose conditions, prescribe treatments, name or dose drugs, invent contact numbers or URLs.\\n\\nIf the participant describes any sign of physical distress or urgency, advise them to seek care promptly even if not a recognised danger sign.\\n\\n{temp_state.kb_section}\\n\\n{temp_state.llm_context}\\n\\nKeep replies under 120 words. Respond in the participant\\'s stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.\\n'\n    BUDGET_BYTES = 4000\n\n    if not isinstance(input, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"invalid_question\")\n        return input\n\n    question = input\n\n    # Fail-closed: blank sanitised question (whitespace or empty string).\n    if not question.strip():\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"blank_question\")\n        return input\n\n    # Read runtime values — no defaults, no silent coercion.\n    kb_section = get_temp_state_key(\"kb_section\")\n    llm_context = get_temp_state_key(\"llm_context\")\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\", \"\")\n\n    # Fail-closed: kb_section absent or not a string.\n    if not isinstance(kb_section, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_kb_section\")\n        return input\n\n    # Fail-closed: llm_context absent or not a string.\n    if not isinstance(llm_context, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_llm_context\")\n        return input\n\n    # Fail-closed: language preference absent, empty, unsupported locale, or\n    # wrong type (bool/int).  Only exactly \"en\" or \"sw\" is accepted; any other\n    # value — including \"fr\", whitespace strings, True, 42 — routes OVER_BUDGET\n    # without raising a TypeError.\n    if lang not in (\"en\", \"sw\"):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_language\")\n        return input\n\n    # One-pass substitution: replace each {source.key} placeholder exactly once.\n    # Using re.sub with a callback avoids sequential replace which could\n    # re-interpret placeholder-like text inserted from KB or context values.\n    ts_lookup = {\"kb_section\": kb_section, \"llm_context\": llm_context}\n    pd_lookup = {\"language_preference\": lang}\n\n    def do_sub(m):\n        source = m.group(1)\n        key = m.group(2)\n        if source == \"temp_state\":\n            val = ts_lookup.get(key)\n            return val if val is not None else m.group(0)\n        if source == \"participant_data\":\n            val = pd_lookup.get(key)\n            return val if val is not None else m.group(0)\n        return m.group(0)\n\n    rendered = re.sub(\n        r\"\\{(temp_state|participant_data)\\.([^}]+)\\}\",\n        do_sub,\n        SYSTEM_PROMPT,\n    )\n\n    total_bytes = len(rendered.encode(\"utf-8\")) + len(question.encode(\"utf-8\"))\n    set_temp_state_key(\"budget_bytes\", total_bytes)\n\n    if total_bytes > BUDGET_BYTES:\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_reason\", \"over_cap\")\n    else:\n        set_temp_state_key(\"budget_route\", \"VALID\")\n        set_temp_state_key(\"budget_reason\", \"\")\n\n    return input"
+          }
+        }
+      },
+      {
+        "id": "budget_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3300,
+          "y": 750
+        },
+        "data": {
+          "id": "budget_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "budget_router",
+            "data_source": "temp_state",
+            "route_key": "budget_route",
+            "keywords": [
+              "OVER_BUDGET",
+              "VALID"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "output_guard",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2700,
+          "y": 300
+        },
+        "data": {
+          "id": "output_guard",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "output_guard",
+            "code": "\"\"\"\nOpen Chat Studio Python node: output guard.\n\nGenerated by render_output_guard.  Do not edit this file directly.\nChange docs/output-policy.json and re-run render_output_guard to update.\n\nClassifier source embedded from ocs/guard_classifier.py -- the same predicate\nused for host-side referral validation (source reuse, not hand-copy).\n\nScope limits (do not remove):\n  - Medicine patterns: conservative starter set, protocol list not supplied.\n  - Sheng slang not covered; no equivalences without source.\n  - Unicode hostname lookalikes not caught.\n  - Short helpline set finite and review-pending.\n  - ZW normalisation covers six specific chars; not exhaustive.\n\nGuard constraints:\n  - No model, network, file I/O or credentials.\n  - Non-sensitive reason codes only; no raw input in tags/logs.\n  - Does not mutate participant data.\n  - Applies to AI/card output only.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import json\n\n    # Embedded policy (re-generate via render_output_guard)\n    gpolicy = json.loads(\n        '{\"max_words\": 120, \"verified_phone_allow'\n        'list\": [], \"verified_url_allowlist\": [],'\n        ' \"blocked_referral_en\": \"I can\\'t share m'\n        \"ore details safely. Please speak with yo\"\n        'ur health worker.\", \"blocked_referral_sw'\n        '\": \"Sina maelezo zaidi ya kushiriki kwa '\n        \"usalama. Zungumza na mhudumu wa afya wak\"\n        'o.\", \"never_say_patterns\": [\"\\\\\\\\b(diagnos'\n        '\\\\\\\\w*|prescri\\\\\\\\w*)\\\\\\\\b\", \"\\\\\\\\b(utambuzi)\\\\\\\\b'\n        '\"], \"medicine_patterns\": [\"\\\\\\\\b(metronida'\n        \"zole|flagyl|amoxicillin|ampicillin|co-tr\"\n        \"imoxazole|cotrimoxazole|azithromycin|dox\"\n        \"ycycline|gentamicin|ceftriaxone|benzylpe\"\n        \"nicillin|benzathine|clindamycin|erythrom\"\n        \"ycin|tetracycline|ciprofloxacin|fluconaz\"\n        \"ole|nystatin|mebendazole|albendazole|ive\"\n        \"rmectin|chloroquine|artemether|lumefantr\"\n        \"ine|artesunate|quinine|mefloquine|fansid\"\n        'ar|pyrimethamine)\\\\\\\\b\", \"\\\\\\\\b(magnesium\\\\\\\\s'\n        \"+sul[fp]hate|oxytocin|misoprostol|ergome\"\n        \"trine|methyldopa|labetalol|nifedipine|hy\"\n        \"dralazine|furosemide|dexamethasone|betam\"\n        \"ethasone|phenobarbital|diazepam|phenytoi\"\n        'n|heparin|salbutamol)\\\\\\\\b\", \"\\\\\\\\b(aspirin|'\n        \"ibuprofen|paracetamol|acetaminophen|tram\"\n        'adol|morphine|pethidine)\\\\\\\\b\", \"\\\\\\\\b(ferro'\n        \"us\\\\\\\\s+sul[fp]hate|iron\\\\\\\\s+tablets?|iron\\\\\"\n        \"\\\\s+supplements?|folic\\\\\\\\s+acid\\\\\\\\s+tablets\"\n        \"?|zinc\\\\\\\\s+tablets?|oral\\\\\\\\s+rehydration\\\\\\\\\"\n        's+salts?|ors\\\\\\\\s+sachets?)\\\\\\\\b\"], \"dose_pa'\n        'tterns\": [\"\\\\\\\\b\\\\\\\\d+\\\\\\\\s*(mg|ml|mcg|g\\\\\\\\b|iu'\n        '|units?|tabs?|capsules?)\\\\\\\\b\", \"\\\\\\\\b(once\\\\'\n        \"\\\\s+daily|twice\\\\\\\\s+daily|three\\\\\\\\s+times\\\\\\\\\"\n        \"s+daily|four\\\\\\\\s+times\\\\\\\\s+daily|every\\\\\\\\s+\"\n        '\\\\\\\\d+\\\\\\\\s+hours?)\\\\\\\\b\"], \"diagnosis_pattern'\n        's\": [\"\\\\\\\\b(you\\\\\\\\s+are\\\\\\\\s+diagnosed|diagno'\n        \"sed\\\\\\\\s+with|diagnosis\\\\\\\\s+is|you\\\\\\\\s+are\\\\\\\\\"\n        \"s+suffering\\\\\\\\s+from|your\\\\\\\\s+condition\\\\\\\\s\"\n        '+is)\\\\\\\\b\", \"\\\\\\\\b(umepata\\\\\\\\s+ugonjwa|una\\\\\\\\s'\n        '+ugonjwa\\\\\\\\s+wa\\\\\\\\s+\\\\\\\\w+)\\\\\\\\b\"], \"suspiciou'\n        's_url_patterns\": [\"hxxps?://\", \"\\\\\\\\b(?:ft'\n        'p|ftps|sftp)://\", \"\\\\\\\\b(?:data|javascript'\n        '|vbscript):\", \"\\\\\\\\[.+?\\\\\\\\]\\\\\\\\(https?://[^)]'\n        '+\\\\\\\\)\", \"(?:https?://)[^/\\\\\\\\s]*@\", \"\\\\\\\\b(?:'\n        \"bit\\\\\\\\.ly|goo\\\\\\\\.gl|tinyurl\\\\\\\\.com|t\\\\\\\\.co|i\"\n        's\\\\\\\\.gd|ow\\\\\\\\.ly)/\", \"(?<![./\\\\\\\\-:@])\\\\\\\\b\\\\\\\\w'\n        \"[\\\\\\\\w-]{2,}\\\\\\\\.(?:com|org|net|gov|edu|info\"\n        '|int|io|ly|ke|tz|ug)(?:/\\\\\\\\S*)?\\\\\\\\b\"], \"sh'\n        'ort_helpline_patterns\": [\"\\\\\\\\b(?:999|112|'\n        '922|1199|911|116)\\\\\\\\b\"]}'\n    )\n\n    # Embedded classifier from ocs/guard_classifier.py\n    def guard_classify(text, policy):\n        \"\"\"Classify text against the guard policy.\n\n        Parameters\n        ----------\n        text : str\n            The AI/card output or fixed referral text to classify.\n        policy : dict\n            A validated policy dict from load_output_policy.  All required keys\n            must be present; this function does not re-validate the schema.\n\n        Returns\n        -------\n        dict with keys ``blocked`` (bool) and ``reason`` (str).\n            ``blocked`` is True if the text should be blocked.\n            ``reason`` is a short non-sensitive code; ``\"PASS\"`` when not\n            blocked, otherwise: ``empty_output``, ``too_long``, ``never_say``,\n            ``medicine_name``, ``dose_pattern``, ``diagnosis_wording``,\n            ``suspicious_url``, ``unverified_phone``, ``url_with_credentials``,\n            ``unverified_url``.\n        \"\"\"\n        import re  # noqa: PLC0415\n\n        # ------------------------------------------------------------------\n        # 0. Zero-width character normalisation\n        # Strips U+200B ZWSP, U+200C ZWNJ, U+200D ZWJ, U+2060 WJ,\n        # U+FEFF BOM/ZWNBSP, U+00AD soft-hyphen before all pattern checks.\n        # ------------------------------------------------------------------\n        t = re.sub(\"[\\u200b\\u200c\\u200d\\u2060\\ufeff\\u00ad]\", \"\", text if text is not None else \"\")\n\n        # 1. Empty / whitespace\n        if not t.strip():\n            return {\"blocked\": True, \"reason\": \"empty_output\"}\n\n        # 2. Word count (fail-closed on > max_words)\n        if len(t.split()) > policy[\"max_words\"]:\n            return {\"blocked\": True, \"reason\": \"too_long\"}\n\n        # 3. Never-say patterns\n        for pat in policy[\"never_say_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"never_say\"}\n\n        # 4. Medicine / drug name check\n        for pat in policy[\"medicine_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"medicine_name\"}\n\n        # 5. Dose / dosage pattern\n        for pat in policy[\"dose_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"dose_pattern\"}\n\n        # 6. Diagnostic wording\n        for pat in policy[\"diagnosis_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"diagnosis_wording\"}\n\n        # 7. Suspicious URL patterns (always blocked; not allowlist-checked)\n        # Covers hxxps://, ftp/data/js schemes, Markdown links, URL shorteners,\n        # bare domain references and credential-bearing URLs.\n        for pat in policy[\"suspicious_url_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"suspicious_url\"}\n\n        # 8. Short helpline / emergency number check (finite set; review-pending)\n        # Emergency response text bypasses this guard on its own pipeline branch.\n        for pat in policy[\"short_helpline_patterns\"]:\n            for num in re.findall(pat, t):\n                digits = re.sub(r\"\\D\", \"\", num)\n                phone_ok = any(re.sub(r\"\\D\", \"\", str(v)) == digits for v in policy[\"verified_phone_allowlist\"])\n                if not phone_ok:\n                    return {\"blocked\": True, \"reason\": \"unverified_phone\"}\n\n        # 9. Long-format phone check (9-15 digits)\n        # () added to separator class for international formats +1 (202) 555-0100.\n        # Negative lookahead/lookbehind prevents partial match inside overlong\n        # digit sequences (e.g. a 20-digit batch reference number).\n        for raw in re.findall(r\"(?<!\\d)\\+?\\d[\\d\\s\\-\\.\\(\\)]{7,15}\\d(?!\\d)\", t):\n            digits = re.sub(r\"\\D\", \"\", raw)\n            if len(digits) < 9 or len(digits) > 15:\n                continue\n            phone_ok = any(re.sub(r\"\\D\", \"\", str(v)) == digits for v in policy[\"verified_phone_allowlist\"])\n            if not phone_ok:\n                return {\"blocked\": True, \"reason\": \"unverified_phone\"}\n\n        # 10. URL check\n        # Canonicalisation: lowercase scheme+host only; preserve path/query case;\n        # preserve path slashes; strip fragment and trailing punctuation.\n        # Only https:// URLs are ever allowable; non-HTTPS is always blocked.\n\n        def gcanon(raw):\n            \"\"\"Return canonical URL string or None for non-HTTPS / malformed.\"\"\"\n            # Strip common trailing punctuation not part of URL\n            url = re.sub(r\"[.,;:!?)>'\\\"]+$\", \"\", raw)\n            # Discard fragment\n            frag = url.find(\"#\")\n            if frag != -1:\n                url = url[:frag]\n            # Parse: require https:// scheme\n            m = re.match(r\"^(https://)([^/?#]*)(/[^?#]*)?(\\?.*)?$\", url, re.IGNORECASE)\n            if not m:\n                return None\n            host = m.group(2).lower()  # host: case-insensitive -> lowercase\n            if not host or \"@\" in host:  # reject empty host or credentials\n                return None\n            path = m.group(3) or \"\"\n            query = m.group(4) or \"\"\n            return \"https://\" + host + path + query\n\n        for raw_url in re.findall(r\"(?:https?://|www\\.)[^\\s]+\", t, re.IGNORECASE):\n            canon = gcanon(raw_url)\n            if canon is None:\n                # Non-HTTPS or malformed (includes www. without https://)\n                return {\"blocked\": True, \"reason\": \"unverified_url\"}\n            # Exact allowlist match against canonicalised entry\n            allowed = False\n            for entry in policy[\"verified_url_allowlist\"]:\n                ec = gcanon(str(entry))\n                if ec is not None and canon == ec:\n                    allowed = True\n                    break\n            if not allowed:\n                return {\"blocked\": True, \"reason\": \"unverified_url\"}\n\n        return {\"blocked\": False, \"reason\": \"PASS\"}\n\n    # Participant language (read-only)\n    gparticipant = get_participant_data() or {}\n    glang = gparticipant.get(\"language_preference\", \"en\")\n    greferral = gpolicy[\"blocked_referral_sw\"] if glang == \"sw\" else gpolicy[\"blocked_referral_en\"]\n\n    gtext = input if input is not None else \"\"\n\n    gresult = guard_classify(gtext, gpolicy)\n    if gresult[\"blocked\"]:\n        set_temp_state_key(\"guard_route\", \"guard_blocked\")\n        add_message_tag(\"route:guard_blocked\")\n        add_message_tag(\"guard_blocked_reason:\" + gresult[\"reason\"])\n        return greferral\n\n    set_temp_state_key(\"guard_route\", \"PASS\")\n    return input\n"
+          }
+        }
+      },
+      {
+        "id": "llm",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 600
         },
         "data": {
           "id": "llm",
@@ -133,12 +307,10 @@
             "llm_provider_id": 0,
             "llm_provider_model_id": 0,
             "llm_model_parameters": {
-              "temperature": 1.0
+              "temperature": 0.3
             },
-            "prompt": "You are a maternal health education assistant serving pregnant women in Kenya. Your role is to provide accurate, culturally appropriate antenatal information based on WHO and Kenya Ministry of Health guidelines.\n\nCRITICAL RULES:\n1. If you detect ANY danger sign (bleeding, severe headache, reduced fetal movement, convulsions, high fever, severe abdominal pain, water breaking, swelling of face/hands), IMMEDIATELY advise seeking urgent medical care at the nearest health facility.\n2. Never diagnose conditions or prescribe treatments.\n3. Always encourage ANC (antenatal care) attendance and completing all recommended visits.\n4. Keep responses under 200 words for readability on mobile phones.\n5. Use simple, clear language appropriate for secondary school education level.\n6. Be culturally sensitive to practices in Kenya while correcting harmful myths.\n7. When unsure about medical specifics, advise consulting a healthcare provider.\n\nCONTENT AREAS YOU CAN HELP WITH:\n- Danger signs recognition and when to seek emergency care\n- Nutrition and dietary guidance during pregnancy\n- Physical activity recommendations\n- Birth preparedness and complication readiness\n- Common pregnancy discomforts and safe management\n- ANC appointment importance and schedule\n- Newborn care preparation\n- Breastfeeding education\n\nDISCLAIMER: Include this reminder periodically:\n\"This is educational information, not medical diagnosis. Always consult your healthcare provider for medical advice.\"\n\nRespond in a warm, supportive tone. Address the user as \"Mama\" when appropriate. If the user writes in Swahili, respond in Swahili. If in English, respond in English.\n\n{temp_state.llm_context}",
-            "history_type": "node",
-            "history_mode": "max_history_length",
-            "max_history_length": 12
+            "prompt": "You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.\n\nAnswer using ONLY the knowledge entries supplied below. If a question is not covered, reply: \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\" Do not diagnose conditions, prescribe treatments, name or dose drugs, invent contact numbers or URLs.\n\nIf the participant describes any sign of physical distress or urgency, advise them to seek care promptly even if not a recognised danger sign.\n\n{temp_state.kb_section}\n\n{temp_state.llm_context}\n\nKeep replies under 120 words. Respond in the participant's stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.\n",
+            "history_type": "none"
           }
         }
       },
@@ -146,8 +318,8 @@
         "id": "end",
         "type": "endNode",
         "position": {
-          "x": 1800,
-          "y": 200
+          "x": 3300,
+          "y": 300
         },
         "data": {
           "id": "end",
@@ -210,15 +382,99 @@
         "targetHandle": "input"
       },
       {
-        "id": "registration_router:output_1->llm",
+        "id": "registration_router:output_1->kb_context",
         "source": "registration_router",
+        "target": "kb_context",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_context:output->kb_router",
+        "source": "kb_context",
+        "target": "kb_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_router:output_0->knowledge_referral",
+        "source": "kb_router",
+        "target": "knowledge_referral",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_router:output_1->answer_match",
+        "source": "kb_router",
+        "target": "answer_match",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "knowledge_referral:output->end",
+        "source": "knowledge_referral",
+        "target": "end",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_match:output->answer_router",
+        "source": "answer_match",
+        "target": "answer_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_router:output_0->output_guard",
+        "source": "answer_router",
+        "target": "output_guard",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_router:output_1->llm_input",
+        "source": "answer_router",
+        "target": "llm_input",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "llm_input:output->prompt_budget",
+        "source": "llm_input",
+        "target": "prompt_budget",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "prompt_budget:output->budget_router",
+        "source": "prompt_budget",
+        "target": "budget_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "budget_router:output_0->knowledge_referral",
+        "source": "budget_router",
+        "target": "knowledge_referral",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "budget_router:output_1->llm",
+        "source": "budget_router",
         "target": "llm",
         "sourceHandle": "output_1",
         "targetHandle": "input"
       },
       {
-        "id": "llm:output->end",
+        "id": "llm:output->output_guard",
         "source": "llm",
+        "target": "output_guard",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "output_guard:output->end",
+        "source": "output_guard",
         "target": "end",
         "sourceHandle": "output",
         "targetHandle": "input"

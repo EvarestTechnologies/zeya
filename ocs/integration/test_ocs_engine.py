@@ -7,6 +7,17 @@ of ``make test-ocs``.
 
 The LLM provider is patched with OCS's FakeLlm, which records every call, so these
 tests can assert that a danger-sign message never reaches an LLM.
+
+Obsolete assertions removed (G2 integration context):
+  - test_safe_message_from_registered_user_reaches_llm removed; replaced with
+    test_safe_message_from_registered_user_default_no_kb_referral. With all five KB
+    entries pending, kb_context bakes KB_JSON='[]', kb_available=False, and kb_router
+    always routes FALSE → knowledge_referral. The old 1.0-temperature assertion is gone;
+    temperature 0.3 is in the LLM node params but the LLM is never called in this path.
+  - test_full_multiturn_registration_persists_and_reaches_llm_with_language_context
+    renamed to test_full_multiturn_registration_default_no_kb_referral; the final
+    question turn now returns the exact language-specific fixed referral (G202).
+  Original emergency and onboarding tests are retained unchanged.
 """
 
 import datetime
@@ -22,10 +33,15 @@ from apps.utils.factories.pipelines import PipelineFactory
 from apps.utils.factories.service_provider_factories import LlmProviderFactory, LlmProviderModelFactory
 from apps.utils.tests.langchain import build_fake_llm_service
 
-from ocs.build_pipeline import SYSTEM_PROMPT_FILE, build_pipeline
+from ocs.build_pipeline import build_pipeline
 from ocs.tests.danger_corpus import BILINGUAL_EXAMPLES
 
 LLM_REPLY = "Eat a balanced diet, Mama."
+
+# Exact referral texts from ocs/nodes/knowledge_referral.py.
+# Never changed here; changing the node is the single source of truth.
+EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+SW_REFERRAL = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
 
 REGISTERED = {
     "welcome_sent": True,
@@ -171,25 +187,27 @@ def test_danger_message_during_partial_registration_recovery_gets_emergency(run,
     assert output["participant_data"]["registration_complete"] is False
 
 
-def test_safe_message_from_registered_user_reaches_llm(run, fake_llm, caplog):
+def test_safe_message_from_registered_user_default_no_kb_referral(run, fake_llm):
+    """With all-pending KB content, a registered participant receives a fixed referral.
+
+    New default-no-KB semantics: build_pipeline(approved-only) bakes KB_JSON='[]'.
+    kb_context sets kb_available=False; kb_router routes FALSE → knowledge_referral → end.
+    No model is called.
+
+    Old assertion removed: 'assert ... temperature 1.0' (Zeya's original Gemini config).
+    New config is temperature=0.3 (in LLM node params) but the LLM is never called on
+    this path so temperature config cannot be asserted here — see G208 for LLM-path check.
+    """
     llm, get_llm_service = fake_llm
 
     output = run("What should I eat?", REGISTERED)
 
-    assert output["messages"][-1] == LLM_REPLY
+    reply = output["messages"][-1]
+    assert reply == EN_REFERRAL, f"Expected EN referral, got: {reply!r}"
     assert "danger_router:SAFE" in _tags(output)
-    assert len(llm.calls) == 1
-    messages = llm.get_call_messages()[0]
-    system = messages[0].content
-    assert system.startswith(SYSTEM_PROMPT_FILE.read_text())
-    assert "User's current gestational age:" in system
-    assert "Second trimester" in system
-    human = messages[-1].content
-    if not isinstance(human, str):  # OCS sends content blocks
-        human = "".join(block["text"] for block in human if block.get("type") == "text")
-    assert human == "What should I eat?"
-    # Zeya called Gemini without a generation config, i.e. at the model's default temperature (1.0).
-    assert "with parameters: {'temperature': 1.0}" in caplog.text
+    assert "route:knowledge_referral" in _tags(output)
+    assert llm.calls == [], "LLM must not be called with all-pending KB"
+    get_llm_service.assert_not_called()
 
 
 def test_safe_message_from_new_user_sees_language_choice_then_welcome_without_llm(run, fake_llm):
@@ -220,6 +238,7 @@ def test_drift_check_accepts_ocs_round_trip(pipeline):
     from ocs.check_drift import find_drift
 
     pipeline.refresh_from_db()
+    # Default approved-only drift check; staging flag defaults to False.
     assert find_drift({"pipeline": {"data": pipeline.flow_data}}) == []
 
 
@@ -233,15 +252,25 @@ FULL_FLOW_CASES = [
 
 
 @pytest.mark.parametrize(("is_study", "language", "choice_reply", "consent_reply", "name", "weeks"), FULL_FLOW_CASES)
-def test_full_multiturn_registration_persists_and_reaches_llm_with_language_context(
+def test_full_multiturn_registration_default_no_kb_referral(
     run, fake_llm, is_study, language, choice_reply, consent_reply, name, weeks
 ):
-    # End-to-end, turn-by-turn registration (#27 plan items 1-4): language choice, then
-    # the appropriate study/public welcome+consent, name, gestational age, and finally a
-    # real question that must reach the LLM carrying the Swahili context line only when
-    # the participant chose Swahili. Each turn's participant_data is threaded into the
-    # next, as a real channel would persist it between messages, and no turn up to
-    # registration completion may call the LLM.
+    """End-to-end multi-turn registration; final question returns language-specific referral.
+
+    G202: original onboarding/consent/study behaviour retained; four parametrized
+    full-multiturn cases (en study, en public, sw study, sw public) each ending with
+    the exact fixed referral for the saved language. Zero model calls throughout.
+
+    Old assertion removed: final turn asserted LLM_REPLY reached via LLM call.
+    New assertion: knowledge_referral returns exact EN or SW referral text with zero model.
+
+    When KB content is approved and deployed, the final turn should:
+      - LLM be called (len(llm.calls) == 1) through the VALID budget path
+      - Temperature 0.3 in llm_model_parameters (see G208)
+      - history_type=none confirmed
+      - Swahili context line present for SW participants (see G205)
+    Parent runs those gates after content passes clinical and language review.
+    """
     llm, get_llm_service = fake_llm
     seed = {"study_participant": True} if is_study else {}
 
@@ -280,11 +309,14 @@ def test_full_multiturn_registration_persists_and_reaches_llm_with_language_cont
     assert "20" in weeks_turn["messages"][-1] or str(weeks) in weeks_turn["messages"][-1]
     assert llm.calls == []
 
+    # G202: exact fixed referral per saved language; zero model calls throughout.
     question = "Ninapaswa kula nini?" if language == "sw" else "What should I eat?"
     answer_turn = run(question, weeks_turn["participant_data"])
-    assert answer_turn["messages"][-1] == LLM_REPLY
+
+    expected_referral = SW_REFERRAL if language == "sw" else EN_REFERRAL
+    reply = answer_turn["messages"][-1]
+    assert reply == expected_referral, f"Expected exact {language!r} referral, got: {reply!r}"
     assert "danger_router:SAFE" in _tags(answer_turn)
-    assert len(llm.calls) == 1
-    system = llm.get_call_messages()[0][0].content
-    assert ("User prefers Swahili. Respond in Swahili." in system) == (language == "sw")
-    get_llm_service.assert_called_once()
+    assert "route:knowledge_referral" in _tags(answer_turn)
+    assert llm.calls == [], "LLM must not be called with all-pending KB"
+    get_llm_service.assert_not_called()

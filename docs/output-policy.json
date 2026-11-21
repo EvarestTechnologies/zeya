@@ -1,0 +1,45 @@
+{
+  "_format": "Zeya output guard policy v1.0",
+  "_limits_note": "CONSERVATIVE CONFIGURABLE GUARD — NOT COMPREHENSIVE MEDICAL SAFETY. This policy uses a conservative starter vocabulary. The Kenya MoH ANC protocol drug list and clinical never-say vocabulary have NOT been supplied. Medicine patterns cover common antibiotics, obstetric agents and analgesics from general sources only. Do not represent this as complete clinical safety coverage. Clinical and language review required before treating this as a comprehensive medical guard.",
+  "_pending_vocabulary": "No protocol-supplied drug list or diagnosis list has been provided to the implementation team. The medicine_patterns here are a conservative starter set. Known gaps: Sheng drug-name slang is not covered by explicit patterns; this requires a sourced clinical-language review before any equivalences can be asserted. Never-say terms cover clear diagnostic and prescriptive language only. Clinical vocabulary review required.",
+  "_url_obfuscation_note": "Detection covers explicit HTTP(S), common obfuscated schemes, Markdown links, enumerated shorteners and bare domains with common TLDs. Only verified HTTPS destinations may pass. Scheme and ASCII hostname are case-insensitive; path/query case and meaningful slashes are preserved. Fragments are ignored on both sides; ordinary trailing prose punctuation is stripped. This is finite pattern coverage, not universal obfuscation detection.",
+  "_sheng_note": "Sheng is a Nairobi urban creole mixing Swahili, English and other languages. AI outputs are expected to be EN or SW per the system prompt. Sheng drug-name slang is not covered by explicit patterns in this guard; this is a documented gap pending clinical-language review. No specific equivalences between Sheng slang terms and medicine names are asserted here without a sourced vocabulary review.",
+  "verified_phone_allowlist": [],
+  "verified_url_allowlist": [],
+  "max_words": 120,
+  "blocked_referral_en": "I can't share more details safely. Please speak with your health worker.",
+  "blocked_referral_sw": "Sina maelezo zaidi ya kushiriki kwa usalama. Zungumza na mhudumu wa afya wako.",
+  "never_say_patterns": [
+    "\\b(diagnos\\w*|prescri\\w*)\\b",
+    "\\b(utambuzi)\\b"
+  ],
+  "medicine_patterns": [
+    "\\b(metronidazole|flagyl|amoxicillin|ampicillin|co-trimoxazole|cotrimoxazole|azithromycin|doxycycline|gentamicin|ceftriaxone|benzylpenicillin|benzathine|clindamycin|erythromycin|tetracycline|ciprofloxacin|fluconazole|nystatin|mebendazole|albendazole|ivermectin|chloroquine|artemether|lumefantrine|artesunate|quinine|mefloquine|fansidar|pyrimethamine)\\b",
+    "\\b(magnesium\\s+sul[fp]hate|oxytocin|misoprostol|ergometrine|methyldopa|labetalol|nifedipine|hydralazine|furosemide|dexamethasone|betamethasone|phenobarbital|diazepam|phenytoin|heparin|salbutamol)\\b",
+    "\\b(aspirin|ibuprofen|paracetamol|acetaminophen|tramadol|morphine|pethidine)\\b",
+    "\\b(ferrous\\s+sul[fp]hate|iron\\s+tablets?|iron\\s+supplements?|folic\\s+acid\\s+tablets?|zinc\\s+tablets?|oral\\s+rehydration\\s+salts?|ors\\s+sachets?)\\b"
+  ],
+  "dose_patterns": [
+    "\\b\\d+\\s*(mg|ml|mcg|g\\b|iu|units?|tabs?|capsules?)\\b",
+    "\\b(once\\s+daily|twice\\s+daily|three\\s+times\\s+daily|four\\s+times\\s+daily|every\\s+\\d+\\s+hours?)\\b"
+  ],
+  "diagnosis_patterns": [
+    "\\b(you\\s+are\\s+diagnosed|diagnosed\\s+with|diagnosis\\s+is|you\\s+are\\s+suffering\\s+from|your\\s+condition\\s+is)\\b",
+    "\\b(umepata\\s+ugonjwa|una\\s+ugonjwa\\s+wa\\s+\\w+)\\b"
+  ],
+  "_url_detection_note": "Approval is exact full HTTPS destination matching, not hostname-wide approval. Configured URLs require structurally valid ASCII DNS/IPv4 authorities; unsupported IDN/IPv6 forms fail validation. Different paths, queries, meaningful slashes and unlisted subdomains are not aliases. Zero-width normalization is finite; no universal Unicode safety guarantee is made.",
+  "_phone_detection_note": "Long-format phone detection (9-15 digits with separators) uses negative lookahead/lookbehind to prevent partial match in overlong digit runs. Short helpline detection covers a finite explicit set of emergency numbers; see short_helpline_patterns. Zero-width characters are stripped before checks.",
+  "suspicious_url_patterns": [
+    "hxxps?://",
+    "\\b(?:ftp|ftps|sftp)://",
+    "\\b(?:data|javascript|vbscript):",
+    "\\[.+?\\]\\(https?://[^)]+\\)",
+    "(?:https?://)[^/\\s]*@",
+    "\\b(?:bit\\.ly|goo\\.gl|tinyurl\\.com|t\\.co|is\\.gd|ow\\.ly)/",
+    "(?<![./\\-:@])\\b\\w[\\w-]{2,}\\.(?:com|org|net|gov|edu|info|int|io|ly|ke|tz|ug)(?:/\\S*)?\\b"
+  ],
+  "short_helpline_patterns": [
+    "\\b(?:999|112|922|1199|911|116)\\b"
+  ],
+  "_allowlist_semantics_note": "verified_url_allowlist entries must be structurally valid full HTTPS URLs. Scheme/hostname case is ignored; path/query case and meaningful slashes are preserved. Fragments are ignored and ordinary trailing prose punctuation is stripped consistently. No hostname-wide or path-prefix approval. verified_phone_allowlist contains explicitly verified phone numbers, compared by digits."
+}
