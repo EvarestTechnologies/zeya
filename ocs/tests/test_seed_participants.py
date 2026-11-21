@@ -136,4 +136,89 @@ def test_cli_skips_deactivated_consented_users(tmp_path, capsys):
     rows = list(csv.DictReader(io.StringIO(out.read_text())))
     assert [r["identifier"] for r in rows] == ["254700000001"]
     assert list(rows[0]) == OCS_COLUMNS
-    assert "254700000002" in capsys.readouterr().err
+    err = capsys.readouterr().err
+    # P08: diagnostics must be count-only; no raw identifiers in stderr.
+    assert "254700000002" not in err, "phone number must not appear in stderr (P08)"
+    assert "Skipped 1" in err
+
+
+# =============================================================================
+# Diagnostic-boundary regressions (D09–D12)
+# P08/P09 — seed malformed input controlled failure.
+# =============================================================================
+
+REGISTERED_USER_HEADERS = "id,whatsapp_id,name,consent_given,is_active,registration_complete"
+_VALID_ROW = "synthetic-id,254700000001,Exampleperson,t,t,t"
+
+
+# D09: seed with wrong / absent required headers
+def test_seed_bad_empty_header_controlled_exit(tmp_path, capsys):
+    """D09: seed CSV with wrong/missing required headers → controlled nonzero, no output."""
+    source = tmp_path / "source.csv"
+    source.write_text("wrong\n")
+    out = tmp_path / "out.csv"
+    rc = main(["--zeya-users", str(source), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "wrong headers must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+
+
+# D10: seed row with extra unnamed cells
+def test_seed_extra_row_cell_controlled_exit(tmp_path, capsys):
+    """D10: seed row with extra unnamed cell → controlled nonzero, no output."""
+    source = tmp_path / "source.csv"
+    source.write_text(REGISTERED_USER_HEADERS + "\r\n" + _VALID_ROW + ",extra\r\n")
+    out = tmp_path / "out.csv"
+    rc = main(["--zeya-users", str(source), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "extra cell must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+
+
+# D11: seed row missing a declared cell (registration_complete)
+def test_seed_missing_declared_cell_controlled_exit(tmp_path, capsys):
+    """D11: seed row shorter than headers (registration_complete absent) → controlled nonzero."""
+    source = tmp_path / "source.csv"
+    # Only 5 values for 6 declared columns → registration_complete = None
+    source.write_text(
+        REGISTERED_USER_HEADERS + "\r\nsynthetic-id,254700000001,Exampleperson,t,t\r\n"  # missing registration_complete
+    )
+    out = tmp_path / "out.csv"
+    rc = main(["--zeya-users", str(source), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "missing declared cell must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+
+
+# D12: seed with duplicate column header
+def test_seed_duplicate_header_controlled_exit(tmp_path, capsys):
+    """D12: seed CSV with duplicate header → controlled nonzero, no output."""
+    source = tmp_path / "source.csv"
+    source.write_text(REGISTERED_USER_HEADERS + ",name\r\n" + _VALID_ROW + ",Otherexample\r\n")
+    out = tmp_path / "out.csv"
+    rc = main(["--zeya-users", str(source), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "duplicate header must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+
+
+# A: csv.Error boundary regression for seed
+
+
+def test_seed_csv_error_controlled_exit(tmp_path, capsys):
+    """A-seed: seed CSV field exceeding size limit → csv.Error caught safely, no output."""
+    import csv as _csv
+
+    big = "X" * (_csv.field_size_limit() + 1)
+    source = tmp_path / "source.csv"
+    source.write_text(REGISTERED_USER_HEADERS + "\r\n" + f"synthetic-id,254700000001,{big},t,t,t\r\n")
+    out = tmp_path / "out.csv"
+    rc = main(["--zeya-users", str(source), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "csv.Error from seed source must give nonzero exit"
+    assert "Traceback" not in err, f"Traceback in stderr: {err[:200]}"
+    assert not out.exists()
