@@ -116,3 +116,39 @@ def test_cli_requires_expected_model(tmp_path):
 
     with pytest.raises(SystemExit):
         main([str(path)])
+
+
+def _add_generic_null_instance_ids(live):
+    """Mimic hosted OCS: it enriches every node's params with the generic
+    llm_provider_id / llm_provider_model_id keys, set to null, even on nodes
+    whose repository definition has no such param (Start/End/Code/Router)."""
+    for node in live["pipeline"]["data"]["nodes"]:
+        node["data"]["params"].setdefault("llm_provider_id", None)
+        node["data"]["params"].setdefault("llm_provider_model_id", None)
+    return live
+
+
+def test_ignores_hosted_null_instance_ids_on_non_llm_nodes():
+    """Hosted OCS exports generic null provider/model keys on every node, not just
+    the LLM node. The strict instance-id check must not flag those as drift."""
+    live = _add_generic_null_instance_ids(_live(llm_provider_id=7, llm_provider_model_id=31))
+
+    assert find_drift(live, llm_provider_id=7, llm_provider_model_id=31) == []
+
+
+def test_detects_llm_provider_id_set_to_null():
+    live = _live(llm_provider_id=7, llm_provider_model_id=31)
+    _node(live, "llm")["data"]["params"]["llm_provider_id"] = None
+
+    assert find_drift(live, llm_provider_id=7, llm_provider_model_id=31) == [
+        "llm: 'llm_provider_id' is None, expected 7"
+    ]
+
+
+def test_detects_llm_provider_model_id_missing_entirely():
+    live = _live(llm_provider_id=7, llm_provider_model_id=31)
+    del _node(live, "llm")["data"]["params"]["llm_provider_model_id"]
+
+    assert find_drift(live, llm_provider_id=7, llm_provider_model_id=31) == [
+        "llm: 'llm_provider_model_id' is None, expected 31"
+    ]
