@@ -49,7 +49,21 @@ def _bool(value: str) -> bool:
 
 
 def _iso_datetime(value: str) -> str | None:
-    return datetime.fromisoformat(value).isoformat() if value else None
+    """Parse an ISO datetime string, raising a safe ValueError without echoing the value."""
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value).isoformat()
+    except ValueError:
+        raise ValueError("participant data contains an invalid date value") from None
+
+
+def _gestational_age_weeks(value: str) -> int:
+    """Parse gestational age weeks, raising a safe error without echoing the value."""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        raise ValueError("participant data contains an invalid gestational age") from None
 
 
 def zeya_user_to_participant(user: dict) -> dict:
@@ -63,7 +77,7 @@ def zeya_user_to_participant(user: dict) -> dict:
         "consent_declined": True if not consent_given and not _bool(user["is_active"]) else None,
         "consent_given_at": _iso_datetime(user.get("consent_given_at")),
         "name_collected": True if name else None,
-        "gestational_age_at_enrollment": int(weeks) if weeks else None,
+        "gestational_age_at_enrollment": _gestational_age_weeks(weeks) if weeks else None,
         "expected_delivery_date": user.get("expected_delivery_date") or None,
         "enrolled_at": _iso_datetime(user.get("enrolled_at")),
         "registration_complete": _bool(user["registration_complete"]),
@@ -89,24 +103,65 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
-    with open(args.zeya_users, newline="", encoding="utf-8") as f:
-        users = list(csv.DictReader(f))
+    try:
+        with open(args.zeya_users, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            users = list(reader)
+            fieldnames: list[str] = list(reader.fieldnames or [])
+    except UnicodeDecodeError:
+        print("error: seed source is not valid UTF-8", file=sys.stderr)
+        return 1
+    except (FileNotFoundError, OSError, csv.Error):
+        print("error: could not read seed source", file=sys.stderr)
+        return 1
 
+    # Validate CSV headers: no blank, no duplicates, required columns present.
+    _REQUIRED_HEADERS = frozenset({"id", "whatsapp_id", "consent_given", "is_active", "registration_complete"})
+    if any(not (f or "").strip() for f in fieldnames):
+        print("error: seed CSV has blank column header(s)", file=sys.stderr)
+        return 1
+    if len(fieldnames) != len(set(fieldnames)):
+        print("error: seed CSV has duplicate column header(s)", file=sys.stderr)
+        return 1
+    if not _REQUIRED_HEADERS.issubset(set(fieldnames)):
+        print("error: seed CSV is missing required column(s)", file=sys.stderr)
+        return 1
+
+    # Validate required columns: fail before processing if any mandatory field
+    # is absent from the headers or missing (None) in a row.
     rows, skipped = [], []
     for user in users:
+        # None restkey: extra unnamed cells
+        if None in user:
+            print("error: seed CSV row has unexpected extra cell(s)", file=sys.stderr)
+            return 1
+        # None values: missing declared cell (row shorter than headers)
+        if any(v is None for v in user.values()):
+            print("error: seed CSV row is missing a declared cell", file=sys.stderr)
+            return 1
+
         if _bool(user["consent_given"]) and not _bool(user["is_active"]):
             skipped.append(user["whatsapp_id"])
             continue
-        rows.append(zeya_user_to_participant(user))
+        try:
+            rows.append(zeya_user_to_participant(user))
+        except (ValueError, KeyError, TypeError):
+            # Date parsing, missing field, or unexpected type: fail cleanly.
+            print("error: invalid participant data (not echoing content)", file=sys.stderr)
+            return 1
 
-    with open(args.out, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=OCS_COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
+    try:
+        with open(args.out, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=OCS_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+    except OSError:
+        print("error: could not write output", file=sys.stderr)
+        return 1
 
-    print(f"Wrote {len(rows)} participants to {args.out}", file=sys.stderr)
+    print(f"Wrote {len(rows)} participant(s).", file=sys.stderr)
     if skipped:
-        print(f"Skipped {len(skipped)} deactivated consented users: {', '.join(skipped)}", file=sys.stderr)
+        print(f"Skipped {len(skipped)} deactivated consented user(s).", file=sys.stderr)
     return 0
 
 

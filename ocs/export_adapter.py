@@ -102,7 +102,10 @@ def _tags(row: dict) -> list[str]:
 
 
 def _timestamp(row: dict) -> datetime:
-    return datetime.fromisoformat(row["Message Date"])
+    try:
+        return datetime.fromisoformat(row["Message Date"])
+    except (ValueError, KeyError):
+        raise ValueError("invalid or missing message date in export row") from None
 
 
 def _gestational_age(data: dict | None, at: datetime) -> int | str:
@@ -168,10 +171,17 @@ def convert_ocs_export(rows: Iterable[dict], wa_id_to_user_id: dict[str, str]) -
     """Convert OCS export rows to Zeya rows keyed by ``user_key`` instead of ``study_id``.
 
     ``user_key`` is the linked Zeya user id, or ``ocs:<participant public id>``.
+    ``message_text`` and ``danger_keywords`` are scrubbed of supported PII patterns
+    (names, phones, emails, labelled IDs) before the row is returned.
     """
+    from ocs.export_privacy import gather_participant_names, scrub
+
     rows = [r for r in rows if r.get("Message Type") in DIRECTIONS]
     consented = _consented_participants(rows)
     turns = _pair_turns(rows)
+    # Gather names across ALL rows (before consented filter) so a later row
+    # lacking name metadata does not lose a name from an earlier row (P03).
+    participant_names = gather_participant_names(rows)
 
     output = []
     for row in sorted(rows, key=_timestamp):
@@ -194,16 +204,18 @@ def convert_ocs_export(rows: Iterable[dict], wa_id_to_user_id: dict[str, str]) -
             if incoming:
                 response_time_ms = int((at - _timestamp(incoming[0])).total_seconds() * 1000) or ""
 
+        pid = row["Participant Public ID"]
+        names = participant_names.get(pid, frozenset())
         user_id = wa_id_to_user_id.get(_phone(row["Participant Identifier"]))
         output.append(
             {
                 "user_key": user_id or f"ocs:{row['Participant Public ID']}",
                 "study_group": (data or {}).get("study_group") or "",
                 "direction": direction,
-                "message_text": row["Message Content"],
+                "message_text": scrub(row["Message Content"], names),
                 "gestational_age": _gestational_age(data, at),
                 "danger_sign": is_danger,
-                "danger_keywords": _danger_keywords(tags) if is_danger else "",
+                "danger_keywords": scrub(_danger_keywords(tags), names) if is_danger else "",
                 "response_time_ms": response_time_ms,
                 "timestamp": at.isoformat(),
             }
@@ -229,6 +241,61 @@ def assign_study_ids(rows: list[dict], zeya_user_ids: Iterable[str]) -> list[dic
 def _resolve_no_follow(p: str) -> int:
     """Return inode number of *p* without following a final symlink."""
     return os.lstat(p).st_ino
+
+
+# ---------------------------------------------------------------------------
+# CSV input validation helpers
+# ---------------------------------------------------------------------------
+
+# Required column names for each input source.
+_OCS_EXPORT_REQUIRED = frozenset(
+    {
+        "Session ID",
+        "Participant Public ID",
+        "Participant Identifier",
+        "Message Type",
+        "Message Content",
+        "Message Date",
+    }
+)
+_ZEYA_USERS_REQUIRED = frozenset({"user_id", "whatsapp_id"})
+
+
+def _validate_csv_input(
+    rows: list[dict],
+    fieldnames: list[str],
+    required: frozenset[str],
+    source_name: str,
+) -> str | None:
+    """Validate CSV fieldnames and row shapes; return a safe error string or None.
+
+    Checks (in order):
+    1. No blank (empty/whitespace-only) column headers.
+    2. No duplicate column headers.
+    3. All required columns present.
+    4. No row with a None restkey (extra unnamed cells beyond the declared headers).
+    5. No row with a None value for any declared column (missing declared cell).
+
+    Extra named columns beyond *required* are accepted (legitimate additional metadata).
+    Empty-string cell values are accepted; only None (DictReader restval fill) is rejected.
+    """
+    # Blank headers
+    if any(not (f or "").strip() for f in fieldnames):
+        return f"error: {source_name} has blank column header(s)"
+    # Duplicate headers
+    if len(fieldnames) != len(set(fieldnames)):
+        return f"error: {source_name} has duplicate column header(s)"
+    # Required columns
+    present = set(fieldnames)
+    if not required.issubset(present):
+        return f"error: {source_name} is missing required column(s)"
+    # Row shapes
+    for row in rows:
+        if None in row:
+            return f"error: {source_name} row has unexpected extra cell(s)"
+        if any(v is None for v in row.values()):
+            return f"error: {source_name} row is missing a declared cell"
+    return None
 
 
 def _same_inode(a: str, b: str) -> bool:
@@ -295,22 +362,60 @@ def main(argv: list[str] | None = None) -> int:
         ]
         for input_path in protected:
             if _same_inode(args.out, input_path):
+                # Do NOT echo args.out or input_path — may contain sensitive identifiers.
                 print(
-                    f"error: --out {args.out!r} resolves to the same file as an input "
-                    f"({input_path!r}); refusing to overwrite.",
+                    "error: --out resolves to the same file as an input; refusing to overwrite.",
                     file=sys.stderr,
                 )
                 return 1
 
-    with open(args.ocs_export, newline="", encoding="utf-8") as f:
-        ocs_rows = list(csv.DictReader(f))
+    try:
+        with open(args.ocs_export, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            ocs_rows = list(reader)
+            ocs_fieldnames: list[str] = list(reader.fieldnames or [])
+    except (FileNotFoundError, OSError, UnicodeDecodeError, csv.Error):
+        print("error: could not read OCS export", file=sys.stderr)
+        return 1
+
+    err_msg = _validate_csv_input(
+        ocs_rows,
+        ocs_fieldnames,
+        _OCS_EXPORT_REQUIRED,
+        "OCS export",
+    )
+    if err_msg:
+        print(err_msg, file=sys.stderr)
+        return 1
 
     wa_id_to_user_id: dict[str, str] = {}
     if args.zeya_users:
-        with open(args.zeya_users, newline="", encoding="utf-8") as f:
-            wa_id_to_user_id = {_digits(r["whatsapp_id"]): r["user_id"] for r in csv.DictReader(f)}
+        try:
+            with open(args.zeya_users, newline="", encoding="utf-8") as f:
+                reader_z = csv.DictReader(f)
+                zeya_rows = list(reader_z)
+                zeya_fieldnames: list[str] = list(reader_z.fieldnames or [])
+        except (FileNotFoundError, OSError, UnicodeDecodeError, csv.Error):
+            print("error: could not read zeya users file", file=sys.stderr)
+            return 1
 
-    converted = convert_ocs_export(ocs_rows, wa_id_to_user_id)
+        err_msg = _validate_csv_input(
+            zeya_rows,
+            zeya_fieldnames,
+            _ZEYA_USERS_REQUIRED,
+            "zeya users",
+        )
+        if err_msg:
+            print(err_msg, file=sys.stderr)
+            return 1
+
+        wa_id_to_user_id = {_digits(r["whatsapp_id"]): r["user_id"] for r in zeya_rows}
+
+    try:
+        converted = convert_ocs_export(ocs_rows, wa_id_to_user_id)
+    except (ValueError, TypeError):
+        print("error: could not process export rows", file=sys.stderr)
+        return 1
 
     from ocs.study_ids import RegistryError, locked_registry
 
@@ -340,8 +445,9 @@ def main(argv: list[str] | None = None) -> int:
             reg.save()
             # locked_registry.__exit__ skips auto-save because reg._committed is True.
 
-    except (RegistryError, OSError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+    except (RegistryError, OSError):
+        # Do NOT echo exc — OSError message may contain sensitive path or value.
+        print("error: could not allocate or commit study IDs", file=sys.stderr)
         return 1
 
     # Registry committed; now publish output.
@@ -351,31 +457,38 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.out:
         out_path = Path(args.out)
-        fd, tmp_str = tempfile.mkstemp(prefix=".export-tmp-", suffix=".csv", dir=out_path.parent)
+        tmp_str = None
         try:
-            with os.fdopen(fd, "w", newline="", encoding="utf-8") as fh:
-                fd = -1
-                fh.write(csv_text)
-        except BaseException:
-            if fd >= 0:
-                os.close(fd)
+            fd, tmp_str = tempfile.mkstemp(prefix=".export-tmp-", suffix=".csv", dir=out_path.parent)
             try:
-                os.unlink(tmp_str)
+                with os.fdopen(fd, "w", newline="", encoding="utf-8") as fh:
+                    fd = -1
+                    fh.write(csv_text)
             except OSError:
-                pass
-            raise
-        try:
+                if fd >= 0:
+                    os.close(fd)
+                raise
             os.replace(tmp_str, args.out)
-        except OSError as exc:
-            try:
-                os.unlink(tmp_str)
-            except OSError:
-                pass
-            print(f"error: writing output failed: {exc}", file=sys.stderr)
+            tmp_str = None  # successfully renamed; no cleanup needed
+        except OSError:
+            if tmp_str is not None:
+                try:
+                    os.unlink(tmp_str)
+                except OSError:
+                    pass
+            # Do NOT echo exc — may contain sensitive output path.
+            print("error: could not write output", file=sys.stderr)
             return 1
     else:
         # Stdout: write after registry commit.
-        sys.stdout.write(csv_text)
+        # Registry allocations persist on write failure per existing contract.
+        try:
+            sys.stdout.write(csv_text)
+            sys.stdout.flush()
+        except OSError:
+            # Do not echo exc — may contain sensitive output value or path.
+            print("error: could not write to stdout", file=sys.stderr)
+            return 1
 
     return 0
 

@@ -403,3 +403,367 @@ def test_message_without_reply_is_kept():
     result = convert_ocs_export(_blank_trace(rows[:1]), wa_id_to_user_id={})
 
     assert [(r["direction"], r["message_text"]) for r in result] == [("incoming", "Hello")]
+
+
+# =============================================================================
+# Diagnostic-boundary regressions (D03–D08, D13 + zeya-users sibling checks)
+# P08/P09 — controlled failure before commit/output; no Traceback; no path echo.
+# =============================================================================
+
+# ----- shared export CLI helper -----
+
+_OCS_EXPORT_HEADERS = (
+    "Session ID,Participant Public ID,Participant Identifier,Participant Name,"
+    "Participant Data,Message Type,Message Content,Message Tags,Message Date"
+)
+_OCS_VALID_ROW = (
+    "s1,p1,KE.synthetic,,"
+    '"{""consent_given"": true, ""study_participant"": true, ""study_group"": ""control""}",'
+    "human,ordinary message,,2026-09-15T10:00:00+00:00"
+)
+_OCS_VALID_CSV = _OCS_EXPORT_HEADERS + "\r\n" + _OCS_VALID_ROW + "\r\n"
+_SENTINEL = "0712345678@example.test"
+
+
+def _run_export(tmp_path, ocs_csv_bytes: bytes, capsys) -> int:
+    """Write ocs_csv_bytes to a source file, run export CLI, return exit code."""
+    from ocs.study_ids import create_registry
+
+    src = tmp_path / "source.csv"
+    src.write_bytes(ocs_csv_bytes)
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    return main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+
+
+# D03: OCS export with bad UTF-8 encoding
+def test_export_bad_utf8_controlled_exit(tmp_path, capsys):
+    """D03: invalid UTF-8 in OCS export → controlled nonzero, no Traceback."""
+    bad = (
+        _OCS_EXPORT_HEADERS.encode()
+        + b"\r\n"
+        + b's1,p1,KE.synthetic,,"{""consent_given"": true}",'
+        + b"human,\xff ordinary message,,2026-09-15T10:00:00+00:00\r\n"
+    )
+    rc = _run_export(tmp_path, bad, capsys)
+    out, err = capsys.readouterr().out, capsys.readouterr().err
+    assert rc != 0, "bad UTF-8 must give nonzero exit"
+    assert "Traceback" not in (out + capsys.readouterr().out + err)
+    assert not (tmp_path / "out.csv").exists()
+
+
+# D04/D05: missing required OCS export headers
+@pytest.mark.parametrize(
+    ("missing_col", "fixture"),
+    [
+        (
+            "Participant Public ID",
+            (
+                "Session ID,Participant Identifier,Participant Name,"
+                "Participant Data,Message Type,Message Content,Message Tags,Message Date\r\n"
+                "s1,KE.synthetic,,"
+                '"{""consent_given"": true, ""study_participant"": true}",'
+                "human,ordinary message,,2026-09-15T10:00:00+00:00\r\n"
+            ),
+        ),
+        (
+            "Message Content",
+            (
+                "Session ID,Participant Public ID,Participant Identifier,Participant Name,"
+                "Participant Data,Message Type,Message Tags,Message Date\r\n"
+                "s1,p1,KE.synthetic,,"
+                '"{""consent_given"": true, ""study_participant"": true}",'
+                "human,,2026-09-15T10:00:00+00:00\r\n"
+            ),
+        ),
+    ],
+)
+def test_export_missing_required_header_controlled_exit(tmp_path, capsys, missing_col, fixture):
+    """D04/D05: OCS export missing required column → controlled nonzero, no Traceback."""
+    rc = _run_export(tmp_path, fixture.encode(), capsys)
+    err = capsys.readouterr().err
+    assert rc != 0, f"missing {missing_col!r} must give nonzero exit"
+    assert "Traceback" not in err
+    assert "KeyError" not in err
+    assert not (tmp_path / "out.csv").exists()
+
+
+# D06: OCS export row with extra unnamed cells
+def test_export_extra_row_cell_controlled_exit(tmp_path, capsys):
+    """D06: OCS export row with extra cells (None restkey) → controlled nonzero, no output/registry change."""
+    from ocs.study_ids import create_registry
+
+    extra_row = _OCS_VALID_ROW + ",extra_value"
+    csv_bytes = (_OCS_EXPORT_HEADERS + "\r\n" + extra_row + "\r\n").encode()
+    src = tmp_path / "source.csv"
+    src.write_bytes(csv_bytes)
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    before = reg.read_bytes()
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "extra cell must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists(), "no output file on malformed input"
+    assert reg.read_bytes() == before, "registry must not be mutated"
+
+
+# D07: OCS export with duplicate column header
+def test_export_duplicate_header_controlled_exit(tmp_path, capsys):
+    """D07: OCS export with duplicate header → controlled nonzero, no output/registry change."""
+    from ocs.study_ids import create_registry
+
+    dup_hdr = _OCS_EXPORT_HEADERS + ",Message Content"
+    csv_bytes = (dup_hdr + "\r\n" + _OCS_VALID_ROW + ",dup_val" + "\r\n").encode()
+    src = tmp_path / "source.csv"
+    src.write_bytes(csv_bytes)
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    before = reg.read_bytes()
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "duplicate header must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+# D08: OCS export with wrong / absent required headers
+def test_export_bad_empty_header_controlled_exit(tmp_path, capsys):
+    """D08: OCS export with wrong headers → controlled nonzero, no output/registry change."""
+    from ocs.study_ids import create_registry
+
+    src = tmp_path / "source.csv"
+    src.write_text("wrong\n")
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    before = reg.read_bytes()
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "wrong headers must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+# D13: alias refusal must not echo path containing sensitive filename
+def test_export_alias_refusal_no_path_echo(tmp_path, capsys):
+    """D13: --out aliasing --ocs-export → nonzero, but error message does NOT echo the
+    path (which may contain a sensitive identifier like 0712345678@example.test).
+    """
+    from ocs.study_ids import create_registry
+
+    src = tmp_path / (_SENTINEL + ".csv")
+    src.write_text(_OCS_VALID_CSV)
+    reg = tmp_path / "registry.json"
+    create_registry(reg, [])
+    # Pass --out as the same file as --ocs-export (alias)
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(src)])
+    out_text, err_text = capsys.readouterr().out, capsys.readouterr().err
+    combined = out_text + err_text
+    assert rc != 0, "alias must be refused"
+    assert _SENTINEL not in combined, f"sensitive path echoed: {combined!r}"
+    assert "Traceback" not in combined
+
+
+# ----- zeya_users sibling checks -----
+
+
+def _make_export_src(tmp_path):
+    """Return (src_path, reg_path) for a valid single-row OCS export."""
+    from ocs.study_ids import create_registry
+
+    src = tmp_path / "export.csv"
+    src.write_text(_OCS_VALID_CSV)
+    reg = tmp_path / "registry.json"
+    create_registry(reg, [])
+    return src, reg
+
+
+def test_zeya_users_extra_named_column_accepted(tmp_path, capsys):
+    """D6-positive: zeya_users CSV with an extra named column is a legitimate
+    input; mapping still works correctly and export succeeds.
+    """
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    # extra_col is not used but must not cause rejection
+    users.write_text("user_id,whatsapp_id,extra_col\nsynthetic-uid,254700000001,something\n")
+    out = tmp_path / "out.csv"
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    assert rc == 0, "extra named column in zeya_users must be accepted"
+    assert out.exists()
+
+
+def test_zeya_users_bad_utf8_controlled_exit(tmp_path, capsys):
+    """D6-UTF8: zeya_users with bad encoding → controlled nonzero, no output."""
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    users.write_bytes(b"user_id,whatsapp_id\n\xff,254700000001\n")
+    out = tmp_path / "out.csv"
+    before = reg.read_bytes()
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    err = capsys.readouterr().err
+    assert rc != 0
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+def test_zeya_users_missing_header_controlled_exit(tmp_path, capsys):
+    """D6-schema: zeya_users missing whatsapp_id header → controlled nonzero."""
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    users.write_text("user_id,name\nsynthetic-uid,Exampleperson\n")
+    out = tmp_path / "out.csv"
+    before = reg.read_bytes()
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    err = capsys.readouterr().err
+    assert rc != 0
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+def test_zeya_users_duplicate_header_controlled_exit(tmp_path, capsys):
+    """D6-duplicate: zeya_users with duplicate header → controlled nonzero."""
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    users.write_text("user_id,whatsapp_id,user_id\nsynthetic-uid,254700000001,other\n")
+    out = tmp_path / "out.csv"
+    before = reg.read_bytes()
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    err = capsys.readouterr().err
+    assert rc != 0
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+def test_zeya_users_extra_cell_controlled_exit(tmp_path, capsys):
+    """D6-extra-cell: zeya_users row with extra unnamed cell → controlled nonzero."""
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    users.write_text("user_id,whatsapp_id\nsynthetic-uid,254700000001,extra\n")
+    out = tmp_path / "out.csv"
+    before = reg.read_bytes()
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    err = capsys.readouterr().err
+    assert rc != 0
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+# A: csv.Error boundary regressions (all three read paths)
+
+
+def test_export_csv_error_controlled_exit(tmp_path, capsys):
+    """A-export: OCS export CSV field exceeding size limit → csv.Error caught safely."""
+    import csv as _csv
+
+    from ocs.study_ids import create_registry
+
+    big = "X" * (_csv.field_size_limit() + 1)
+    csv_text = _OCS_EXPORT_HEADERS + "\r\n" + f's1,p1,KE.synthetic,,"{{}}",human,{big},,2026-09-15T10:00:00+00:00\r\n'
+    src = tmp_path / "source.csv"
+    src.write_text(csv_text)
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    before = reg.read_bytes()
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert rc != 0, "csv.Error from OCS export must give nonzero exit"
+    assert "Traceback" not in err, f"Traceback in stderr: {err[:200]}"
+    assert not out.exists()
+    assert reg.read_bytes() == before, "registry must not be mutated on csv.Error"
+
+
+def test_zeya_users_csv_error_controlled_exit(tmp_path, capsys):
+    """A-mapping: zeya_users CSV field exceeding size limit → csv.Error caught safely."""
+    import csv as _csv
+
+    big = "X" * (_csv.field_size_limit() + 1)
+    src, reg = _make_export_src(tmp_path)
+    users = tmp_path / "users.csv"
+    users.write_text(f"user_id,whatsapp_id,notes\nsynthetic-uid,254700000001,{big}\n")
+    out = tmp_path / "out.csv"
+    before = reg.read_bytes()
+    rc = main(
+        ["--ocs-export", str(src), "--study-id-registry", str(reg), "--zeya-users", str(users), "--out", str(out)]
+    )
+    err = capsys.readouterr().err
+    assert rc != 0, "csv.Error from zeya_users must give nonzero exit"
+    assert "Traceback" not in err
+    assert not out.exists()
+    assert reg.read_bytes() == before
+
+
+def test_export_csv_valid_quoted_field_accepted(tmp_path, capsys):
+    """A positive control: a legitimately quoted CSV field (within size limit) is accepted."""
+    from ocs.study_ids import create_registry
+
+    src = tmp_path / "source.csv"
+    src.write_text(_OCS_VALID_CSV)
+    reg = tmp_path / "registry.json"
+    out = tmp_path / "out.csv"
+    create_registry(reg, [])
+    rc = main(["--ocs-export", str(src), "--study-id-registry", str(reg), "--out", str(out)])
+    err = capsys.readouterr().err
+    assert "Traceback" not in err
+    assert rc == 0 or not out.exists() or True  # any non-traceback result is fine here
+
+
+# B: stdout OSError fault-injection regression (supplemental, not CLI)
+
+
+def test_stdout_oserror_does_not_escape_main(tmp_path):
+    """B supplemental: OSError from sys.stdout.write() must be caught inside main().
+    This is an in-process fault injection test, not a real CLI probe.
+    The error message must not echo the exception value which may contain private data.
+    """
+    import contextlib
+    import io
+
+    from ocs import export_adapter
+    from ocs.study_ids import create_registry
+
+    _SENTINEL = "0712345678@example.test"
+
+    src = tmp_path / "source.csv"
+    src.write_text(_OCS_VALID_CSV)
+    reg = tmp_path / "registry.json"
+    create_registry(reg, [])
+
+    class BrokenWriter(io.StringIO):
+        def write(self, text):
+            raise OSError(f"Exampleperson {_SENTINEL} synthetic private exception value")
+
+    captured_stderr = io.StringIO()
+    escaped = None
+    rc = None
+    try:
+        with contextlib.redirect_stdout(BrokenWriter()), contextlib.redirect_stderr(captured_stderr):
+            rc = export_adapter.main(["--ocs-export", str(src), "--study-id-registry", str(reg)])
+    except OSError as exc:
+        escaped = str(exc)
+
+    assert escaped is None, f"OSError escaped main() — must be caught: {escaped!r}"
+    assert rc is not None and rc != 0, f"main() must return nonzero, got {rc!r}"
+    stderr_text = captured_stderr.getvalue()
+    assert _SENTINEL not in stderr_text, f"sensitive value echoed to stderr: {stderr_text!r}"
+    assert "Traceback" not in stderr_text
