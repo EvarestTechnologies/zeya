@@ -90,6 +90,9 @@ def test_imported_participant_skips_registration():
 
 
 def test_user_mid_registration_resumes_at_next_step():
+    # REGISTERED_USER's language_preference is "sw", so the resumed prompt is Swahili
+    # (methodological change: explicit language onboarding selects EN/SW per preference
+    # for every fixed registration response, including the invalid-weeks retry).
     user = REGISTERED_USER | {
         "gestational_age_at_enrollment": "",
         "expected_delivery_date": "",
@@ -99,7 +102,7 @@ def test_user_mid_registration_resumes_at_next_step():
 
     output = NodeHarness(node_source("registration"), participant_data=data).run("hello")
 
-    assert output == "Please enter a valid number of weeks (between 1 and 42). For example: 20"
+    assert output == "Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20"
 
 
 def test_declined_user_is_marked_declined():
