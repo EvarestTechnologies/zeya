@@ -210,6 +210,23 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
     ZEYA, or NO if you do not want to."). The Swahili public welcome needs review by a
     native speaker before release.
 
+13. **Explicit language-choice onboarding (#27).** Participants without a valid stored
+    English/Swahili preference first receive a fixed bilingual numbered choice, with
+    no model call. A valid selection is saved and followed by the public or study
+    welcome and consent in that language; selecting a language does not grant consent.
+    Valid imported preferences bypass this step. Partially registered participants
+    missing a valid preference choose one and resume their pending step without the
+    selection being consumed as a name or pregnancy-week answer. Completed participants
+    are not sent through registration again. All fixed registration responses now have
+    English and Swahili versions. New Swahili wording is draft pending fluent-speaker
+    review, not clinically approved. Danger rules, emergency content and pipeline
+    safety ordering are unchanged. Go-live date: not published by this code change.
+    Export continuity: the first-contact input and all registration replies remain
+    excluded under the existing adapter rules. Subsequent language-selection inputs
+    and invalid-choice retries remain registration answers, so their incoming rows
+    are retained for consented trial participants. These additional onboarding turns
+    did not exist before this change and must be distinguished in study analysis.
+
 ## Study data continuity
 
 - **Existing transcripts are not migrated.** The Zeya database and

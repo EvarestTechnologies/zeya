@@ -41,7 +41,10 @@ CONSENT_RETRY_MSG = "Please reply YES or NO to consent to participate in the stu
 # Anyone in Kenya can use ZEYA. Only participants imported from the trial's enrolment list
 # (study_participant) get Zeya's study wording; everyone else is asked to consent to using
 # ZEYA and having messages stored (methodological change 12).
-STUDY = {"study_participant": True}
+# An existing/imported language_preference bypasses the new language choice (methodological
+# change: explicit language onboarding), so most STUDY-based tests seed "en" here to keep
+# exercising the post-choice flow without re-threading the choice through every test.
+STUDY = {"study_participant": True, "language_preference": "en"}
 PUBLIC_WELCOME_EN = (
     "Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\n\n"
     "I share educational information about maternal health based on WHO and Kenya Ministry "
@@ -65,6 +68,26 @@ PUBLIC_WELCOME_SW = (
 PUBLIC_CONSENTED_MSG = "Thank you! What is your name?"
 PUBLIC_CONSENT_RETRY_MSG = "Please reply YES to start using ZEYA, or NO if you do not want to."
 GA_RETRY_MSG = "Please enter a valid number of weeks (between 1 and 42). For example: 20"
+
+# New participants without a valid stored/imported language preference see this fixed,
+# bilingual, deterministic choice before anything else. Their first message's content is
+# discarded, same as the old single-language first contact.
+LANGUAGE_CHOICE_MSG = "Please choose your language / Tafadhali chagua lugha yako:\n1. English\n2. Kiswahili"
+
+# Draft Swahili wording below is machine/engineer-translated for review, not a clinical or
+# fluent-speaker approved translation (methodological change: explicit language onboarding).
+CONSENTED_MSG_SW = "Asante kwa kukubali kushiriki katika utafiti! Jina lako ni nani?"
+PUBLIC_CONSENTED_MSG_SW = "Asante! Jina lako ni nani?"
+DECLINED_MSG_SW = "Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama!"
+CONSENT_RETRY_MSG_SW = "Tafadhali jibu NDIYO au HAPANA kukubali kushiriki katika utafiti."
+PUBLIC_CONSENT_RETRY_MSG_SW = "Tafadhali jibu NDIYO kuanza kutumia ZEYA, au HAPANA kama hutaki."
+NAME_PROMPT_SW = "Jina lako ni nani?"
+GA_RETRY_MSG_SW = "Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20"
+FALLBACK_COMPLETION_MSG_SW = "Andika swali lako tu nami nitafanya niwezalo kukusaidia, Mama!"
+FALLBACK_COMPLETION_MSG_EN = "Just type your question and I will do my best to help you, Mama!"
+
+# Existing/imported en preference used by tests that are not exercising the language choice.
+EN = {"language_preference": "en"}
 
 REGISTERED = {
     "welcome_sent": True,
@@ -184,7 +207,7 @@ class TestPublicUser:
     """Someone who messages ZEYA without being imported from the trial enrolment list."""
 
     def test_english_welcome(self):
-        harness = _run("Hi")
+        harness = _run("Hi", EN)
 
         assert harness.output == PUBLIC_WELCOME_EN
         assert "study_participant" not in harness.participant_data
@@ -203,19 +226,19 @@ class TestPublicUser:
         assert disclaimer in PUBLIC_WELCOME_EN
 
     def test_accepts(self):
-        harness = _after("Hi", "yes")
+        harness = _after("Hi", "yes", data=EN)
 
         assert harness.output == PUBLIC_CONSENTED_MSG
         assert harness.participant_data["consent_given"] is True
 
     def test_declines_with_zeyas_message(self):
-        assert _after("Hi", "no").output == DECLINED_MSG
+        assert _after("Hi", "no", data=EN).output == DECLINED_MSG
 
     def test_reprompts_without_mentioning_a_study(self):
-        assert _after("Hi", "maybe").output == PUBLIC_CONSENT_RETRY_MSG
+        assert _after("Hi", "maybe", data=EN).output == PUBLIC_CONSENT_RETRY_MSG
 
     def test_registers_like_a_study_participant(self):
-        harness = _after("Hi", "yes", "Achieng", "23")
+        harness = _after("Hi", "yes", "Achieng", "23", data=EN)
 
         assert harness.participant_data["registration_complete"] is True
         assert harness.participant_data["gestational_age_at_enrollment"] == 23
@@ -223,7 +246,7 @@ class TestPublicUser:
 
 class TestName:
     def test_stores_stripped_name(self):
-        harness = _after("Hi", "yes", "  Akinyi Otieno ")
+        harness = _after("Hi", "yes", "  Akinyi Otieno ", data=EN)
 
         assert harness.participant_data["name"] == "Akinyi Otieno"
         assert harness.participant_data["name_collected"] is True
@@ -235,7 +258,7 @@ class TestName:
     @pytest.mark.parametrize("answer", ["", "   "])
     def test_message_without_text_does_not_set_name(self, answer):
         # e.g. a photo or voice note. Zeya ignored non-text messages; here we ask again.
-        harness = _after("Hi", "yes", answer)
+        harness = _after("Hi", "yes", answer, data=EN)
 
         assert harness.output == "What is your name?"
         assert "name" not in harness.participant_data
@@ -243,7 +266,7 @@ class TestName:
 
     def test_asks_for_name_even_if_ocs_already_has_one(self):
         # OCS exposes participant.name as participant data "name".
-        consented = _after("Hi", "yes").participant_data | {"name": "+254700000000"}
+        consented = _after("Hi", "yes", data=EN).participant_data | {"name": "+254****0000"}
 
         harness = _run("Akinyi", consented)
 
@@ -254,7 +277,7 @@ class TestName:
 class TestGestationalAge:
     @pytest.mark.parametrize(("answer", "weeks"), [("20", 20), ("20 weeks", 20), (" 1 ", 1), ("42", 42)])
     def test_completes_registration(self, answer, weeks):
-        harness = _after("Hi", "yes", "Akinyi", answer)
+        harness = _after("Hi", "yes", "Akinyi", answer, data=EN)
 
         edd = NOW.date() + datetime.timedelta(weeks=40 - weeks)
         assert harness.participant_data["gestational_age_at_enrollment"] == weeks
@@ -276,11 +299,183 @@ class TestGestationalAge:
 
     @pytest.mark.parametrize("answer", ["twenty", "0", "43", "-5", "20weeks", ""])
     def test_reprompts_on_invalid(self, answer):
-        harness = _after("Hi", "yes", "Akinyi", answer)
+        harness = _after("Hi", "yes", "Akinyi", answer, data=EN)
 
         assert harness.output == GA_RETRY_MSG
         assert harness.participant_data["registration_complete"] is False
         assert "gestational_age_at_enrollment" not in harness.participant_data
+
+
+class TestLanguageChoice:
+    """Explicit bilingual language-choice onboarding (Zeya #27)."""
+
+    def test_first_contact_without_preference_shows_bilingual_choice(self):
+        harness = _run("Hi")
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+        assert "welcome_sent" not in harness.participant_data
+        assert "consent_given" not in harness.participant_data
+        assert harness.participant_data["language_choice_pending"] is True
+        assert harness.message_tags == ["registration", "registration:first_contact"]
+
+    def test_first_message_content_is_not_treated_as_consent(self):
+        # Even "yes" as the very first message must not be read as consent.
+        harness = _run("yes")
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+        assert "consent_given" not in harness.participant_data
+
+    @pytest.mark.parametrize("answer", ["1", "english", "  ENGLISH  ", " 1 "])
+    def test_numeric_or_text_english_choice_sets_preference_and_sends_welcome(self, answer):
+        harness = _after("Hi", answer)
+
+        assert harness.output == PUBLIC_WELCOME_EN
+        assert harness.participant_data["language_preference"] == "en"
+        assert harness.participant_data["language_choice_pending"] is False
+        assert harness.participant_data["welcome_sent"] is True
+
+    @pytest.mark.parametrize("answer", ["2", "kiswahili", "swahili", " Swahili "])
+    def test_numeric_or_text_swahili_choice_sets_preference_and_sends_welcome(self, answer):
+        harness = _after("Hi", answer)
+
+        assert harness.output == PUBLIC_WELCOME_SW
+        assert harness.participant_data["language_preference"] == "sw"
+
+    def test_choice_does_not_grant_consent(self):
+        harness = _after("Hi", "1")
+
+        assert harness.participant_data["consent_given"] is False
+        assert harness.output != CONSENTED_MSG
+
+    @pytest.mark.parametrize("answer", ["3", "maybe", "", "   ", "yes"])
+    def test_invalid_or_empty_choice_repeats_without_advancing(self, answer):
+        harness = _after("Hi", answer)
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+        assert harness.participant_data["language_choice_pending"] is True
+        assert "welcome_sent" not in harness.participant_data
+
+    def test_existing_language_preference_bypasses_choice(self):
+        harness = _run("Hi", {"language_preference": "sw"})
+
+        assert harness.output == PUBLIC_WELCOME_SW
+        assert "language_choice_pending" not in harness.participant_data
+
+    def test_invalid_stored_preference_still_shows_choice(self):
+        harness = _run("Hi", {"language_preference": "fr"})
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+
+    def test_study_participant_choice_gets_study_welcome(self):
+        harness = _after("Hi", "2", data={"study_participant": True})
+
+        assert harness.output == WELCOME_SW
+
+
+class TestLanguageRecovery:
+    """Missing/invalid preference mid-registration must not re-enrol or eat other answers."""
+
+    def _imported_partial(self, **overrides):
+        data = {
+            "welcome_sent": True,
+            "enrolled_at": "2026-09-23T09:30:00+00:00",
+            "consent_given": False,
+            "registration_complete": False,
+            "study_group": "intervention",
+        }
+        data.update(overrides)
+        return data
+
+    def test_missing_language_before_consent_shows_choice_not_consent_text(self):
+        harness = _run("blah", self._imported_partial())
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+        assert harness.participant_data["consent_given"] is False
+
+    def test_choice_reply_resumes_consent_retry_without_consuming_it_as_consent(self):
+        data = self._imported_partial()
+        harness = _after("blah", "2", data=data)
+
+        assert harness.output == PUBLIC_CONSENT_RETRY_MSG_SW
+        assert harness.participant_data["language_preference"] == "sw"
+        assert harness.participant_data["consent_given"] is False
+
+    def test_missing_language_after_consent_does_not_consume_reply_as_name(self):
+        data = self._imported_partial(consent_given=True)
+        harness = _after("Akinyi", "1", data=data)
+
+        assert harness.output == "What is your name?"
+        assert harness.participant_data["language_preference"] == "en"
+        assert "name" not in harness.participant_data
+        assert "name_collected" not in harness.participant_data
+
+    def test_missing_language_after_name_does_not_consume_reply_as_weeks(self):
+        data = self._imported_partial(consent_given=True, name="Akinyi", name_collected=True)
+        harness = _after("25", "1", data=data)
+
+        assert harness.output == ("How many weeks pregnant are you? Please reply with a number (for example: 20).")
+        assert harness.participant_data["language_preference"] == "en"
+        assert "gestational_age_at_enrollment" not in harness.participant_data
+
+    def test_invalid_stored_preference_mid_registration_also_recovers(self):
+        data = self._imported_partial(consent_given=True, name="Akinyi", name_collected=True, language_preference="fr")
+        harness = _run("25", data)
+
+        assert harness.output == LANGUAGE_CHOICE_MSG
+        assert "gestational_age_at_enrollment" not in harness.participant_data
+
+    def test_registered_user_with_invalid_language_is_not_forced_to_relanguage(self):
+        harness = _run("hello", REGISTERED | {"language_preference": "fr"})
+
+        assert harness.temp_state["registration_route"] == "REGISTERED"
+        assert harness.output == "hello"
+        assert "language_choice_pending" not in harness.participant_data
+
+    def test_stale_pending_flag_does_not_override_a_valid_saved_preference(self):
+        # Opus review #27, finding 1: an operator/re-import can fix an invalid stored
+        # preference to a valid one (e.g. "EN" -> "en") after the choice was already
+        # shown and language_choice_pending was set True. The stale pending flag must
+        # not override the now-valid preference and swallow the real reply underneath it.
+        data = self._imported_partial(language_preference="sw", language_choice_pending=True)
+        harness = _run("Ndiyo", data)
+
+        assert harness.output != LANGUAGE_CHOICE_MSG
+        assert harness.output == PUBLIC_CONSENTED_MSG_SW
+        assert harness.participant_data["consent_given"] is True
+        assert harness.participant_data["language_preference"] == "sw"
+        assert harness.participant_data["language_choice_pending"] is False
+
+    def test_stale_pending_flag_lets_a_later_numeric_reply_overwrite_valid_language(self):
+        # Without the fix, "1" here would be read as a fresh language choice and
+        # silently overwrite the already-valid "sw" preference with "en". With the fix,
+        # the stale flag is cleared and "1" is processed as the normal next answer
+        # (here: the name, since consent is already given) instead.
+        data = self._imported_partial(language_preference="sw", language_choice_pending=True, consent_given=True)
+        harness = _run("1", data)
+
+        assert harness.participant_data["language_preference"] == "sw"
+        assert harness.participant_data["name"] == "1"
+
+    def test_recovery_completing_the_last_missing_field_marks_registration_complete(self):
+        # Opus review #27, finding 2: consent/name/weeks are all already set but
+        # registration_complete is False (e.g. hand-imported data) and the preference
+        # needed recovery. Resolving the recovery choice must finish registration so the
+        # participant's next real message is routed to the LLM instead of being eaten
+        # by the fallback prompt again.
+        data = self._imported_partial(
+            consent_given=True,
+            name="Akinyi",
+            name_collected=True,
+            gestational_age_at_enrollment=20,
+        )
+        harness = _after("hi", "1", data=data)
+
+        assert harness.output == FALLBACK_COMPLETION_MSG_EN
+        assert harness.participant_data["registration_complete"] is True
+
+        next_harness = _run("What should I eat?", harness.participant_data)
+        assert next_harness.temp_state["registration_route"] == "REGISTERED"
+        assert next_harness.output == "What should I eat?"
 
 
 def _expected_context(gestational_age, language):
@@ -325,3 +520,77 @@ class TestRegistered:
         data = {k: v for k, v in REGISTERED.items() if k != "gestational_age_at_enrollment"}
         harness = _run("hello", data)
         assert harness.temp_state["llm_context"] == "No additional context available."
+
+
+class TestSwahiliExactResponses:
+    """Explicit assertions for SW constants beyond a single or endswith check.
+
+    Reviewer suggestion (opus-review-1): most SW strings were only asserted once or
+    via endswith; these exercise the full public SW path and assert each fixed
+    response verbatim.
+    """
+
+    def test_name_to_weeks_greeting_is_exact(self):
+        harness = _after("Habari", "2", "ndiyo", "Akinyi", data={})
+
+        assert harness.output == (
+            "Nimefurahi kukutana nawe, Akinyi! Una wiki ngapi za ujauzito? Tafadhali jibu kwa nambari (kwa mfano: 20)."
+        )
+
+    def test_study_participant_sw_decline_is_exact(self):
+        harness = _after("Habari", "2", "hapana", data={"study_participant": True})
+
+        assert harness.output == (
+            "Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama!"
+        )
+        assert harness.participant_data["consent_declined"] is True
+
+    def test_public_sw_decline_is_exact(self):
+        harness = _after("Habari", "2", "hapana", data={})
+
+        assert harness.output == (
+            "Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama!"
+        )
+
+    def test_invalid_weeks_retry_is_exact(self):
+        harness = _after("Habari", "2", "ndiyo", "Akinyi", "100", data={})
+
+        assert harness.output == "Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20"
+        assert "gestational_age_at_enrollment" not in harness.participant_data
+
+
+class TestFullRegistrationBothLanguages:
+    """Acceptance matrix: complete public+study registration end to end, EN and SW."""
+
+    def test_full_study_registration_in_swahili(self):
+        harness = _after("Hi", "2", "Ndiyo", "Akinyi", "20", data={"study_participant": True})
+
+        assert harness.participant_data["language_preference"] == "sw"
+        assert harness.participant_data["registration_complete"] is True
+        assert harness.participant_data["consent_given"] is True
+        assert harness.participant_data["name"] == "Akinyi"
+        assert "Umesajiliwa!" in harness.output
+        assert harness.output.endswith(FALLBACK_COMPLETION_MSG_SW)
+
+    def test_full_public_registration_in_english(self):
+        harness = _after("Hi", "1", "yes", "Achieng", "23")
+
+        assert harness.participant_data["language_preference"] == "en"
+        assert harness.participant_data["registration_complete"] is True
+        assert harness.output.startswith("You are registered! You are 23 weeks pregnant.")
+        assert harness.output.endswith("Just type your question and I will do my best to help you, Mama!")
+
+    def test_full_public_registration_in_swahili(self):
+        harness = _after("Habari", "2", "ndiyo", "Achieng", "23")
+
+        assert harness.participant_data["language_preference"] == "sw"
+        assert harness.participant_data["registration_complete"] is True
+        assert harness.output.startswith("Umesajiliwa! Una wiki 23 za ujauzito.")
+        assert harness.output.endswith(FALLBACK_COMPLETION_MSG_SW)
+
+    def test_full_study_registration_in_english(self):
+        harness = _after("Hi", "1", "yes", "Akinyi", "20", data={"study_participant": True})
+
+        assert harness.participant_data["language_preference"] == "en"
+        assert harness.participant_data["registration_complete"] is True
+        assert harness.output.endswith("Just type your question and I will do my best to help you, Mama!")
