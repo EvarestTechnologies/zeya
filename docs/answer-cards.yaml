@@ -1,0 +1,88 @@
+[
+  {
+    "id": "anc_purpose_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "anc_purpose",
+    "topic_anchors": ["anc", "antenatal", "clinic", "prenatal"],
+    "source_note": "Drafted from WHO starter KB v0.1 entry anc_purpose. Pending clinical and language review. Not approved for public use.",
+    "triggers": [
+      "Why should I go to ANC?",
+      "What are pregnancy clinic visits for?",
+      "Why should I attend antenatal care?",
+      "What are antenatal visits for?",
+      "What is the purpose of antenatal clinic visits when pregnant?",
+      "Why should I attend antenatal care visits?",
+      "Why do I need to attend antenatal visits?"
+    ],
+    "answer": "Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend."
+  },
+  {
+    "id": "pregnancy_records_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "pregnancy_records",
+    "topic_anchors": ["record", "documentation"],
+    "source_note": "Drafted from WHO starter KB v0.1 entry pregnancy_records. Pending clinical and language review. Not approved for public use.",
+    "triggers": [
+      "Should I keep my pregnancy health records?",
+      "Why keep a record of pregnancy care?",
+      "Should I keep records of my pregnancy care?",
+      "Why is it important to keep my pregnancy health records?",
+      "Why should I keep records of my pregnancy health care?",
+      "How should I manage my maternity health records?"
+    ],
+    "answer": "Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand."
+  },
+  {
+    "id": "food_variety_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "food_variety",
+    "topic_anchors": ["food", "eat", "diet", "vegetable", "fruit", "nutrition"],
+    "source_note": "Drafted from WHO starter KB v0.1 entry food_variety. Pending clinical and language review. Not approved for public use.",
+    "triggers": [
+      "What kinds of food should I eat?",
+      "What does a varied pregnancy diet include?",
+      "What food should I eat during pregnancy?",
+      "What kinds of food can I eat when pregnant?",
+      "What varieties of food should I eat during pregnancy?",
+      "What is a healthy varied diet for a pregnant woman?"
+    ],
+    "answer": "Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs."
+  },
+  {
+    "id": "food_safety_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "food_safety",
+    "topic_anchors": ["food", "eat", "diet"],
+    "source_note": "Drafted from WHO starter KB v0.1 entry food_safety. Pending clinical and language review. Not approved for public use.",
+    "triggers": [
+      "Does food cleanliness matter in pregnancy?",
+      "Should I make sure food is safe and clean during pregnancy?",
+      "Is food safety important when pregnant?",
+      "Should food be safe and clean during pregnancy?",
+      "Why is clean and safe food important in pregnancy?",
+      "How do I keep food safe during pregnancy?"
+    ],
+    "answer": "Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy."
+  },
+  {
+    "id": "birth_preparation_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "birth_preparation",
+    "topic_anchors": ["birth", "delivery", "deliver", "childbirth"],
+    "source_note": "Drafted from WHO starter KB v0.1 entry birth_preparation. Pending clinical and language review. Not approved for public use.",
+    "triggers": [
+      "What should I discuss when planning for birth?",
+      "Should I plan where I will give birth?",
+      "How should I prepare for childbirth?",
+      "Should I plan and prepare for where I will give birth?",
+      "What is a birth preparedness plan?",
+      "How do I plan for birth and complications?"
+    ],
+    "answer": "Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance."
+  }
+]

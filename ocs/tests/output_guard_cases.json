@@ -1,0 +1,449 @@
+{
+  "_comment": "Zeya #25 output-guard regression fixtures. Each case exercises guard logic run against AI or card output text. 'expect':'pass' means the text should reach the user unchanged; 'expect':'block' means the guard must block and return the fixed referral. The 'note' field documents known limitations. Cases are intentionally bilingual (EN/SW) with Sheng-mixed examples and boundary/obfuscation specimens.",
+  "_sheng_note": "Sheng is a Nairobi urban creole mixing Swahili, English and other languages. AI outputs are expected to be EN or SW per the system prompt. Sheng drug-name slang is not covered by explicit patterns in this guard; this is a documented gap pending clinical-language review. No specific equivalences between Sheng slang terms and medicine names are asserted here without a sourced vocabulary review.",
+  "_url_obfuscation_note": "The guard detects https:// http:// and www. URL prefixes only. Obfuscated forms such as hxxps:// or h t t p s // are NOT blocked; this is a known limitation. These boundary cases are included to document the gap, not assert coverage.",
+  "cases": [
+    {
+      "id": "pass_en_educational_anc",
+      "description": "Positive control — plain ANC education passes",
+      "lang": "en",
+      "input": "Antenatal care helps you have a healthier pregnancy. Visit your health worker for regular check-ups, advice and support. Keep records of all your visits at home.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_en_educational_food",
+      "description": "Positive control — food variety education passes",
+      "lang": "en",
+      "input": "Eat a variety of foods including vegetables, fruit, beans and grains to support a healthy pregnancy. Ask your health worker for advice about your individual dietary needs.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_en_educational_records",
+      "description": "Positive control — records advice passes",
+      "lang": "en",
+      "input": "Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain anything in your records you do not understand.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_en_educational_birth_plan",
+      "description": "Positive control — birth planning passes",
+      "lang": "en",
+      "input": "Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness plan with their guidance so you are ready when the time comes.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_sw_educational_anc",
+      "description": "Positive control Swahili — ANC education passes",
+      "lang": "sw",
+      "input": "Huduma ya ujauzito inakusaidia kuwa na ujauzito wenye afya. Tembelea mhudumu wa afya wako mara kwa mara kwa uchunguzi, ushauri na msaada.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_sw_educational_food",
+      "description": "Positive control Swahili — food advice passes",
+      "lang": "sw",
+      "input": "Kula vyakula vya aina mbalimbali: mboga, matunda, nafaka na vyakula vya protini kusaidia ujauzito wenye afya. Uliza mhudumu wa afya wako kuhusu mahitaji yako binafsi.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_sw_educational_records",
+      "description": "Positive control Swahili — records passes",
+      "lang": "sw",
+      "input": "Hifadhi kumbukumbu za huduma yako ya ujauzito nyumbani. Uliza mhudumu wa afya wako kueleza maelezo yoyote ambayo huelewi kwenye kumbukumbu zako.",
+      "expect": "pass"
+    },
+    {
+      "id": "pass_sheng_mixed_valid",
+      "description": "Positive control Sheng-mixed — educational valid response passes (guard checks content not language)",
+      "lang": "en",
+      "input": "Mama, make sure unakwenda ANC visits zote. Health worker atakusaidia stay healthy wakati wa ujauzito. Kula food variety na rest vizuri.",
+      "expect": "pass",
+      "note": "Sheng-mixed educational content; no medicine/dose/diagnosis terms present"
+    },
+    {
+      "id": "pass_en_folate_food_context",
+      "description": "Positive control — 'folate' as food nutrient does not trigger medicine pattern",
+      "lang": "en",
+      "input": "Foods rich in folate include dark leafy vegetables, beans and fortified cereals. Folate is important for pregnancy health.",
+      "expect": "pass",
+      "note": "Folate as a nutrient name in food context. Medicine pattern targets tablet/supplement forms only."
+    },
+    {
+      "id": "pass_en_iron_food_context",
+      "description": "Positive control — 'iron' as a nutrient in food context does not block",
+      "lang": "en",
+      "input": "Eating foods rich in iron, such as beans, lentils, meat and leafy greens, can help during pregnancy. Ask your health worker for more guidance.",
+      "expect": "pass",
+      "note": "Iron as food nutrient; not a tablet/supplement form"
+    },
+    {
+      "id": "pass_en_no_phone_no_url",
+      "description": "Positive control — answer with no contact details passes",
+      "lang": "en",
+      "input": "If you have any concerns about your pregnancy, please speak with your health worker at your next visit.",
+      "expect": "pass"
+    },
+    {
+      "id": "block_en_medicine_amoxicillin",
+      "description": "Drug name amoxicillin blocked",
+      "lang": "en",
+      "input": "You can take amoxicillin for the infection.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_en_medicine_metronidazole",
+      "description": "Drug name metronidazole blocked",
+      "lang": "en",
+      "input": "Metronidazole is used to treat bacterial infections during pregnancy.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_en_medicine_paracetamol",
+      "description": "Drug name paracetamol blocked",
+      "lang": "en",
+      "input": "Paracetamol can help with mild headaches.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_en_medicine_oxytocin",
+      "description": "Obstetric drug oxytocin blocked",
+      "lang": "en",
+      "input": "Oxytocin is used to help with labour and delivery.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_sw_medicine_metronidazole",
+      "description": "Swahili sentence containing English drug name blocked",
+      "lang": "sw",
+      "input": "Tumia metronidazole kutibu maambukizi ya mfumo wa uzazi.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_sw_medicine_aspirin",
+      "description": "Swahili sentence with aspirin blocked",
+      "lang": "sw",
+      "input": "Unaweza kutumia aspirin kupunguza maumivu ya kichwa.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_sheng_medicine_paracetamol",
+      "description": "Sheng-mixed output containing paracetamol blocked",
+      "lang": "en",
+      "input": "Unaweza kula paracetamol kama una maumivu kidogo, inafanya kazi vizuri.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_en_iron_tablet_form",
+      "description": "Iron tablets (supplement form) blocked",
+      "lang": "en",
+      "input": "Taking iron tablets daily is recommended during pregnancy.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_en_dose_mg",
+      "description": "Dose pattern 500mg blocked",
+      "lang": "en",
+      "input": "Take 500mg daily for the first trimester.",
+      "expect": "block",
+      "block_reason_contains": "dose_pattern"
+    },
+    {
+      "id": "block_en_dose_ml",
+      "description": "Dose pattern 5ml blocked",
+      "lang": "en",
+      "input": "Use 5ml of the syrup twice a day.",
+      "expect": "block",
+      "block_reason_contains": "dose_pattern"
+    },
+    {
+      "id": "block_en_dose_mcg",
+      "description": "Dose pattern micrograms blocked",
+      "lang": "en",
+      "input": "400 mcg is the recommended daily amount.",
+      "expect": "block",
+      "block_reason_contains": "dose_pattern"
+    },
+    {
+      "id": "block_sw_dose_mg",
+      "description": "Swahili sentence with dose mg blocked",
+      "lang": "sw",
+      "input": "Tumia 400mg kila siku pamoja na chakula.",
+      "expect": "block",
+      "block_reason_contains": "dose_pattern"
+    },
+    {
+      "id": "block_en_diagnosis_diagnosed_with",
+      "description": "Diagnosis wording 'diagnosed with' blocked — 'diagnosed' matches never_say diagnos\\w* (checked first)",
+      "lang": "en",
+      "input": "You are diagnosed with gestational diabetes based on your symptoms.",
+      "expect": "block",
+      "block_reason_contains": "never_say",
+      "note": "Guard blocks at never_say step because 'diagnosed' matches diagnos\\w*. The diagnosis_wording pattern also covers it but the never_say check runs first. Both are correct reasons to block this content."
+    },
+    {
+      "id": "block_en_diagnosis_condition_is",
+      "description": "Diagnosis wording 'your condition is' blocked",
+      "lang": "en",
+      "input": "Your condition is preeclampsia and you need immediate care.",
+      "expect": "block",
+      "block_reason_contains": "diagnosis_wording"
+    },
+    {
+      "id": "block_sw_diagnosis_wording",
+      "description": "Swahili diagnosis wording blocked",
+      "lang": "sw",
+      "input": "Umepata ugonjwa wa malaria na unahitaji matibabu ya haraka.",
+      "expect": "block",
+      "block_reason_contains": "diagnosis_wording"
+    },
+    {
+      "id": "block_en_never_say_diagnosis",
+      "description": "Never-say 'diagnosis' blocked",
+      "lang": "en",
+      "input": "The diagnosis is iron-deficiency anemia.",
+      "expect": "block",
+      "block_reason_contains": "never_say"
+    },
+    {
+      "id": "block_en_never_say_prescribe",
+      "description": "Never-say 'prescribe' blocked",
+      "lang": "en",
+      "input": "I prescribe iron supplements for your condition.",
+      "expect": "block",
+      "block_reason_contains": "never_say"
+    },
+    {
+      "id": "block_en_never_say_prescription",
+      "description": "Never-say 'prescription' blocked",
+      "lang": "en",
+      "input": "Here is a prescription for vitamins to take daily.",
+      "expect": "block",
+      "block_reason_contains": "never_say"
+    },
+    {
+      "id": "block_sw_never_say_utambuzi",
+      "description": "Swahili never-say 'utambuzi' blocked",
+      "lang": "sw",
+      "input": "Utambuzi wako ni ugonjwa wa damu unaoitwa anemia.",
+      "expect": "block",
+      "block_reason_contains": "never_say"
+    },
+    {
+      "id": "block_en_unverified_phone",
+      "description": "Unverified phone number blocked (allowlist is empty)",
+      "lang": "en",
+      "input": "If you need help, call 0712345678 to speak with a nurse.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_en_unverified_phone_intl",
+      "description": "Unverified international phone format blocked",
+      "lang": "en",
+      "input": "Contact us at +254 712 345 678 for more information.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_sw_unverified_phone",
+      "description": "Swahili text with unverified phone blocked",
+      "lang": "sw",
+      "input": "Piga simu 0722123456 kwa msaada wa haraka.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_en_unverified_url_https",
+      "description": "Unverified HTTPS URL blocked",
+      "lang": "en",
+      "input": "For more information visit https://example-health.com/antenatal.",
+      "expect": "block",
+      "block_reason_contains": "unverified_url"
+    },
+    {
+      "id": "block_en_unverified_url_www",
+      "description": "Unverified www URL blocked",
+      "lang": "en",
+      "input": "See www.pregnancy-advice.co.ke for detailed guidance.",
+      "expect": "block",
+      "block_reason_contains": "unverified_url"
+    },
+    {
+      "id": "block_sw_unverified_url",
+      "description": "Swahili text with unverified URL blocked",
+      "lang": "sw",
+      "input": "Tembelea https://health-info.example.org kwa maelezo zaidi.",
+      "expect": "block",
+      "block_reason_contains": "unverified_url"
+    },
+    {
+      "id": "block_en_too_long",
+      "description": "Response exceeding 120 words blocked",
+      "lang": "en",
+      "input": "Antenatal care is very important for a healthy pregnancy and helps monitor both mother and baby. During antenatal visits health workers check blood pressure weight and the baby's growth and position. They also provide advice on nutrition hydration rest and warning signs. It is recommended to attend all scheduled visits even if you feel well. Keeping records helps track progress and ensures continuity of care especially if you change facilities. You should discuss your birth plan including where you want to give birth who will support you and what to bring. Early registration at a facility means you get the full course of care. Ask your health worker about danger signs that need urgent attention at any time during pregnancy. The visits are free in most public health facilities in Kenya so there is no cost barrier.",
+      "expect": "block",
+      "block_reason_contains": "too_long"
+    },
+    {
+      "id": "block_en_referral_uses_en_lang",
+      "description": "Blocked response returns English referral when lang is en",
+      "lang": "en",
+      "input": "Take 500mg amoxicillin.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "block_sw_referral_uses_sw_lang",
+      "description": "Blocked response returns Swahili referral when lang is sw",
+      "lang": "sw",
+      "input": "Tumia 500mg amoxicillin.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name"
+    },
+    {
+      "id": "boundary_obfuscated_hxxps_not_caught",
+      "description": "hxxps:// obfuscated scheme blocked (acceptance defect corrected)",
+      "lang": "en",
+      "input": "See hxxps://example.com for more.",
+      "expect": "block",
+      "block_reason_contains": "suspicious_url"
+    },
+    {
+      "id": "boundary_phone_with_dashes",
+      "description": "Phone with dashes blocked",
+      "lang": "en",
+      "input": "Call 071-234-5678 for help.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "boundary_pregnancy_week_number_not_phone",
+      "description": "Positive control — pregnancy week number 32 does not false-trigger phone detection",
+      "lang": "en",
+      "input": "At 32 weeks you should discuss your birth plan with your health worker.",
+      "expect": "pass",
+      "note": "32 is only 2 digits; phone detection requires 9+ digit sequences"
+    },
+    {
+      "id": "block_empty_string",
+      "description": "Empty AI output blocked (repair-1 D2)",
+      "lang": "en",
+      "input": "",
+      "expect": "block",
+      "block_reason_contains": "empty_output"
+    },
+    {
+      "id": "block_whitespace_only",
+      "description": "Whitespace-only AI output blocked (repair-1 D3)",
+      "lang": "en",
+      "input": "   \n\t  ",
+      "expect": "block",
+      "block_reason_contains": "empty_output"
+    },
+    {
+      "id": "block_hxxps_url",
+      "description": "hxxps:// obfuscated scheme blocked (repair-1 D1)",
+      "lang": "en",
+      "input": "Visit hxxps://example.com for more information.",
+      "expect": "block",
+      "block_reason_contains": "suspicious_url"
+    },
+    {
+      "id": "block_ftp_scheme",
+      "description": "ftp:// suspicious scheme blocked (repair-1 D4)",
+      "lang": "en",
+      "input": "Download from ftp://example.com/guide.pdf",
+      "expect": "block",
+      "block_reason_contains": "suspicious_url"
+    },
+    {
+      "id": "block_bare_domain_com",
+      "description": "Bare .com domain reference blocked",
+      "lang": "en",
+      "input": "Visit example.com for more resources on antenatal care.",
+      "expect": "block",
+      "block_reason_contains": "suspicious_url"
+    },
+    {
+      "id": "block_url_shortener",
+      "description": "URL shortener bit.ly blocked",
+      "lang": "en",
+      "input": "See bit.ly/healthinfo for guidance.",
+      "expect": "block",
+      "block_reason_contains": "suspicious_url"
+    },
+    {
+      "id": "block_999_helpline",
+      "description": "Emergency number 999 in AI output blocked (repair-1 D8)",
+      "lang": "en",
+      "input": "If there is an emergency please call 999.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_112_helpline",
+      "description": "Emergency number 112 in AI output blocked (repair-1 D9)",
+      "lang": "en",
+      "input": "You can call 112 for emergency services.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_1199_helpline",
+      "description": "Helpline 1199 in AI output blocked (repair-1 D10)",
+      "lang": "en",
+      "input": "Contact Red Cross at 1199 for support.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "block_922_helpline",
+      "description": "National ambulance 922 in AI output blocked (repair-1 D11)",
+      "lang": "en",
+      "input": "Call the national ambulance on 922.",
+      "expect": "block",
+      "block_reason_contains": "unverified_phone"
+    },
+    {
+      "id": "pass_overlong_digit_run",
+      "description": "20-digit batch reference must NOT be partially matched as phone (repair-1 D12)",
+      "lang": "en",
+      "input": "The reference batch number is 12345678901234567890.",
+      "expect": "pass",
+      "note": "Partial phone match in overlong digit runs is a false positive; fixed by negative lookahead/lookbehind in phone regex."
+    },
+    {
+      "id": "block_zwsp_in_medicine",
+      "description": "Zero-width space inside 'amoxicillin' blocked after normalization (repair-1 D13)",
+      "lang": "en",
+      "input": "Take amox​icillin for the infection.",
+      "expect": "block",
+      "block_reason_contains": "medicine_name",
+      "note": "U+200B (ZERO WIDTH SPACE) inserted to try to split the medicine name; guard normalizes before checking."
+    },
+    {
+      "id": "block_subdomain_exact_match",
+      "description": "news.who.int must be blocked when only who.int is in allowlist (exact match only)",
+      "lang": "en",
+      "input": "Visit https://news.who.int/stories for more.",
+      "expect": "block",
+      "block_reason_contains": "unverified_url",
+      "note": "Allowlist semantics are exact hostname match only (after www. strip). No arbitrary subdomain approval."
+    },
+    {
+      "id": "pass_pregnancy_week_32_not_helpline",
+      "description": "Pregnancy week 32 must NOT trigger short helpline detection (positive control)",
+      "lang": "en",
+      "input": "At 32 weeks you should discuss your birth plan with your health worker.",
+      "expect": "pass"
+    }
+  ]
+}

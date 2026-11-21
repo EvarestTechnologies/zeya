@@ -152,3 +152,84 @@ def test_detects_llm_provider_model_id_missing_entirely():
     assert find_drift(live, llm_provider_id=7, llm_provider_model_id=31) == [
         "llm: 'llm_provider_model_id' is None, expected 31"
     ]
+
+
+# ---------------------------------------------------------------------------
+# Staging flag tests
+# ---------------------------------------------------------------------------
+
+
+def test_staging_build_has_same_graph_structure_as_default():
+    """Staging and production builds share the same graph; only node code may differ."""
+    default = build_pipeline(0, 0, include_pending=False)
+    staging = build_pipeline(0, 0, include_pending=True)
+
+    # Same edge set (same graph shape regardless of content)
+    default_edge_ids = {e["id"] for e in default["data"]["edges"]}
+    staging_edge_ids = {e["id"] for e in staging["data"]["edges"]}
+    assert default_edge_ids == staging_edge_ids, "Staging and production must share the same graph edges"
+
+    # Same node set by ID
+    default_node_ids = {n["id"] for n in default["data"]["nodes"]}
+    staging_node_ids = {n["id"] for n in staging["data"]["nodes"]}
+    assert default_node_ids == staging_node_ids
+
+
+def test_staging_build_has_non_empty_kb_and_card_sources():
+    """Staging build must have pending content included (KB and card sources differ from default).
+
+    With the current all-pending starter content:
+    - Default build: KB_JSON = '[]' (empty), answer cards baked empty.
+    - Staging build: KB_JSON has 5 pending entries; answer match has 5 pending cards.
+    """
+    default = build_pipeline(0, 0, include_pending=False)
+    staging = build_pipeline(0, 0, include_pending=True)
+
+    def _params(build, name):
+        return next(n["data"]["params"] for n in build["data"]["nodes"] if n["data"]["params"]["name"] == name)
+
+    default_kb_code = _params(default, "kb_context")["code"]
+    staging_kb_code = _params(staging, "kb_context")["code"]
+    assert default_kb_code != staging_kb_code, "KB node source must differ between staging and production builds"
+
+    default_am_code = _params(default, "answer_match")["code"]
+    staging_am_code = _params(staging, "answer_match")["code"]
+    assert default_am_code != staging_am_code, "Answer match source must differ between staging and production builds"
+
+
+def test_staging_drift_check_accepts_staging_build():
+    """find_drift(include_pending=True) finds no drift against a staging deployment."""
+    staging_pipeline = build_pipeline(7, 31, include_pending=True)
+    staging_live = {
+        "pipeline": {"id": 12, "name": staging_pipeline["name"], "data": staging_pipeline["data"], "errors": {}}
+    }
+    assert find_drift(staging_live, llm_provider_id=7, llm_provider_model_id=31, include_pending=True) == []
+
+
+def test_staging_pipeline_drifts_from_default_check():
+    """find_drift(include_pending=False) reports drift against a staging deployment.
+
+    A staging pipeline has different node sources (pending content included).
+    The default approved-only drift check correctly detects this as drift,
+    preventing a staging pipeline from being accepted as a production deployment.
+    """
+    staging_pipeline = build_pipeline(7, 31, include_pending=True)
+    staging_live = {
+        "pipeline": {"id": 12, "name": staging_pipeline["name"], "data": staging_pipeline["data"], "errors": {}}
+    }
+    drift = find_drift(staging_live, llm_provider_id=7, llm_provider_model_id=31, include_pending=False)
+    assert len(drift) > 0, (
+        "Staging pipeline must differ from production build; default drift check must detect the difference"
+    )
+
+
+def test_staging_flag_cli(tmp_path):
+    """check_drift CLI --include-pending flag works and matches staging build."""
+    staging_pipeline = build_pipeline(7, 31, include_pending=True)
+    staged_live = {
+        "pipeline": {"id": 12, "name": staging_pipeline["name"], "data": staging_pipeline["data"], "errors": {}}
+    }
+    path = tmp_path / "staging_live.json"
+    path.write_text(json.dumps(staged_live))
+    # Staging check: no drift expected
+    assert main([str(path), "--llm-provider-id", "7", "--llm-provider-model-id", "31", "--include-pending"]) == 0
