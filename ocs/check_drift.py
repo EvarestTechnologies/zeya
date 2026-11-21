@@ -49,11 +49,31 @@ def _describe(flow: dict) -> tuple[dict, set]:
     return nodes, edges
 
 
+def _instance_param_requirements(flow: dict) -> dict[str, set]:
+    """Map node name -> the instance params its repository definition actually sets.
+
+    Hosted OCS enriches every node's exported params with the generic
+    llm_provider_id / llm_provider_model_id keys (usually null), even on node types
+    that have no such param (Start/End/Code/Router). Only nodes whose own repository
+    definition sets one of these keys (currently just the LLM node) should be held to
+    the instance-id check; otherwise unrelated nodes false-positive on hosted exports.
+    """
+    names = {node["id"]: node["data"]["params"].get("name", node["id"]) for node in flow["nodes"]}
+    requirements: dict[str, set] = {}
+    for node in flow["nodes"]:
+        required = {key for key in INSTANCE_PARAMS if key in node["data"]["params"]}
+        if required:
+            requirements[names[node["id"]]] = required
+    return requirements
+
+
 def find_drift(
     live_document: dict, llm_provider_id: int | None = None, llm_provider_model_id: int | None = None
 ) -> list[str]:
     """Return human-readable differences between the live pipeline and the repository."""
-    expected_nodes, expected_edges = _describe(build_pipeline(0, 0)["data"])
+    expected_flow = build_pipeline(0, 0)["data"]
+    expected_nodes, expected_edges = _describe(expected_flow)
+    required_instance_params = _instance_param_requirements(expected_flow)
     live_nodes, live_edges = _describe(_flow(live_document))
     problems = []
 
@@ -78,11 +98,11 @@ def find_drift(
     expected_ids = {"llm_provider_id": llm_provider_id, "llm_provider_model_id": llm_provider_model_id}
     for node in _flow(live_document)["nodes"]:
         params = node["data"]["params"]
-        for key in INSTANCE_PARAMS:
-            if key in params and expected_ids[key] is not None and params[key] != expected_ids[key]:
-                problems.append(
-                    f"{params.get('name', node['id'])}: '{key}' is {params[key]}, expected {expected_ids[key]}"
-                )
+        name = params.get("name", node["id"])
+        for key in required_instance_params.get(name, ()):
+            value = params.get(key)
+            if expected_ids[key] is not None and value != expected_ids[key]:
+                problems.append(f"{name}: '{key}' is {value}, expected {expected_ids[key]}")
 
     return problems
 
