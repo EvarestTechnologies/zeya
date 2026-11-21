@@ -7,6 +7,7 @@ planned analysis can read Zeya-era and OCS-era data the same way.
 
     python -m ocs.export_adapter \\
         --ocs-export ocs_sessions.csv \\
+        --study-id-registry /secure/path/study_ids.json \\
         --zeya-users zeya_users.csv \\
         --out conversations_export_ocs.csv
 
@@ -38,11 +39,15 @@ Rules, matching what Zeya logged:
 
 import argparse
 import csv
+import io
 import json
+import os
 import re
 import sys
+import tempfile
 from collections.abc import Iterable
 from datetime import datetime
+from pathlib import Path
 
 ZEYA_COLUMNS = [
     "study_id",
@@ -207,22 +212,95 @@ def convert_ocs_export(rows: Iterable[dict], wa_id_to_user_id: dict[str, str]) -
 
 
 def assign_study_ids(rows: list[dict], zeya_user_ids: Iterable[str]) -> list[dict]:
-    """Replace ``user_key`` with Zeya's STUDY_#### ids over Zeya users plus OCS rows.
+    """Removed: assign_study_ids re-sorted all keys on every call, making IDs unstable.
 
-    Zeya numbers users by sorted user id. OCS-only keys start with "ocs:", which sorts
-    after every UUID, so ids already used in Zeya exports stay the same.
+    Calling this function now raises ``TypeError`` with migration guidance.  Use
+    ``ocs.study_ids.locked_registry`` with ``--study-id-registry`` on the CLI.
+    See docs/study-export-operations.md for the migration guide.
     """
-    keys = sorted(set(zeya_user_ids) | {r["user_key"] for r in rows})
-    id_map = {key: f"STUDY_{i + 1:04d}" for i, key in enumerate(keys)}
-    return [{"study_id": id_map[r["user_key"]], **{k: v for k, v in r.items() if k != "user_key"}} for r in rows]
+    raise TypeError(
+        "assign_study_ids is no longer supported: it re-sorts all keys on every call "
+        "and produces unstable IDs when new earlier-sorting participants are added.  "
+        "Use --study-id-registry (python -m ocs.study_ids create ...) for stable IDs.  "
+        "See docs/study-export-operations.md."
+    )
+
+
+def _resolve_no_follow(p: str) -> int:
+    """Return inode number of *p* without following a final symlink."""
+    return os.lstat(p).st_ino
+
+
+def _same_inode(a: str, b: str) -> bool:
+    """True when *a* and *b* resolve to the same underlying file (both follow symlinks).
+
+    Uses ``os.stat`` for both sides so that symlinks pointing to the same real file
+    are detected regardless of which name is used.  When either path does not exist
+    (e.g. a lock file not yet created), falls back to lexical path comparison so
+    deterministic paths like the registry ``.lock`` sibling are still protected.
+    """
+    try:
+        sa = os.stat(a)
+        sb = os.stat(b)
+        return sa.st_ino == sb.st_ino and sa.st_dev == sb.st_dev
+    except OSError:
+        # At least one path does not exist; compare canonical lexical paths.
+        try:
+            return Path(a).resolve() == Path(b).resolve()
+        except OSError:
+            return False
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--ocs-export", required=True, help="CSV exported from the OCS chatbot sessions page")
     parser.add_argument("--zeya-users", help="CSV with user_id,whatsapp_id from the Zeya database")
+    parser.add_argument(
+        "--study-id-registry",
+        required=False,
+        help=(
+            "Path to the persistent study-ID registry JSON (ocs.study_ids). "
+            "REQUIRED for stable IDs across multiple exports. "
+            "Create with: python -m ocs.study_ids create --registry R.json [--seed zeya_users.csv]. "
+            "Omitting this flag is an error; the deprecated assign_study_ids fallback is not invoked."
+        ),
+    )
     parser.add_argument("--out", help="output path (default: stdout)")
     args = parser.parse_args(argv)
+
+    # S06: require --study-id-registry; refuse silent fallback.
+    if not args.study_id_registry:
+        print(
+            "error: --study-id-registry is required for stable IDs across multiple exports.\n"
+            "Create a registry first: python -m ocs.study_ids create --registry R.json\n"
+            "See docs/study-export-operations.md for the full migration guide.",
+            file=sys.stderr,
+        )
+        return 1
+
+    # S09: reject --out that aliases any input or the registry lock file.
+    # F5: always protect the lock path even when it does not yet exist —
+    # the path is deterministic and must not be overwritten before locking.
+    if args.out:
+        reg_path_tentative = Path(args.study_id_registry)
+        protected = [
+            p
+            for p in [
+                args.ocs_export,
+                args.study_id_registry,
+                args.zeya_users,
+                str(reg_path_tentative.with_suffix(".lock")),  # always, no exists() check
+            ]
+            if p is not None
+        ]
+        for input_path in protected:
+            if _same_inode(args.out, input_path):
+                print(
+                    f"error: --out {args.out!r} resolves to the same file as an input "
+                    f"({input_path!r}); refusing to overwrite.",
+                    file=sys.stderr,
+                )
+                return 1
 
     with open(args.ocs_export, newline="", encoding="utf-8") as f:
         ocs_rows = list(csv.DictReader(f))
@@ -232,17 +310,73 @@ def main(argv: list[str] | None = None) -> int:
         with open(args.zeya_users, newline="", encoding="utf-8") as f:
             wa_id_to_user_id = {_digits(r["whatsapp_id"]): r["user_id"] for r in csv.DictReader(f)}
 
-    rows = assign_study_ids(convert_ocs_export(ocs_rows, wa_id_to_user_id), wa_id_to_user_id.values())
+    converted = convert_ocs_export(ocs_rows, wa_id_to_user_id)
 
-    out = open(args.out, "w", newline="", encoding="utf-8") if args.out else sys.stdout
+    from ocs.study_ids import RegistryError, locked_registry
+
+    reg_path = Path(args.study_id_registry)
+    csv_text: str | None = None
     try:
-        writer = csv.writer(out)
-        writer.writerow(ZEYA_COLUMNS)
-        for row in rows:
-            writer.writerow([row[column] for column in ZEYA_COLUMNS])
-    finally:
-        if out is not sys.stdout:
-            out.close()
+        with locked_registry(reg_path) as reg:
+            # Build the ID map and rows entirely in memory.
+            id_map = {r["user_key"]: reg.allocate(r["user_key"]) for r in converted}
+            rows_out = [
+                {"study_id": id_map[r["user_key"]], **{k: v for k, v in r.items() if k != "user_key"}}
+                for r in converted
+            ]
+
+            # Render CSV to an in-memory spool BEFORE committing the registry.
+            # If the render raises, reg.save() is never called; no registry change persists.
+            spool = io.StringIO()
+            writer = csv.writer(spool)
+            writer.writerow(ZEYA_COLUMNS)
+            for row in rows_out:
+                writer.writerow([row[column] for column in ZEYA_COLUMNS])
+            csv_text = spool.getvalue()
+
+            # Commit registry to disk FIRST (while still under lock).
+            # Only after this succeeds will we publish any output.
+            # If reg.save() raises: locked_registry does NOT auto-save; csv_text discarded.
+            reg.save()
+            # locked_registry.__exit__ skips auto-save because reg._committed is True.
+
+    except (RegistryError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+
+    # Registry committed; now publish output.
+    # If this step fails: retained allocation is OK (IDs never recycled).
+    if csv_text is None:
+        return 1  # defensive guard; should not occur after successful context exit
+
+    if args.out:
+        out_path = Path(args.out)
+        fd, tmp_str = tempfile.mkstemp(prefix=".export-tmp-", suffix=".csv", dir=out_path.parent)
+        try:
+            with os.fdopen(fd, "w", newline="", encoding="utf-8") as fh:
+                fd = -1
+                fh.write(csv_text)
+        except BaseException:
+            if fd >= 0:
+                os.close(fd)
+            try:
+                os.unlink(tmp_str)
+            except OSError:
+                pass
+            raise
+        try:
+            os.replace(tmp_str, args.out)
+        except OSError as exc:
+            try:
+                os.unlink(tmp_str)
+            except OSError:
+                pass
+            print(f"error: writing output failed: {exc}", file=sys.stderr)
+            return 1
+    else:
+        # Stdout: write after registry commit.
+        sys.stdout.write(csv_text)
+
     return 0
 
 
