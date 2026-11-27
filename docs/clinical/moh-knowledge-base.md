@@ -1,4 +1,4 @@
-# Zeya Knowledge Base, version 1.0
+# Zeya Knowledge Base, version 1.1
 
 Merged 12 November 2026. This is the single source of truth for what Zeya may say. Every fact carries a source code and a printed page number. Nothing here comes from general knowledge.
 
@@ -9,7 +9,7 @@ Merged 12 November 2026. This is the single source of truth for what Zeya may sa
 | NG24 | National Guidelines on Quality Obstetrics and Perinatal Care, August 2024, 836 pages | Primary |
 | BOP | Basic Obstetric Protocols, 1st Edition, January 2026, 64 pages | Primary, clinician facing |
 | HB | Mother and Child Health Handbook, MOH 216, Revised June 2020. The PDF is a draft layout, to be checked against the printed booklet | Primary, mother facing |
-| NG12 | National Guidelines for Quality Obstetrics and Perinatal Care, 2012 edition | Superseded. Used only where the others are silent. Marked "pending" until Achar signs off |
+| NG12 | National Guidelines for Quality Obstetrics and Perinatal Care, 2012 edition (PDF created 28 February 2012; file previously named 2010) | Superseded. Used only where the others are silent. Marked "pending" until Achar signs off |
 
 **Three rules for Zeya**
 1. HB wording can be said to a mother directly.
@@ -22,7 +22,7 @@ Merged 12 November 2026. This is the single source of truth for what Zeya may sa
 
 | Contact | Weeks | What happens (NG24 p104, p105) | Iron and folic acid tablets (HB p10) | Malaria dose (HB p10) | What to teach (NG24 p107) |
 |---|---|---|---|---|---|
-| 1 | Up to 12 | History, examination, full ANC profile, early ultrasound, supplements start | 60 | None | Welcome, what ANC is |
+| 1 | Up to 12 | History, examination, full ANC profile, early ultrasound, supplements start | 60 | None | Physical exam and full history, ANC profile, recruitment into the group |
 | 1a | 13 to 16 | | | 1 | |
 | 2 | 20 | Ultrasound at 18 to 20 weeks, deworming | 45 | 2 | Why ANC matters, iron tablets, self care |
 | 3 | 26 | Rhesus negative mothers tested, anti-D at 28 weeks | 30 | 3 | Danger signs, why deliver in a facility |
@@ -32,13 +32,14 @@ Merged 12 November 2026. This is the single source of truth for what Zeya may sa
 | 7 | 38 | Same | 15 | 6 if due | Signs of labour, newborn care recap |
 | 8 | 40 | Same | 60 | None | Signs of labour, labour exercise, family planning |
 
+- The "What to teach" column follows NG24 p107, which is the group ANC rollout table.
 - Return at 41 weeks if labour has not started (NG24 p105).
 - Blood pressure and weight at every contact. Haemoglobin once in each trimester (NG24 p104, BOP p39).
 - Total tablets are 270. One a day, continued after birth until finished (HB p10).
 
 ## 2. What is checked at clinic
 
-**ANC profile (NG24 p112, HB p7).** TB screen, HIV, syphilis, hepatitis B, blood sugar, full haemogram or haemoglobin, malaria slide, blood group and rhesus, urinalysis. Couple HIV testing is offered.
+**ANC profile (NG24 p112, HB p7).** TB screen, HIV, syphilis, hepatitis B (HB p7 only; NG24 p112 does not list it), blood sugar, full haemogram or haemoglobin, malaria slide, blood group and rhesus, urinalysis. Couple HIV testing is offered.
 
 **First visit (HB p5 to p7).** Age, number of pregnancies, height, weight, last period, expected delivery date, past surgery, diabetes, hypertension, transfusion, TB, allergies, twins in the family, previous pregnancies. Blood pressure, pulse, heart, chest, breasts and abdomen are examined.
 
@@ -71,9 +72,9 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 - **Malaria prevention.** SP from 13 weeks, every 4 weeks until delivery in endemic areas (NG24 p110, HB p10).
 - **Safety rule.** Mothers who are HIV positive and on cotrimoxazole do not take SP (NG24 p110). Zeya never tells every mother to expect SP. It says "ask about your malaria prevention tablets".
 - **Treated bed net** every night (HB p10, p13).
-- **Deworming** once from the second trimester (HB p10, NG24 p110).
+- **Deworming** once from the second trimester, for pregnant women living in hookworm-infested areas (HB p10, NG24 p110). Participant wording: "Ask your health worker about deworming."
 - **Tetanus diphtheria vaccine.** Dose 1 at first visit. Dose 2 four weeks later and at least two weeks before birth. Dose 3 six months after dose 2. Doses 4 and 5 a year apart or in later pregnancies. Five doses protect through the childbearing years (HB p10, NG24 p110).
-- **Vitamin A** is not given in pregnancy. High doses can harm the baby (NG24 p42, p109).
+- **Vitamin A** is not routinely given in pregnancy. High doses can harm the baby (NG24 p42, p109).
 - **Rhesus negative mothers** receive anti-D at 28 weeks (NG24 p104).
 
 ## 5. Daily care and food
@@ -93,7 +94,6 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 - Eat oranges, guavas, lemons or pineapple with meals to help the body take up iron.
 - No tea or coffee with meals or straight after.
 - Snack ideas are chapati, mandazi, sweet potato, porridge, arrowroot, groundnuts, simsim, and fresh or fermented milk.
-- Calcium from milk, yoghurt and omena.
 - Use iodised salt.
 
 ## 6. Common discomforts
@@ -103,7 +103,7 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 - Starts around 4 to 6 weeks, peaks at 9 weeks, settles by 20 weeks for 90 percent.
 - Small, frequent dry meals. Small sips of fluid often. Eat something before getting out of bed.
 - Ginger, lemon or peppermint tea can help.
-- Go to the clinic if she cannot keep fluids down, is losing weight, or nausea first starts late in pregnancy.
+- Go to the clinic if she cannot keep fluids down or is losing weight.
 
 **Heartburn, pending (NG12 p50).** Small meals eaten slowly. Drink between meals. Avoid spicy food. Stay upright for one to two hours after eating. Raise the head of the bed. No antacids without asking a health worker.
 
@@ -115,7 +115,7 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 
 ## 7. Danger signs in pregnancy
 
-**The nine handbook signs (HB p14).** Any one means go to a health facility now.
+**The nine handbook signs (HB p14).** Any one means go to a health facility now. HB p14 itself says "Be prepared always to seek skilled care at the health facility in case of any of the above signs". "Go now" is the clinical reviewer's choice (sign-off A9, 27 November 2026).
 1. Severe headache
 2. Looking pale
 3. Vaginal bleeding
@@ -133,11 +133,11 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 - Extreme tiredness, shortness of breath, dizziness, racing heartbeat (BOP p39)
 - Chills, foul smelling discharge, constant pelvic pain (BOP p46)
 - Any bleeding after 24 weeks, painful or painless (BOP p26)
-- Fewer than 10 baby movements in a day, pending (NG12 p173)
+- Fewer than 10 baby movements in a day: clinician-only, not for participant-facing text (NG12 p173, a question at labour admission)
 
 ## 8. Higher risk mothers (BOP p12, NG24 p112 to p116)
 
-These mothers should attend and deliver at a level 4 hospital or above.
+A health worker may refer these mothers to a level 4 or higher facility for further assessment (BOP p12).
 - Age under 20 or over 35
 - Twins or more
 - High blood pressure, diabetes, heart, kidney or thyroid disease, sickle cell disease, epilepsy, severe anaemia, HIV, TB on treatment, obesity
@@ -168,7 +168,7 @@ Zeya can ask about these at registration and encourage hospital based care.
 - Pain relief options include breathing and relaxation, massage and warm packs, and medicines (p302).
 - A cut is not done routinely (p304).
 - The cord is clamped after at least one minute (p305).
-- The baby is placed skin to skin straight away (p305).
+- The baby is placed skin to skin straight away (p306).
 - She stays at least 24 hours after a normal birth (p307).
 - She is entitled to privacy, dignity and clear explanations (p121).
 
@@ -182,12 +182,14 @@ Zeya can ask about these at registration and encourage hospital based care.
 
 **Food while breastfeeding (HB p18, NG24 p51).** Two extra small meals a day. Three extra servings of calcium rich food such as milk or omena. Plenty of fluids. Rest, and family support.
 
+**Calcium foods while breastfeeding, pending (NG12 p48, NG24 p51).** Calcium from milk, yoghurt and omena.
+
 **Family planning (HB p4).** Space pregnancies by at least two years. A method can start straight after birth.
 
 **Mood (NG24 p286 to p291)**
 - Baby blues affect 50 to 80 percent of new mothers. They start after day three, peak at day five and clear by day ten. Support from family and other mothers helps.
 - Depression affects up to 11 percent of women in pregnancy and 13 percent in the three months after birth.
-- Low mood that lasts beyond two weeks or gets worse needs a clinic visit.
+- Worsening or prolonged low mood needs a clinic visit (NG24 p291).
 - Zeya gives information and encourages a visit. It does not run a screening score until a referral path in Migori is agreed.
 
 ## 12. The newborn
@@ -227,7 +229,8 @@ Every mother is tested. A positive mother starts treatment for life. A negative 
 - A single weight gain target.
 - That every mother will receive SP.
 - Vitamin A advice in pregnancy.
-- Salt restriction, vitamin A after birth, or stopping breastfeeding an older child. These appear only in NG12 and not in current guidance.
+- Salt restriction. It is condition-specific advice the health worker gives (NG24 p58, pre-eclampsia).
+- Vitamin A after birth, or stopping breastfeeding an older child. These appear only in NG12 and not in current guidance.
 
 ## Decisions needed from Achar
 
@@ -246,4 +249,18 @@ Every mother is tested. A positive mother starts treatment for life. A negative 
 ## Change log
 
 - v0.1 handbook and protocols.
+- v1.1, 27 November 2026. Corrections from the page check, approved by Stella Oiro in `docs/review/clinical-signoff.md` B3:
+  - Row 1, section 8: higher-risk mothers may be referred to a level 4 or higher facility for further assessment (BOP p12), replacing "attend and deliver at level 4".
+  - Row 2, section 4: deworming limited to hookworm-infested areas (NG24 p110); participant wording "Ask your health worker about deworming".
+  - Row 3, section 2: hepatitis B cited to HB p7 only.
+  - Row 4, section 1: contact 1 teaching corrected; table noted as group ANC (NG24 p107).
+  - Row 5, section 5 to 11: calcium from milk, yoghurt and omena moved to breastfeeding (NG12 p48, NG24 p51).
+  - Row 6, section 10: skin to skin cited to NG24 p306.
+  - Row 7, never say: salt restriction reason changed to condition-specific advice (NG24 p58).
+  - Row 8, section 7: "go now" kept, per sign-off A9.
+  - Row 9, section 7: fewer than 10 movements marked clinician-only (NG12 p173).
+  - Row 10, section 6: "nausea first starts late in pregnancy" removed.
+  - Row 11, section 11: two-week mood rule replaced with worsening or prolonged low mood (NG24 p291).
+  - Extra, section 4: vitamin A "not routinely given in pregnancy" (NG24 p42, p109).
+  - Source table: NG12 identified as the 2012 edition.
 - v1.0 adds NG24 antenatal, labour, mental health, nutrition and newborn chapters, folds in NG12 items as pending, and settles the visit count, malaria timing, tetanus misprint and vitamin A questions.
