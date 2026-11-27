@@ -65,6 +65,7 @@ def test_original_has_expected_shape():
     assert list(DANGER_SIGN_PATTERNS) == [
         "bleeding",
         "headache_vision",
+        "pallor_anaemia",
         "fever",
         "fetal_movement",
         "abdominal_pain",
@@ -72,7 +73,7 @@ def test_original_has_expected_shape():
         "convulsions",
         "swelling",
     ]
-    assert sum(len(p) for p in DANGER_SIGN_PATTERNS.values()) == 39
+    assert sum(len(p) for p in DANGER_SIGN_PATTERNS.values()) == 132
 
 
 def test_every_pattern_has_an_example():

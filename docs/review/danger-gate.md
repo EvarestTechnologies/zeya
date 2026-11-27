@@ -9,6 +9,60 @@ When you approve or change an item, write your decision next to it: **Approve**,
 
 ---
 
+## 0. Results after sign-off (27 November 2026)
+
+Your decisions A1 to A12 are applied. The approved draft is now the live gate in both `ocs/nodes/danger_gate.py` and `backend/app/services/danger_signs.py`. The two files are identical, and the parity tests enforce it.
+
+**Held-out sets first.** No pattern was tuned on these.
+- **Set B:** 50 messages, written 12 November.
+- **Set C:** 63 messages, written 27 November, after the decisions and before any pattern change. Set C includes the 14 set B misses.
+
+| Set | Gate | Emergencies caught | Routine false alarms | Question false alarms |
+|---|---|---|---|---|
+| B | Before (on `main`) | 0/30 (0%) | 0/20 (0%) | n/a |
+| B | After | **15/30 (50%)** | 1/20 (5%) | n/a |
+| C | Before (on `main`) | 4/39 (10%) | 0/15 (0%) | 1/9 (11%) |
+| C | After | **14/39 (36%)** | 1/15 (7%) | 1/9 (11%) |
+
+**Corpus.** 310 messages. Batch v1 was looked at while the patterns were written, so it is not a fair test.
+
+| Measure | Before | After |
+|---|---|---|
+| Emergencies caught, all (132) | 14 (11%) | 108 (82%) |
+| Emergencies caught, v2 only (40) | 2 (5%) | 16 (40%) |
+| Routine false alarms (140) | 5 (4%) | 0 (0%) |
+| Questions about danger signs sent to emergency (22) | 4 (18%) | 0 (0%) |
+| Same-day messages sent to emergency (28) | 0 | 0 |
+| The walkthrough phrase "nina homa na kichwa kinauma sana" | missed | caught |
+
+**The target is not met.** The work order asks for at least 95% of emergencies caught, with under 10% false alarms. On unseen wording the gate catches 36 to 50%.
+
+What it still misses, from set C:
+- **Spelling mistakes:** "im bleading", "my waters brok", "my hed is paining".
+- **New wording:** "worst headache of my life", "I am burning up", "soaked with water", "foaming at the mouth".
+- **Sheng:** "Bebi hachezi siku nzima", "Maji imevunja", "Ako na fits".
+
+No pattern was added for these, because only the approved S1 to S29 patterns and the A8 fixes were applied. Each new pattern needs your sign-off first. The second safety net in the AI prompt (A10) covers the normal answer path.
+
+**Remaining false alarms:**
+- **"I want to donate blood after delivery"** (set B) and **"the clinic took my blood for tests"** (set C) still trigger "blood". The live gate always flagged these and still does.
+- **"is fever dangerous in pregnancy?"** (set C) is sent to emergency, because the question check does not cover "is … dangerous". The gate on `main` did the same.
+
+**What changed while applying the decisions:**
+1. **A8 fixes.** S4 and S23 need a pain word nearby, before or after the body word. S19 needs uchafu or a discharge word. S20 drops "ameacha" unless "kucheza" follows. All 12 reported false alarms are now safe.
+2. **Context rules.** A question about what the clinic checks, a past pregnancy, or blood from the gums, nose or food is treated as a question or history, not happening now. These messages take the normal route, and task 6 adds the fixed line.
+3. **Bug fixed in S28.** "anguka … tetemeka" had a word boundary before "anguka", so it missed prefixed verbs such as "Alianguka". The boundary is removed, as your S28 row intends.
+4. **Pain word placement.** The S4 fix at first required the pain word after "kichwa", which lost "Naumwa na kichwa sana" (E015). The pain word may now come before or after.
+
+Reproduce:
+
+```
+python -m ocs.eval.score_heldout --details
+python -m ocs.eval.score_gate
+```
+
+---
+
 ## 1. Summary
 
 When a mother's message matches a danger sign pattern, Zeya sends the emergency reply and the emergency numbers right away, with no AI step. Today the live gate has 39 patterns in 8 categories. It sends the walkthrough's emergency message, "nina homa na kichwa kinauma sana", down the safe route.
