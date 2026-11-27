@@ -1,11 +1,16 @@
 [
   {
     "id": "anc_purpose_en",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "en",
     "kb_ref": "anc_purpose",
-    "topic_anchors": ["anc", "antenatal", "clinic", "prenatal"],
-    "source_note": "Drafted from WHO starter KB v0.1 entry anc_purpose. Pending clinical and language review. Not approved for public use.",
+    "topic_anchors": [
+      "anc",
+      "antenatal",
+      "clinic",
+      "prenatal"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry anc_purpose.",
     "triggers": [
       "Why should I go to ANC?",
       "What are pregnancy clinic visits for?",
@@ -19,11 +24,14 @@
   },
   {
     "id": "pregnancy_records_en",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "en",
     "kb_ref": "pregnancy_records",
-    "topic_anchors": ["record", "documentation"],
-    "source_note": "Drafted from WHO starter KB v0.1 entry pregnancy_records. Pending clinical and language review. Not approved for public use.",
+    "topic_anchors": [
+      "record",
+      "documentation"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry pregnancy_records.",
     "triggers": [
       "Should I keep my pregnancy health records?",
       "Why keep a record of pregnancy care?",
@@ -36,11 +44,18 @@
   },
   {
     "id": "food_variety_en",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "en",
     "kb_ref": "food_variety",
-    "topic_anchors": ["food", "eat", "diet", "vegetable", "fruit", "nutrition"],
-    "source_note": "Drafted from WHO starter KB v0.1 entry food_variety. Pending clinical and language review. Not approved for public use.",
+    "topic_anchors": [
+      "food",
+      "eat",
+      "diet",
+      "vegetable",
+      "fruit",
+      "nutrition"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry food_variety.",
     "triggers": [
       "What kinds of food should I eat?",
       "What does a varied pregnancy diet include?",
@@ -53,11 +68,15 @@
   },
   {
     "id": "food_safety_en",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "en",
     "kb_ref": "food_safety",
-    "topic_anchors": ["food", "eat", "diet"],
-    "source_note": "Drafted from WHO starter KB v0.1 entry food_safety. Pending clinical and language review. Not approved for public use.",
+    "topic_anchors": [
+      "food",
+      "eat",
+      "diet"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry food_safety.",
     "triggers": [
       "Does food cleanliness matter in pregnancy?",
       "Should I make sure food is safe and clean during pregnancy?",
@@ -70,11 +89,16 @@
   },
   {
     "id": "birth_preparation_en",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "en",
     "kb_ref": "birth_preparation",
-    "topic_anchors": ["birth", "delivery", "deliver", "childbirth"],
-    "source_note": "Drafted from WHO starter KB v0.1 entry birth_preparation. Pending clinical and language review. Not approved for public use.",
+    "topic_anchors": [
+      "birth",
+      "delivery",
+      "deliver",
+      "childbirth"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry birth_preparation.",
     "triggers": [
       "What should I discuss when planning for birth?",
       "Should I plan where I will give birth?",
@@ -87,11 +111,16 @@
   },
   {
     "id": "anc_purpose_sw",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "sw",
     "kb_ref": "anc_purpose",
-    "topic_anchors": ["anc", "ujauzito", "kliniki", "ziara"],
-    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (anc_purpose). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "topic_anchors": [
+      "anc",
+      "ujauzito",
+      "kliniki",
+      "ziara"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (anc_purpose).",
     "triggers": [
       "Niende kliniki ya ujauzito kwa nini?",
       "Ziara za ujauzito ni kwa nini?",
@@ -104,11 +133,15 @@
   },
   {
     "id": "pregnancy_records_sw",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "sw",
     "kb_ref": "pregnancy_records",
-    "topic_anchors": ["rekodi", "kumbukumbu", "hifadhi"],
-    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (pregnancy_records). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "topic_anchors": [
+      "rekodi",
+      "kumbukumbu",
+      "hifadhi"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (pregnancy_records).",
     "triggers": [
       "Je, nihifadhi rekodi zangu za ujauzito?",
       "Kwa nini nishike kumbukumbu za huduma ya ujauzito?",
@@ -121,11 +154,17 @@
   },
   {
     "id": "food_variety_sw",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "sw",
     "kb_ref": "food_variety",
-    "topic_anchors": ["chakula", "kula", "lishe", "mboga", "matunda"],
-    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (food_variety). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "topic_anchors": [
+      "chakula",
+      "kula",
+      "lishe",
+      "mboga",
+      "matunda"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_variety).",
     "triggers": [
       "Ninapaswa kula chakula gani wakati wa ujauzito?",
       "Nini lishe nzuri kwa mjamzito?",
@@ -138,11 +177,15 @@
   },
   {
     "id": "food_safety_sw",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "sw",
     "kb_ref": "food_safety",
-    "topic_anchors": ["chakula", "kula", "lishe"],
-    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (food_safety). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "topic_anchors": [
+      "chakula",
+      "kula",
+      "lishe"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_safety).",
     "triggers": [
       "Je, usafi wa chakula ni muhimu wakati wa ujauzito?",
       "Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?",
@@ -155,11 +198,16 @@
   },
   {
     "id": "birth_preparation_sw",
-    "review_status": "pending",
+    "review_status": "approved",
     "language": "sw",
     "kb_ref": "birth_preparation",
-    "topic_anchors": ["kujifungua", "mpango", "maandalizi", "uzazi"],
-    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (birth_preparation). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "topic_anchors": [
+      "kujifungua",
+      "mpango",
+      "maandalizi",
+      "uzazi"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (birth_preparation).",
     "triggers": [
       "Ninapaswa kujadili nini kuhusu mipango ya kujifungua?",
       "Je, nipange mahali pa kujifungua?",

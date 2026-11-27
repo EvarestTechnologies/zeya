@@ -175,12 +175,14 @@ def test_staging_build_has_same_graph_structure_as_default():
     assert default_node_ids == staging_node_ids
 
 
-def test_staging_build_has_non_empty_kb_and_card_sources():
-    """Staging build must have pending content included (KB and card sources differ from default).
+def test_staging_build_has_same_non_empty_kb_and_distinct_card_sources():
+    """With all-approved starter content, staging and production KB nodes are identical.
 
-    With the current all-pending starter content:
-    - Default build: KB_JSON = '[]' (empty), answer cards baked empty.
-    - Staging build: KB_JSON has 5 pending entries; answer match has 5 pending cards.
+    With all 10 KB entries and cards approved:
+    - Default build: KB_JSON has 10 approved entries; answer_match bakes allow_pending=False.
+    - Staging build: KB_JSON has 10 approved entries (same); answer_match bakes allow_pending=True.
+    The KB node code is identical (no pending entries to additionally surface).
+    The answer_match node still differs via the allow_pending flag.
     """
     default = build_pipeline(0, 0, include_pending=False)
     staging = build_pipeline(0, 0, include_pending=True)
@@ -190,11 +192,20 @@ def test_staging_build_has_non_empty_kb_and_card_sources():
 
     default_kb_code = _params(default, "kb_context")["code"]
     staging_kb_code = _params(staging, "kb_context")["code"]
-    assert default_kb_code != staging_kb_code, "KB node source must differ between staging and production builds"
+    # KB nodes are identical: all entries approved, no pending to additionally surface.
+    assert default_kb_code == staging_kb_code, (
+        "KB node code must be identical between staging and production when all entries are approved"
+    )
+    # KB must be non-empty in both builds (10 approved entries).
+    assert "KB_JSON" in default_kb_code, "Production KB node must contain injected KB_JSON"
+    assert "anc_purpose" in default_kb_code, "Production KB node must contain at least one approved entry"
 
     default_am_code = _params(default, "answer_match")["code"]
     staging_am_code = _params(staging, "answer_match")["code"]
-    assert default_am_code != staging_am_code, "Answer match source must differ between staging and production builds"
+    # answer_match differs: allow_pending flag distinguishes staging from production.
+    assert default_am_code != staging_am_code, (
+        "Answer match source must still differ (allow_pending flag) between staging and production builds"
+    )
 
 
 def test_staging_drift_check_accepts_staging_build():

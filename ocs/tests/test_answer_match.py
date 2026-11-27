@@ -102,11 +102,12 @@ class TestNoKBRouting:
         result = h.run("some question text")
         assert result == "some question text"
 
-    def test_no_approved_cards_routes_ask_ai(self):
-        """include_pending=False → 0 cards baked in → always ASK_AI (all pending in v0)."""
+    def test_approved_cards_load_routes_card_for_known_question(self):
+        """include_pending=False with approved real cards → routes CARD for known question."""
         h = _harness(ALL_KB_IDS, kb_available=True, include_pending=False)
         h.run("Why should I go to ANC?")
-        assert h.temp_state["answer_route"] == "ASK_AI"
+        assert h.temp_state["answer_route"] == "CARD"
+        assert h.temp_state["matched_card"] == "anc_purpose_en"
 
     def test_kb_ref_not_in_kb_ids_routes_ask_ai(self):
         """Card exists but its kb_ref is not in the selected KB IDs → ASK_AI."""
@@ -276,14 +277,32 @@ class TestRuntimeEligibilityIndependent:
     Pending review_status is never relabelled as approved.
     """
 
-    def test_render_raises_for_pending_by_default(self):
+    def test_render_raises_for_pending_by_default(self, tmp_path):
         """render_answer_match(pending_cards) must raise ValueError by default.
 
-        Current impl has no eligibility guard → test fails (RED).
-        After repair: raises ValueError → GREEN.
+        Uses synthetic pending fixture — independent of real KB review_status.
+        The safety guard: pending cards cannot reach production render accidentally.
         """
         _require_import()
-        pending_cards = load_answer_cards(CARDS_PATH, include_pending=True)
+        import json as _json
+
+        # Synthetic pending card fixture so the test is independent of real data state.
+        synthetic_pending = [
+            {
+                "id": "synth_pending_runtime_check",
+                "review_status": "pending",
+                "language": "en",
+                "kb_ref": "anc_purpose",
+                "topic_anchors": ["anc"],
+                "triggers": ["Synthetic pending trigger"],
+                "answer": "Synthetic pending answer text.",
+            }
+        ]
+        p = tmp_path / "synth_cards.yaml"
+        p.write_text(_json.dumps(synthetic_pending), encoding="utf-8")
+        from ocs.answer_cards import load_answer_cards as _load
+
+        pending_cards = _load(p, include_pending=True)
         assert len(pending_cards) > 0, "Need pending cards for this test"
         with pytest.raises(ValueError):
             render_answer_match(pending_cards)

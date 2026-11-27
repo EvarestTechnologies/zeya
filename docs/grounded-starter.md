@@ -25,14 +25,15 @@ start
                                                                      VALID       → llm → output_guard → end
 ```
 
-## Default build semantics (all content pending)
+## Default build semantics (bilingual starter content)
 
-All five KB entries and answer cards are pending clinical and language review. The default approved-only build produces:
+The five English starter topics and five Kiswahili counterparts have approved runtime eligibility. The default approved-only build produces:
 
-- `kb_context` bakes `KB_JSON = '[]'`
-- At runtime: `kb_available = False`
-- `kb_router` routes FALSE → `knowledge_referral` → end for every registered participant
-- **No model is called** until entries pass review
+- `kb_context` includes ten KB entries, selected at runtime by participant language and question context.
+- Eligible selected knowledge sets `kb_available = True`; `kb_router` routes TRUE → `answer_match`.
+- A matching eligible card returns its prepared answer through `output_guard`, without a model call.
+- Unmatched questions follow the sanitised, prompt-budgeted AI path; missing eligible knowledge or an over-budget prompt routes to the fixed referral without a model call.
+- Pending entries remain excluded. Production does not use `--include-pending`.
 
 The fixed referral messages are:
 
@@ -162,4 +163,4 @@ The graph tests exercise default approved-only referral and explicit synthetic s
 
 From the repository root, use `make test-ocs PYTHON=/path/to/venv/bin/python` and `make lint-ocs PYTHON=/path/to/venv/bin/python`. Set `OCS_SOURCE=/path/to/pinned/open-chat-studio` for the pinned sandbox probe. `make test-ocs-engine OCS_SOURCE=/path/to/pinned/open-chat-studio` additionally requires a prepared isolated OCS test database and supported test settings; never point it at a production database. `ZEYA_G2_EVIDENCE_DIR` can select an isolated artifact directory; otherwise the tests allocate a temporary directory.
 
-All real content retains pending runtime eligibility. Five starter topics do not complete the original approximately 60-card ambition. Five Kiswahili (sw) counterpart KB entries and answer cards are now included, also with pending eligibility. Contact verification, expanded content and held-out evaluation, hosted deployment/drift checks, messaging-template approval and handset tests remain separate release work. Merging this source does not publish a bot version or change WhatsApp.
+The five English starter topics and five Kiswahili counterparts have approved runtime eligibility. Five topics do not complete the original approximately 60-card ambition. Expanded content and held-out evaluation, contact verification, hosted deployment/drift checks, messaging-template approval and handset tests remain separate checks. Merging this source does not publish a bot version or change WhatsApp.

@@ -237,35 +237,36 @@ def test_malformed_review_status_treated_as_pending(malformed_md):
 
 
 # ---------------------------------------------------------------------------
-# Real knowledge-base: all five entries must remain pending
+# Real knowledge-base: all 10 entries are approved for production
 # ---------------------------------------------------------------------------
 
 
-def test_real_kb_all_entries_are_pending(real_kb_path):
-    entries = load_knowledge(real_kb_path, include_pending=True)
-    assert len(entries) == 10, f"Expected 10 entries (5 en + 5 sw), got {len(entries)}"
+def test_real_kb_all_entries_are_approved(real_kb_path):
+    """Default load (approved-only) must return exactly 10 approved entries."""
+    entries = load_knowledge(real_kb_path)
+    assert len(entries) == 10, f"Expected 10 approved entries (5 en + 5 sw), got {len(entries)}"
     for entry in entries:
-        assert entry["review_status"] == "pending", (
-            f"Entry '{entry['id']}' (lang={entry['language']}) must remain pending — "
-            "no clinical or language approval has been given for the v0.1 draft"
+        assert entry["review_status"] == "approved", (
+            f"Entry '{entry['id']}' (lang={entry['language']}) must be approved for production"
         )
 
 
-def test_real_kb_excludes_all_entries_by_default(real_kb_path):
+def test_real_kb_includes_all_entries_by_default(real_kb_path):
+    """Default production load (include_pending=False) must return all 10 approved entries."""
     entries = load_knowledge(real_kb_path)
-    assert len(entries) == 0, "No real KB entries must be approved; all must remain pending"
+    assert len(entries) == 10, f"Expected 10 approved entries from default production load; got {len(entries)}"
 
 
 def test_real_kb_expected_ids(real_kb_path):
-    entries = load_knowledge(real_kb_path, include_pending=True)
+    entries = load_knowledge(real_kb_path)
     ids = {e["id"] for e in entries}
     expected = {"anc_purpose", "pregnancy_records", "food_variety", "food_safety", "birth_preparation"}
     assert ids == expected
 
 
-def test_real_kb_english_entries_remain_english(real_kb_path):
-    """The five English KB entries must remain language='en', pending, and unchanged."""
-    entries = load_knowledge(real_kb_path, include_pending=True)
+def test_real_kb_english_entries_are_approved(real_kb_path):
+    """The five English KB entries must have language='en' and review_status='approved'."""
+    entries = load_knowledge(real_kb_path)
     en_entries = [e for e in entries if e["language"] == "en"]
     assert len(en_entries) == 5, (
         f"Expected exactly 5 en KB entries; got {len(en_entries)}. "
@@ -273,28 +274,28 @@ def test_real_kb_english_entries_remain_english(real_kb_path):
     )
     for entry in en_entries:
         assert entry["language"] == "en", f"Entry '{entry['id']}' classified as en but language={entry['language']!r}"
-        assert entry["review_status"] == "pending"
+        assert entry["review_status"] == "approved"
 
 
-def test_real_kb_sw_entries_are_sw_and_pending(real_kb_path):
-    """The five Kiswahili draft KB entries must have language='sw' and remain pending.
+def test_real_kb_sw_entries_are_sw_and_approved(real_kb_path):
+    """The five Kiswahili KB entries must have language='sw' and review_status='approved'.
 
-    Kiswahili translations require a separate fluent-speaker and clinical review
-    before any entry can be approved.  All five sw entries must remain pending.
+    Owner has approved the Kiswahili starter pack for production eligibility.
+    review_status='approved' denotes owner content eligibility; it is not a
+    clinician certification claim.  No clinical validation is claimed.
     """
-    entries = load_knowledge(real_kb_path, include_pending=True)
+    entries = load_knowledge(real_kb_path)
     sw_entries = [e for e in entries if e["language"] == "sw"]
-    assert len(sw_entries) == 5, f"Expected exactly 5 sw KB entries (pending draft), got {len(sw_entries)}."
+    assert len(sw_entries) == 5, f"Expected exactly 5 sw KB entries, got {len(sw_entries)}."
     for entry in sw_entries:
         assert entry["language"] == "sw", f"Entry '{entry['id']}' classified as sw but language={entry['language']!r}"
-        assert entry["review_status"] == "pending", (
-            f"sw entry '{entry['id']}' must remain pending — "
-            "Kiswahili translation requires separate fluent-speaker and clinical review."
+        assert entry["review_status"] == "approved", (
+            f"sw entry '{entry['id']}' must be approved — owner has approved the Kiswahili starter pack"
         )
 
 
 def test_real_kb_entries_have_source_refs(real_kb_path):
-    entries = load_knowledge(real_kb_path, include_pending=True)
+    entries = load_knowledge(real_kb_path)
     for entry in entries:
         assert entry["source_refs"], f"Entry '{entry['id']}' has no source references"
 

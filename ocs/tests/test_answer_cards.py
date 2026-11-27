@@ -79,10 +79,14 @@ class TestLoadAnswerCards:
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         assert len(cards) == 10, f"Expected 10 starter cards (5 en + 5 sw), got {len(cards)}"
 
-    def test_returns_empty_when_all_pending_and_not_include_pending(self):
+    def test_returns_10_approved_cards_by_default(self):
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=False)
-        assert cards == [], "Default (include_pending=False) must return [] for all-pending starter"
+        assert len(cards) == 10, f"Default (include_pending=False) must return 10 approved cards; got {len(cards)}"
+        for card in cards:
+            assert card["review_status"] == "approved", (
+                f"Card {card['id']!r} returned by default load must be approved; got {card['review_status']!r}"
+            )
 
     def test_each_card_has_required_keys(self):
         _require_import()
@@ -103,28 +107,28 @@ class TestLoadAnswerCards:
                 f"Card {card.get('id')!r} classified as en but language={card.get('language')!r}"
             )
 
-    def test_swahili_draft_cards_are_sw(self):
-        """The five Kiswahili draft cards must have language='sw' and remain pending.
+    def test_swahili_starter_cards_are_sw_and_approved(self):
+        """The five Kiswahili starter cards must have language='sw' and review_status='approved'.
 
-        Kiswahili translations require separate fluent-speaker and clinical review
-        before any sw card can be approved.
+        Owner has approved the Kiswahili starter pack for production eligibility.
+        review_status='approved' denotes owner content eligibility; it is not a
+        clinician certification claim.  No clinical validation is claimed.
         """
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         sw_cards = [c for c in cards if c.get("language") == "sw"]
-        assert len(sw_cards) == 5, f"Expected exactly 5 sw cards (pending draft), got {len(sw_cards)}"
+        assert len(sw_cards) == 5, f"Expected exactly 5 sw cards, got {len(sw_cards)}"
         for card in sw_cards:
             assert card["language"] == "sw"
-            assert card["review_status"] == "pending", (
-                f"sw card {card.get('id')!r} must remain pending — "
-                "Kiswahili translation requires separate fluent-speaker and clinical review."
+            assert card["review_status"] == "approved", (
+                f"sw card {card.get('id')!r} must be approved — owner has approved the Kiswahili starter pack"
             )
 
-    def test_all_starter_cards_are_pending(self):
+    def test_all_starter_cards_are_approved(self):
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
-        not_pending = [c["id"] for c in cards if c.get("review_status") != "pending"]
-        assert not_pending == [], f"Expected all pending, found: {not_pending}"
+        not_approved = [c["id"] for c in cards if c.get("review_status") != "approved"]
+        assert not_approved == [], f"Expected all approved, found non-approved: {not_approved}"
 
     def test_card_ids_are_stable_and_unique(self):
         _require_import()
@@ -342,14 +346,23 @@ class TestLoadValidatesSchema:
 class TestRenderAnswerMatchEligibility:
     """Behavioral RED tests: render eligibility guard for pending cards."""
 
-    def test_raises_on_pending_cards_by_default(self):
+    def test_raises_on_pending_cards_by_default(self, tmp_path):
         """render_answer_match(pending_cards) must raise ValueError by default.
 
-        Current impl accepts pending cards without raising; this test fails (RED).
-        After repair: raises ValueError → GREEN.
+        Uses synthetic pending fixture — independent of real KB review_status.
+        The safety guard: pending cards cannot reach production render accidentally.
         """
         _require_import()
-        pending_cards = load_answer_cards(CARDS_PATH, include_pending=True)
+        # Use synthetic pending fixture so this test stays valid regardless of real KB state.
+        synthetic_pending = [
+            {
+                **_VALID_APPROVED_CARD,
+                "id": "synth_pending_guard_test",
+                "review_status": "pending",
+            }
+        ]
+        path = _write_cards_file(tmp_path, synthetic_pending)
+        pending_cards = load_answer_cards(path, include_pending=True)
         assert len(pending_cards) > 0, "Need pending cards to run this test"
         with pytest.raises(ValueError):
             render_answer_match(pending_cards)
