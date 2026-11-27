@@ -301,8 +301,13 @@ Some sources give 922 as the national ambulance line launched on 5 August 2026. 
 | 1199 | Kenya Red Cross | [x] | 27 Nov 2026 | Called by Stella Oiro |
 | 1514 | Kenya Red Cross ambulance (alternative) | [x] | 27 Nov 2026 | Called by Stella Oiro |
 | +254 724 024 296 | Migori County emergency dispatch (supplied by Stella Oiro, 27 Nov 2026) | [x] | 27 Nov 2026 | Called by Stella Oiro |
+| 0740 587 479 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
+| 0740 588 519 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
+| 0740 588 853 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
 
 **D1. Migori County emergency dispatch number**
+
+The county poster "Migori County Emergency Ambulance Dispatch" says "Call the dispatch team anytime", "for maternal, newborn and medical emergencies", "coordinated through the County Emergency Dispatch Team". It lists 0740 587 479, 0740 588 519 and 0740 588 853. These three go into the reply only after each is called and ticked.
 - [x] Show it to every participant (Stella Oiro, in chat, 27 Nov 2026)
 - [ ] Show it only to participants who registered from Migori
 - [ ] Don't add it yet
