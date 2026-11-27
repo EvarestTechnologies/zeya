@@ -30,7 +30,7 @@ _VALID_APPROVED_CARD: dict = {
     "id": "test_card_en",
     "review_status": "approved",
     "language": "en",
-    "kb_ref": "anc_purpose",
+    "kb_ref": "anc_visits",
     "topic_anchors": ["anc", "antenatal"],
     "triggers": ["Why should I go to ANC?"],
     "answer": "Antenatal visits provide health care and support during pregnancy.",
@@ -141,11 +141,11 @@ class TestLoadAnswerCards:
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         kb_refs = {c["kb_ref"] for c in cards}
         expected = {
-            "anc_purpose",
-            "pregnancy_records",
-            "food_variety",
-            "food_safety",
-            "birth_preparation",
+            "anc_visits",
+            "danger_signs",
+            "food_groups",
+            "daily_care",
+            "birth_plan",
         }
         assert kb_refs == expected, f"KB refs mismatch: got {kb_refs}"
 
@@ -389,7 +389,7 @@ class TestRenderAnswerMatchEligibility:
         source = render_answer_match(approved)
         h = NodeHarness(
             source,
-            temp_state={"kb_ids": ["anc_purpose"], "kb_available": True},
+            temp_state={"kb_ids": ["anc_visits"], "kb_available": True},
             participant_data={"language_preference": "en"},
         )
         h.run("Why should I go to ANC?")
@@ -471,7 +471,7 @@ class TestRenderAnswerMatch:
         source = render_answer_match([])
         harness = NodeHarness(
             source,
-            temp_state={"kb_ids": ["anc_purpose"], "kb_available": True},
+            temp_state={"kb_ids": ["anc_visits"], "kb_available": True},
             participant_data={"language_preference": "en"},
         )
         result = harness.run("Why should I go to ANC?")
@@ -613,7 +613,7 @@ class TestLoadValidatesSchemaRepair2:
             load_answer_cards(path, include_pending=True)
 
     def test_valid_slug_id_loads_fine(self, tmp_path):
-        """Sanity: lowercase slugs like 'anc_purpose_en' must load without error."""
+        """Sanity: lowercase slugs like 'anc_visits_en' must load without error."""
         _require_import()
         path = _write_cards_file(tmp_path, [_VALID_APPROVED_CARD])
         cards = load_answer_cards(path, include_pending=False)

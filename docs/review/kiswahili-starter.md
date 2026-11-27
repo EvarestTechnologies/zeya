@@ -1,274 +1,120 @@
-# Kiswahili starter cards — review record
+# Kiswahili cards review, release 1
 
-**Status: Starter runtime content eligible. This record is not publication evidence.**
+**Reviewer:** Stella Oiro, licensed clinical officer
+**Status of every string below: DRAFT, pending fluent-speaker and clinical review.** The cards are switched on because sign-off B2 approved them. Rule 7 of the work order still needs a fluent speaker's review recorded here.
 
-This document lists the five Kiswahili (sw) answer cards and KB entries in
-`docs/answer-cards.yaml` and `docs/zeya-knowledge-base.md`.
-They have approved runtime eligibility. Hosted publication remains separate
-from this content record.
+The danger sign names come from the explainer clip (`media/explainers/render_danger_signs.py`). Two Kiswahili walkthrough questions reach their cards:
+- "Nikule nini nikiwa na mimba?" reaches `food_groups_sw`
+- "Dalili za hatari ni zipi?" reaches `danger_signs_sw`
 
----
+Fluent-speaker review:
+- [ ] Reviewed by: ____________  Date: ________
+- [ ] Wording to change:
 
-## Translation status and limitations
+## Kiswahili cards
 
-These five Kiswahili translations were machine-authored by an AI model for
-the purpose of establishing the data schema and test coverage. No clinical
-validation is claimed. The entries and cards have `approved` runtime eligibility;
-production still excludes any records whose eligibility is `pending`.
+### `anc_visits_sw`
 
-**Specific limitations (must be verified by a fluent reviewer):**
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `anc_visits`, source HB p13, HB cover
+- **Words:** 46 (limit 79)
+- **Topic anchors:** kliniki, ziara, anc, mara, kitabu
 
-- Swahili register may be inappropriate for the target audience (pregnant women in
-  Kenya, including trial participants in Migori County). The translations use a formal/standard register; a reviewer
-  should confirm whether a more colloquial register is appropriate.
-- Medical terminology (e.g. "kabla ya kujifungua", "mfanyakazi wa afya") must be
-  confirmed as correct and locally used terms in the Kenyan maternal health context.
-- "Mfanyakazi wa afya" is used for "health worker" — confirm this is the preferred
-  term over alternatives (e.g. "daktari", "muuguzi", "mama wa afya").
-- The trigger strings are natural Swahili paraphrases of the English trigger vocabulary,
-  designed for the word-overlap matcher. A fluent-speaker reviewer should confirm they
-  represent questions that pregnant women in Kenya would actually ask in Swahili.
-- Topic anchors include Swahili words used by the matcher for eligibility checks.
-  These are technical parameters and do not require clinical review, but must be
-  verified correct by a Swahili-language reviewer.
-- No Sheng, regional dialect, or SMS-abbreviated forms have been included. These
-  require separate community review.
+Answer:
 
-**What was NOT changed from the English versions:**
+> Nenda kliniki ya ujauzito kwa mara ya kwanza mapema iwezekanavyo, na uhudhurie mara 8 wakati wa ujauzito wako. Beba Kitabu chako cha Afya ya Mama na Mtoto kila unapoenda kliniki na umwonyeshe mhudumu wa afya.
+> Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-- Source references (WHO links retained verbatim)
-- Scope (general antenatal education only)
-- Absence of diagnoses, drug doses, emergency contacts, or facility-specific guidance
-- pending review_status (identical to English cards)
+Triggers:
 
----
+- Niende ANC kwa sababu gani?
+- Nianze kliniki ya ujauzito lini?
+- Ni mara ngapi niende kliniki nikiwa mjamzito?
+- Ziara za kliniki ya ujauzito ni ngapi?
+- Nibebe nini nikienda kliniki?
+- Kliniki ya kwanza ya ujauzito ni lini?
+- Kwa nini niende kliniki?
 
-## Scope and limitations (same as English cards)
+### `danger_signs_sw`
 
-These five sw draft cards cover general antenatal education only, translated from
-the five-entry WHO-linked starter KB (`zeya-knowledge-base.md`, v0.1 en entries).
-They do not provide diagnoses, prescriptions, drug doses, symptom assessments,
-emergency guidance or facility-specific information.
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `danger_signs`, source HB p14
+- **Words:** 62 (limit 79)
+- **Topic anchors:** dalili, hatari, hospitali
 
-The unsupported-question fallback message remains:
-- **English:** "I do not have reviewed information to answer that question. Please
-  ask your healthcare provider."
-- **Swahili (DRAFT — pending fluent-speaker and clinical review):** "Sina taarifa
-  iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+Answer:
 
----
+> Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto kucheza kidogo au kutocheza, maji kutoka (chupa kupasuka), na degedege au kifafa. Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi.
+> Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-## Draft sw KB entries and cards pending review
+Triggers:
 
-### 1 · `anc_purpose` (sw)
+- Dalili za hatari ni zipi?
+- Dalili za hatari wakati wa ujauzito ni zipi?
+- Ni dalili gani zinanifanya niende hospitali?
+- Dalili za hatari kwa mjamzito ni zipi?
+- Nitajuaje kuna hatari kwenye ujauzito?
 
-| Field | Value |
-|-------|-------|
-| KB ID | `anc_purpose` |
-| Card ID | `anc_purpose_sw` |
-| Language | Kiswahili (sw) |
-| Review status | **pending** |
-| KB source | WHO starter KB v0.1 — anc_purpose entry (en) |
-| Card source | Translator-drafted from KB body above |
+### `daily_care_sw`
 
-**KB body (Swahili draft):**
-> Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada
-> wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya
-> kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza.
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `daily_care`, source HB p13
+- **Words:** 63 (limit 79)
+- **Topic anchors:** jitunze, maji, pumzika, chandarua, vidonge, mazoezi, mlo, nijitunze, nipumzike, upumzike
 
-**Triggers (Swahili — natural paraphrases for the word-overlap matcher):**
-- "Niende kliniki ya ujauzito kwa nini?"
-- "Ziara za ujauzito ni kwa nini?"
-- "Niende ANC kwa sababu gani?"
-- "Huduma ya kabla ya kujifungua ni kwa nini?"
-- "Nini lengo la ziara za ANC?"
-- "Kwa nini ninahitaji kuhudhuria ziara za kabla ya kujifungua?"
+Answer:
 
-**Topic anchors:** `anc`, `ujauzito`, `kliniki`, `ziara`
+> Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na foliki asidi kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua kilichowekwa dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+> Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-Reviewer action needed:
-- [ ] Verify Swahili phrasing is natural and appropriate for the Kenyan context.
-- [ ] Confirm "kabla ya kujifungua" is the standard term for antenatal period.
-- [ ] Confirm "mfanyakazi wa afya" is the preferred term for health worker.
-- [ ] Confirm triggers represent questions pregnant women would actually ask.
-- [ ] Approve or revise; set `review_status: approved` only after explicit sign-off.
+Triggers:
 
----
+- Nijitunze vipi nikiwa mjamzito?
+- Ninywe maji kiasi gani nikiwa mjamzito?
+- Nipumzike zaidi nikiwa mjamzito?
+- Nilale ndani ya chandarua nikiwa mjamzito?
+- Nimeze vidonge vya madini ya chuma kila siku?
+- Nifanye mazoezi nikiwa mjamzito?
 
-### 2 · `pregnancy_records` (sw)
+### `food_groups_sw`
 
-| Field | Value |
-|-------|-------|
-| KB ID | `pregnancy_records` |
-| Card ID | `pregnancy_records_sw` |
-| Language | Kiswahili (sw) |
-| Review status | **pending** |
-| KB source | WHO starter KB v0.1 — pregnancy_records entry (en) |
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `food_groups`, source HB p18
+- **Words:** 70 (limit 79)
+- **Topic anchors:** kula, nile, nikule, chakula, vyakula, lishe, makundi
 
-**KB body (Swahili draft):**
-> Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize
-> mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi.
+Answer:
 
-**Triggers:**
-- "Je, nihifadhi rekodi zangu za ujauzito?"
-- "Kwa nini nishike kumbukumbu za huduma ya ujauzito?"
-- "Vipi niandike rekodi za afya ya ujauzito wangu?"
-- "Ni muhimu kushika rekodi za ujauzito?"
-- "Kwa nini kuweka rekodi ya afya ya ujauzito ni muhimu?"
-- "Ninahifadhije rekodi zangu za afya ya uzazi?"
+> Kula angalau makundi 5 kati ya makundi 10 ya vyakula kila siku: nafaka na vyakula vya wanga, jamii ya kunde, karanga na mbegu, maziwa na bidhaa zake, mayai, nyama, samaki na kuku, matunda na mboga za rangi ya machungwa na njano, mboga za majani ya kijani kibichi, mboga nyingine, na matunda mengine. Kula vyakula mbalimbali ndani ya kila kundi.
+> Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-**Topic anchors:** `rekodi`, `kumbukumbu`, `hifadhi`
+Triggers:
 
-Reviewer action needed:
-- [ ] Confirm "rekodi" is the preferred term over "kumbukumbu" for health records
-  in this context (both are used in the triggers for coverage).
-- [ ] Confirm "chanjo" (vaccines) is the correct Swahili term.
-- [ ] Confirm triggers represent questions about pregnancy record-keeping.
-- [ ] Approve or revise.
+- Nikule nini nikiwa na mimba?
+- Nile nini nikiwa mjamzito?
+- Vyakula gani ni vizuri wakati wa ujauzito?
+- Makundi ya vyakula ni yapi?
+- Nile makundi mangapi ya vyakula?
+- Lishe bora kwa mjamzito ni ipi?
 
----
+### `birth_plan_sw`
 
-### 3 · `food_variety` (sw)
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `birth_plan`, source HB inside cover, HB p3
+- **Words:** 59 (limit 79)
+- **Topic anchors:** kujifungua, mpango, jiandae, nijiandae, mume, mwenzi
 
-| Field | Value |
-|-------|-------|
-| KB ID | `food_variety` |
-| Card ID | `food_variety_sw` |
-| Language | Kiswahili (sw) |
-| Review status | **pending** |
-| KB source | WHO starter KB v0.1 — food_variety entry (en) |
+Answer:
 
-**KB body (Swahili draft):**
-> Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa,
-> maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya
-> ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi.
+> Panga mpango wa kujifungua pamoja na mhudumu wako wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mwandani wako wakati wa kujifungua, usafiri na mchangiaji damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mwandani wa kujifungua na vifaa vya dharura.
+> Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-**Triggers:**
-- "Ninapaswa kula chakula gani wakati wa ujauzito?"
-- "Nini lishe nzuri kwa mjamzito?"
-- "Nini chakula cha aina mbalimbali kwa mjamzito?"
-- "Ninaweza kula nini wakati wa ujauzito?"
-- "Nini inajumuishwa katika lishe ya aina mbalimbali ya ujauzito?"
-- "Ni lishe gani nzuri ya mjamzito?"
+Triggers:
 
-**Topic anchors:** `chakula`, `kula`, `lishe`, `mboga`, `matunda`
-
-Reviewer action needed:
-- [ ] Confirm "mjamzito" is the preferred term for a pregnant woman in this context.
-- [ ] Confirm "nafaka zisizokobolewa" faithfully conveys "whole grains" for the audience.
-- [ ] Confirm listed food groups (mboga, matunda, nafaka zisizokobolewa, maharagwe) are appropriate
-  for the local dietary context and do not exclude locally important foods.
-- [ ] Confirm the answer does not inadvertently imply supplements or specific doses.
-- [ ] Confirm triggers represent questions about pregnancy nutrition in Swahili.
-- [ ] Approve or revise.
-
----
-
-### 4 · `food_safety` (sw)
-
-| Field | Value |
-|-------|-------|
-| KB ID | `food_safety` |
-| Card ID | `food_safety_sw` |
-| Language | Kiswahili (sw) |
-| Review status | **pending** |
-| KB source | WHO starter KB v0.1 — food_safety entry (en) |
-
-**KB body (Swahili draft):**
-> Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa
-> afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito.
-
-**Triggers:**
-- "Je, usafi wa chakula ni muhimu wakati wa ujauzito?"
-- "Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?"
-- "Usalama wa chakula ni muhimu kwa mjamzito?"
-- "Chakula kiwe salama na safi wakati wa ujauzito?"
-- "Kwa nini chakula salama na safi ni muhimu katika ujauzito?"
-- "Ninahifadhije usalama wa chakula wakati wa ujauzito?"
-
-**Topic anchors:** `chakula`, `kula`, `lishe`
-
-Reviewer action needed:
-- [ ] Verify general food safety guidance is accurate without specific cooking or
-  storage instructions that could be misapplied.
-- [ ] Confirm "salama na safi" adequately covers food safety and cleanliness
-  in the Kenyan maternal context.
-- [ ] Confirm triggers represent food safety questions from pregnant women.
-- [ ] Approve or revise.
-
----
-
-### 5 · `birth_preparation` (sw)
-
-| Field | Value |
-|-------|-------|
-| KB ID | `birth_preparation` |
-| Card ID | `birth_preparation_sw` |
-| Language | Kiswahili (sw) |
-| Review status | **pending** |
-| KB source | WHO starter KB v0.1 — birth_preparation entry (en) |
-
-**KB body (Swahili draft):**
-> Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua.
-> Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo
-> kwa mwongozo wao.
-
-**Triggers:**
-- "Ninapaswa kujadili nini kuhusu mipango ya kujifungua?"
-- "Je, nipange mahali pa kujifungua?"
-- "Nijiandaeje kwa kujifungua?"
-- "Nini mpango wa kujiandaa kwa kujifungua?"
-- "Nijiandaeje kwa kujifungua na matatizo yanayoweza kutokea?"
-- "Nini maandalizi ya kujifungua?"
-
-**Topic anchors:** `kujifungua`, `mpango`, `maandalizi`, `uzazi`
-
-Reviewer action needed:
-- [ ] Confirm "kujifungua" is the standard Swahili term for childbirth in this context.
-- [ ] Confirm "kukabiliana na matatizo" adequately conveys complication readiness
-  without implying specific medical interventions.
-- [ ] Confirm the answer does not imply a recommendation for a specific facility type.
-- [ ] Confirm triggers represent birth planning questions from pregnant women.
-- [ ] Approve or revise.
-
----
-
-## Local technical checks and matching limitations
-
-The permanent tests execute the rendered KB-selection, card-matching and output-guard
-nodes in the pinned local RestrictedPython sandbox. Five authored non-trigger
-questions assert the exact expected Kiswahili card ID and delivered answer. These
-are authored regression examples, not held-out language evaluation, hosted OCS
-execution, handset delivery or clinical validation. Separate checks verify that
-the actual default builder excludes pending content for both saved languages.
-
-Generic food wording remains ambiguous under the inherited word-overlap matcher.
-Local probe observations with the pending cards enabled only in the sandbox were:
-
-- `chakula lishe` -> `ASK_AI` (no card).
-- `Je chakula ni muhimu wakati wa ujauzito?` -> `food_safety_sw`.
-- `chakula salama aina mbalimbali` -> `food_variety_sw`.
-
-These observations are not claims that the selected topic is appropriate for
-every interpretation. Reviewers should assess generic nutrition/food-safety
-questions and near-ties before participant use. This draft does not modify the
-production matcher or claim broad Kiswahili matching accuracy.
-
-## Follow-up work (not completed in feat/kiswahili-starter-cards)
-
-- **Fluent-speaker review:** Every sw entry and card trigger/answer must be reviewed
-  by a fluent Kiswahili speaker with community health context before approval.
-- **Clinical review:** Every sw card answer must be reviewed by a clinician
-  (preferably Achar or Kenya MoH-aligned reviewer) for clinical accuracy.
-- **Register and dialect:** Community review for appropriate register, Sheng inclusion
-  and regional dialect variations.
-- **Swahili matcher improvements:** The current Jaccard matcher uses English stemming
-  and stopwords; natural Swahili question coverage depends on shared vocabulary
-  with trigger strings. A Swahili-aware tokenizer/stopword list is a possible
-  follow-up, but any improvement requires evaluation rather than assuming that
-  a tokenizer change improves accuracy.
-- **Kenya MoH alignment:** Compare every sw entry against Kenya MoH maternal-care
-  material in Swahili before describing this as Kenya-handbook-based content.
-- **Full ~60-card library:** Extend to cover ANC contacts, discomforts, danger signs
-  awareness, newborn care, breastfeeding — each requiring its own clinical source
-  and both English and Swahili review cycles.
+- Mpango wa kujifungua ni nini?
+- Nijiandae vipi kwa kujifungua?
+- Nipange vipi mpango wa kujifungua?
+- Mume wangu anaweza kunisaidia vipi kujiandaa kujifungua?
+- Nahitaji nini kabla ya kujifungua?
+- Nitapangaje kujifungua?
+- Nijiandaeje kwa kujifungua?

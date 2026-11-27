@@ -46,11 +46,11 @@ def _require_import():
 
 
 ALL_KB_IDS = [
-    "anc_purpose",
-    "pregnancy_records",
-    "food_variety",
-    "food_safety",
-    "birth_preparation",
+    "anc_visits",
+    "danger_signs",
+    "food_groups",
+    "daily_care",
+    "birth_plan",
 ]
 
 
@@ -107,11 +107,11 @@ class TestNoKBRouting:
         h = _harness(ALL_KB_IDS, kb_available=True, include_pending=False)
         h.run("Why should I go to ANC?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "anc_purpose_en"
+        assert h.temp_state["matched_card"] == "anc_visits_en"
 
     def test_kb_ref_not_in_kb_ids_routes_ask_ai(self):
         """Card exists but its kb_ref is not in the selected KB IDs → ASK_AI."""
-        h = _harness(["food_variety", "food_safety"])
+        h = _harness(["food_groups", "daily_care"])
         h.run("Why should I go to ANC?")
         assert h.temp_state["answer_route"] == "ASK_AI"
         assert h.temp_state["matched_card"] == ""
@@ -136,11 +136,11 @@ class TestNoKBRouting:
 
 
 class TestCardRouting:
-    def test_anc_purpose_trigger_routes_card(self):
+    def test_anc_visits_trigger_routes_card(self):
         h = _harness(ALL_KB_IDS)
         h.run("Why should I go to ANC?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "anc_purpose_en"
+        assert h.temp_state["matched_card"] == "anc_visits_en"
 
     def test_matched_card_sets_card_text(self):
         h = _harness(ALL_KB_IDS)
@@ -157,29 +157,29 @@ class TestCardRouting:
         assert result == h.temp_state["card_text"]
         assert result != "Why should I go to ANC?", "CARD must return answer, not original question"
 
-    def test_pregnancy_records_trigger_routes_card(self):
+    def test_danger_signs_trigger_routes_card(self):
         h = _harness(ALL_KB_IDS)
-        h.run("Should I keep my pregnancy health records?")
+        h.run("What danger signs should I watch for?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "pregnancy_records_en"
+        assert h.temp_state["matched_card"] == "danger_signs_en"
 
-    def test_food_variety_trigger_routes_card(self):
+    def test_food_groups_trigger_routes_card(self):
         h = _harness(ALL_KB_IDS)
         h.run("What kinds of food should I eat?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "food_variety_en"
+        assert h.temp_state["matched_card"] == "food_groups_en"
 
-    def test_food_safety_trigger_routes_card(self):
+    def test_daily_care_trigger_routes_card(self):
         h = _harness(ALL_KB_IDS)
-        h.run("Does food cleanliness matter in pregnancy?")
+        h.run("How much water should I drink in pregnancy?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "food_safety_en"
+        assert h.temp_state["matched_card"] == "daily_care_en"
 
-    def test_birth_preparation_trigger_routes_card(self):
+    def test_birth_plan_trigger_routes_card(self):
         h = _harness(ALL_KB_IDS)
-        h.run("What should I discuss when planning for birth?")
+        h.run("What should be in my birth plan?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "birth_preparation_en"
+        assert h.temp_state["matched_card"] == "birth_plan_en"
 
     def test_card_text_matches_yaml_answer(self):
         """card_text returned by node must equal the answer field in the YAML."""
@@ -243,14 +243,14 @@ class TestLanguageEligibility:
         Before sw card addition (v0): no sw cards → ASK_AI for all sw questions.
         After sw card addition (feat/kiswahili-starter-cards): sw participant asking
         "Kwa nini niende ANC?" shares "ANC" (topic anchor) and "niende" with the
-        anc_purpose_sw trigger "Niende ANC kwa sababu gani?" — matcher routes CARD.
+        anc_visits_sw trigger "Niende ANC kwa sababu gani?" — matcher routes CARD.
         Test updated from the original v0 ASK_AI assertion because the premise
         "no sw cards exist" no longer holds; sw cards are now present (pending draft).
         """
         h = _harness(ALL_KB_IDS, language="sw")
         h.run("Kwa nini niende ANC?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "anc_purpose_sw"
+        assert h.temp_state["matched_card"] == "anc_visits_sw"
 
     def test_english_trigger_does_not_match_swahili_participant(self):
         """English trigger text must not match even if content words overlap."""
@@ -292,7 +292,7 @@ class TestRuntimeEligibilityIndependent:
                 "id": "synth_pending_runtime_check",
                 "review_status": "pending",
                 "language": "en",
-                "kb_ref": "anc_purpose",
+                "kb_ref": "anc_visits",
                 "topic_anchors": ["anc"],
                 "triggers": ["Synthetic pending trigger"],
                 "answer": "Synthetic pending answer text.",
@@ -358,7 +358,7 @@ class TestRuntimeEligibilityIndependent:
                         "id": "test_en",
                         "review_status": "approved",
                         "language": "en",
-                        "kb_ref": "anc_purpose",
+                        "kb_ref": "anc_visits",
                         "topic_anchors": ["anc", "antenatal"],
                         "triggers": ["Why should I go to ANC?"],
                         "answer": "Antenatal visits provide health care.",
@@ -382,9 +382,9 @@ class TestRuntimeEligibilityIndependent:
 # Explanation: vocabulary overlaps with two different cards at similar Jaccard
 # scores; the tie-margin guard prevents forcing an arbitrary card.
 NEAR_TIE_FIXTURES = [
-    # "food" + "records"/"keep" overlaps food_safety (keep/food) and pregnancy_records (keep/record)
+    # "food" + "records"/"keep" overlaps daily_care (keep/food) and danger_signs (keep/record)
     ("What food records should I keep?", "ASK_AI"),
-    # "food" + "hygiene"/"pregnancy" overlaps food_variety and food_safety similarly
+    # "food" + "hygiene"/"pregnancy" overlaps food_groups and daily_care similarly
     ("What are some guidelines for food hygiene in pregnancy?", "ASK_AI"),
 ]
 
@@ -444,18 +444,18 @@ class TestPartialMatchNegatives:
 # None = must NOT force any card (out-of-scope)
 TUNED_AUTHORED_CORPUS = [
     # In-scope: trigger-vocabulary paraphrases
-    ("Why should I attend antenatal care visits?", "anc_purpose_en"),
-    ("What is the purpose of antenatal clinic visits when pregnant?", "anc_purpose_en"),
-    ("Should I keep records of my pregnancy care?", "pregnancy_records_en"),
-    ("Why is it important to keep my pregnancy health records?", "pregnancy_records_en"),
-    ("What kinds of food can I eat when pregnant?", "food_variety_en"),
-    ("Should food be safe and clean during pregnancy?", "food_safety_en"),
-    ("Should I plan and prepare for where I will give birth?", "birth_preparation_en"),
+    ("Why should I attend antenatal care visits?", "anc_visits_en"),
+    ("What is the purpose of antenatal clinic visits when pregnant?", "anc_visits_en"),
+    ("Which signs mean I should go to hospital during pregnancy?", "danger_signs_en"),
+    ("What warning signs should I watch for in pregnancy?", "danger_signs_en"),
+    ("What kinds of food can I eat when pregnant?", "food_groups_en"),
+    ("How should I take care of myself each day in pregnancy?", "daily_care_en"),
+    ("Should I plan and prepare for where I will give birth?", "birth_plan_en"),
     # Out-of-scope
     ("I feel dizzy and tired", None),
     ("What vaccinations do I need?", None),
     ("How do I know if my baby is moving enough?", None),
-    ("What are the danger signs in pregnancy?", None),
+    ("Can I drink alcohol in pregnancy?", None),
     ("Tell me about pain relief during labour", None),
 ]
 
@@ -564,16 +564,16 @@ class TestAuthoredTunedCorpus:
 # notes documents the expected outcome.
 AUTHORED_CHECK_CORPUS = [
     # In-scope (may or may not match; misses documented)
-    ("What happens during antenatal care visits?", "anc_purpose_en", "overlaps: antenatal/visit"),
+    ("What happens during antenatal care visits?", "anc_visits_en", "overlaps: antenatal/visit"),
     (
-        "Why is it important to maintain pregnancy health documentation?",
-        "pregnancy_records_en",
+        "Are there signs in pregnancy that mean I should go to hospital?",
+        "danger_signs_en",
         "overlaps: important/pregnancy/health; documentation→documenta",
     ),
-    ("Can I eat legumes and vegetables when pregnant?", "food_variety_en", "overlaps: eat/pregnant"),
+    ("Can I eat legumes and vegetables when pregnant?", "food_groups_en", "overlaps: eat/pregnant"),
     (
         "How do I plan for delivery at a health facility?",
-        "birth_preparation_en",
+        "birth_plan_en",
         "likely miss: delivery/facility not in triggers",
     ),
     # Out-of-scope: must NOT force a card
@@ -581,7 +581,7 @@ AUTHORED_CHECK_CORPUS = [
     ("How many weeks pregnant am I?", None, "personal; week not in triggers"),
     ("Can I take pain relief during labour?", None, "medicine; no matching card"),
     # Replacing travel question (false-positive risk: 'safe/during/pregnancy' overlaps
-    # food_safety triggers at Jaccard 0.5 — a documented matcher limitation; it is NOT
+    # daily_care triggers at Jaccard 0.5 — a documented matcher limitation; it is NOT
     # included in the zero-wrong-card assertion; see MATCHER_KNOWN_FALSE_POSITIVES below).
     ("How can I cope with morning sickness?", None, "symptom; not covered by v0 cards"),
 ]
@@ -591,9 +591,9 @@ AUTHORED_CHECK_CORPUS = [
 # as a limitation of the word-overlap matcher; NOT included in zero-wrong-card
 # assertions.  These require richer matching or negative-example triggers to fix.
 MATCHER_KNOWN_FALSE_POSITIVES = [
-    # 'safe/during/pregnancy' overlaps food_safety trigger
+    # 'safe/during/pregnancy' overlaps daily_care trigger
     # "How do I keep food safe during pregnancy?" at Jaccard ~0.5.
-    ("Is it safe to travel during pregnancy?", "food_safety_en", "safe/dur/pregnancy overlap"),
+    ("Is it safe to travel during pregnancy?", "daily_care_en", "safe/dur/pregnancy overlap"),
 ]
 
 
@@ -744,11 +744,11 @@ class TestReturnValueContract:
     @pytest.mark.parametrize(
         "question,expected_card",
         [
-            ("Why should I go to ANC?", "anc_purpose_en"),
-            ("Should I keep my pregnancy health records?", "pregnancy_records_en"),
-            ("What kinds of food should I eat?", "food_variety_en"),
-            ("Does food cleanliness matter in pregnancy?", "food_safety_en"),
-            ("What should I discuss when planning for birth?", "birth_preparation_en"),
+            ("Why should I go to ANC?", "anc_visits_en"),
+            ("What danger signs should I watch for?", "danger_signs_en"),
+            ("What kinds of food should I eat?", "food_groups_en"),
+            ("How much water should I drink in pregnancy?", "daily_care_en"),
+            ("What should be in my birth plan?", "birth_plan_en"),
         ],
     )
     def test_card_route_returned_value_equals_card_text(self, question, expected_card):
@@ -789,7 +789,7 @@ class TestUnsupportedTopicGuard:
     def test_safe_during_pregnancy_variation_routes_ask_ai(self, question):
         """Questions sharing 'safe/during/pregnancy' but not food-specific must route ASK_AI.
 
-        Current impl: Jaccard 0.5 on food_safety trigger -> CARD food_safety_en (RED).
+        Current impl: Jaccard 0.5 on daily_care trigger -> CARD daily_care_en (RED).
         After repair: pregnancy/dur in STOPWORDS + <= threshold -> ASK_AI (GREEN).
         """
         h = _harness(ALL_KB_IDS)
@@ -805,12 +805,12 @@ class TestUnsupportedTopicGuard:
         "question,expected_card",
         [
             # food-safety: has food-specific vocabulary beyond safe/pregnancy
-            ("Should my food be clean and safe?", "food_safety_en"),
-            ("What food should I prepare safely during pregnancy?", "food_safety_en"),
+            ("How much water should I drink during pregnancy?", "daily_care_en"),
+            ("Should I sleep under a net during pregnancy?", "daily_care_en"),
             # food-variety positive control
-            ("What kinds of food should I eat during pregnancy?", "food_variety_en"),
+            ("What kinds of food should I eat during pregnancy?", "food_groups_en"),
             # ANC positive control — uses antenatal/clinic vocabulary, no woman/pregnant tie
-            ("What is the purpose of attending antenatal clinic visits?", "anc_purpose_en"),
+            ("What is the purpose of attending antenatal clinic visits?", "anc_visits_en"),
         ],
     )
     def test_true_topic_question_still_routes_card(self, question, expected_card):
@@ -847,8 +847,8 @@ class TestAnswerRouteTags:
         h = _harness(ALL_KB_IDS)
         h.run("Why should I go to ANC?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert "answer_card:anc_purpose_en" in h.message_tags, (
-            f"Expected 'answer_card:anc_purpose_en' in tags; got {h.message_tags!r}"
+        assert "answer_card:anc_visits_en" in h.message_tags, (
+            f"Expected 'answer_card:anc_visits_en' in tags; got {h.message_tags!r}"
         )
 
     def test_ask_ai_no_kb_emits_answer_route_ask_ai_tag(self):
@@ -878,10 +878,10 @@ class TestAnswerRouteTags:
     @pytest.mark.parametrize(
         "question,expected_card",
         [
-            ("Should I keep my pregnancy health records?", "pregnancy_records_en"),
-            ("What kinds of food should I eat?", "food_variety_en"),
-            ("Does food cleanliness matter in pregnancy?", "food_safety_en"),
-            ("What should I discuss when planning for birth?", "birth_preparation_en"),
+            ("What danger signs should I watch for?", "danger_signs_en"),
+            ("What kinds of food should I eat?", "food_groups_en"),
+            ("How much water should I drink in pregnancy?", "daily_care_en"),
+            ("What should be in my birth plan?", "birth_plan_en"),
         ],
     )
     def test_all_five_card_topics_emit_correct_tags(self, question, expected_card):
@@ -913,7 +913,7 @@ class TestAnswerRouteTags:
 class TestFormerFalsePositivesNowRegressions:
     """Former false positives converted to regression tests after repair-2.
 
-    These questions incorrectly routed to food_safety_en before the fix.
+    These questions incorrectly routed to daily_care_en before the fix.
     After repair: they must route ASK_AI and must never regress.
     """
 
@@ -922,9 +922,9 @@ class TestFormerFalsePositivesNowRegressions:
         MATCHER_KNOWN_FALSE_POSITIVES,
     )
     def test_former_false_positive_now_routes_ask_ai(self, question, _expected_wrong_card, notes):
-        """After repair-2 this question must route ASK_AI, not food_safety_en.
+        """After repair-2 this question must route ASK_AI, not daily_care_en.
 
-        Current impl: routes food_safety_en (documented false positive) -> RED.
+        Current impl: routes daily_care_en (documented false positive) -> RED.
         After repair: ASK_AI -> GREEN. This is now a regression test.
         """
         h = _harness(ALL_KB_IDS)
@@ -941,15 +941,15 @@ class TestFormerFalsePositivesNowRegressions:
 #
 # Parent evidence: evidence/23/repair-2/parent-generic-topic-probe.json
 # "Is it safe?", "Am I safe during pregnancy?", "How can I be safe?" currently
-# route food_safety_en because "safe" alone scores Jaccard 0.333 against
+# route daily_care_en because "safe" alone scores Jaccard 0.333 against
 # trigger {food, safe, clean} (1 overlap / 3 union).
 #
 # Fix: check topic_anchors per card BEFORE Jaccard scoring.
-# food_safety anchors: ["food", "eat", "diet"].
+# daily_care anchors: ["food", "eat", "diet"].
 # "safe" is not an anchor → these generic questions cannot match any card.
 #
 # Positive controls prove this is NOT a denylist on "safe":
-# "What food is safe?" has "food" anchor → still routes food_safety_en.
+# "What food is safe?" has "food" anchor → still routes daily_care_en.
 # ---------------------------------------------------------------------------
 
 
@@ -960,7 +960,7 @@ class TestGenericTopicGuard:
     At least one stemmed topic anchor of the card must appear in q_tokens.
     An absent or unrecognised topic abstains.
 
-    RED: three generic-safety questions currently route food_safety_en.
+    RED: three generic-safety questions currently route daily_care_en.
     After fix: topic_eligible check rejects them → ASK_AI.
     """
 
@@ -976,15 +976,15 @@ class TestGenericTopicGuard:
     def test_generic_safe_alone_routes_ask_ai(self, question):
         """'safe' without food/anc/records/birth vocabulary must route ASK_AI.
 
-        Current (repair-2): routes food_safety_en (Jaccard 0.333 on {food,safe,clean}).
-        After fix: topic_eligible(q_tokens={"safe"}, food_safety_anchors) = False → ASK_AI.
+        Current (repair-2): routes daily_care_en (Jaccard 0.333 on {food,safe,clean}).
+        After fix: topic_eligible(q_tokens={"safe"}, daily_care_anchors) = False → ASK_AI.
         """
         h = _harness(ALL_KB_IDS)
         h.run(question)
         assert h.temp_state["answer_route"] == "ASK_AI", (
             f"Generic safe question {question!r} forced to "
             f"{h.temp_state.get('matched_card')!r}; "
-            "generic 'safe' alone must not confer food_safety eligibility."
+            "generic 'safe' alone must not confer daily_care eligibility."
         )
         assert h.temp_state["matched_card"] == ""
 
@@ -995,27 +995,27 @@ class TestGenericTopicGuard:
         assert h.temp_state["answer_route"] == "ASK_AI"
         assert h.temp_state["matched_card"] == ""
 
-    # --- positive controls: "safe" WITH food anchor still routes food_safety ---
+    # --- positive controls: "safe" WITH food anchor still routes daily_care ---
     @pytest.mark.parametrize(
         "question,expected_card",
         [
-            # food vocabulary present → food_safety anchor satisfied → still matches
-            ("Should my food be safe and clean?", "food_safety_en"),
-            ("What food is safe?", "food_safety_en"),
-            ("What food should I prepare safely?", "food_safety_en"),
+            # food vocabulary present → daily_care anchor satisfied → still matches
+            ("Is it safe to sleep under a mosquito net?", "daily_care_en"),
+            ("Is a net safe to sleep under?", "daily_care_en"),
+            ("Is it safe to rest more when pregnant?", "daily_care_en"),
         ],
     )
-    def test_safe_with_food_anchor_routes_food_safety(self, question, expected_card):
-        """'safe' with food anchor must still route food_safety (not a denylist on 'safe').
+    def test_safe_with_topic_anchor_routes_daily_care(self, question, expected_card):
+        """'safe' with food anchor must still route daily_care (not a denylist on 'safe').
 
         These are positive controls: a denylist on the word 'safe' would break them.
-        After fix: topic_eligible(q_tokens contains 'food', food_safety_anchors) = True.
+        After fix: topic_eligible(q_tokens contains 'food', daily_care_anchors) = True.
         """
         h = _harness(ALL_KB_IDS)
         h.run(question)
         assert h.temp_state["answer_route"] == "CARD", (
             f"Positive control {question!r} failed to match {expected_card!r}; "
-            "food vocabulary must confer food_safety eligibility."
+            "food vocabulary must confer daily_care eligibility."
         )
         assert h.temp_state["matched_card"] == expected_card
 
@@ -1024,7 +1024,7 @@ class TestGenericTopicGuard:
         """Routing difference is determined by topic anchor, not by word 'safe' presence.
 
         'Is it safe?' → no food anchor → ASK_AI
-        'What food is safe?' → 'food' anchor → food_safety_en
+        'What food is safe?' → 'food' anchor → daily_care_en
         These two tests together prove it is a topic check, not a denylist.
         """
         # No food anchor: abstains
@@ -1034,6 +1034,6 @@ class TestGenericTopicGuard:
 
         # With food anchor: routes
         h_with_anchor = _harness(ALL_KB_IDS)
-        h_with_anchor.run("What food is safe?")
+        h_with_anchor.run("Is it safe to sleep under a mosquito net?")
         assert h_with_anchor.temp_state["answer_route"] == "CARD"
-        assert h_with_anchor.temp_state["matched_card"] == "food_safety_en"
+        assert h_with_anchor.temp_state["matched_card"] == "daily_care_en"

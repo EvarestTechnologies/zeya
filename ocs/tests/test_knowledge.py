@@ -260,7 +260,7 @@ def test_real_kb_includes_all_entries_by_default(real_kb_path):
 def test_real_kb_expected_ids(real_kb_path):
     entries = load_knowledge(real_kb_path)
     ids = {e["id"] for e in entries}
-    expected = {"anc_purpose", "pregnancy_records", "food_variety", "food_safety", "birth_preparation"}
+    expected = {"anc_visits", "danger_signs", "food_groups", "daily_care", "birth_plan"}
     assert ids == expected
 
 

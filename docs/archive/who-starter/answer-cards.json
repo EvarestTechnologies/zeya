@@ -1,0 +1,221 @@
+[
+  {
+    "id": "anc_purpose_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "anc_purpose",
+    "topic_anchors": [
+      "anc",
+      "antenatal",
+      "clinic",
+      "prenatal"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry anc_purpose.",
+    "triggers": [
+      "Why should I go to ANC?",
+      "What are pregnancy clinic visits for?",
+      "Why should I attend antenatal care?",
+      "What are antenatal visits for?",
+      "What is the purpose of antenatal clinic visits when pregnant?",
+      "Why should I attend antenatal care visits?",
+      "Why do I need to attend antenatal visits?"
+    ],
+    "answer": "Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend."
+  },
+  {
+    "id": "pregnancy_records_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "pregnancy_records",
+    "topic_anchors": [
+      "record",
+      "documentation"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry pregnancy_records.",
+    "triggers": [
+      "Should I keep my pregnancy health records?",
+      "Why keep a record of pregnancy care?",
+      "Should I keep records of my pregnancy care?",
+      "Why is it important to keep my pregnancy health records?",
+      "Why should I keep records of my pregnancy health care?",
+      "How should I manage my maternity health records?"
+    ],
+    "answer": "Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand."
+  },
+  {
+    "id": "food_variety_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "food_variety",
+    "topic_anchors": [
+      "food",
+      "eat",
+      "diet",
+      "vegetable",
+      "fruit",
+      "nutrition"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry food_variety.",
+    "triggers": [
+      "What kinds of food should I eat?",
+      "What does a varied pregnancy diet include?",
+      "What food should I eat during pregnancy?",
+      "What kinds of food can I eat when pregnant?",
+      "What varieties of food should I eat during pregnancy?",
+      "What is a healthy varied diet for a pregnant woman?"
+    ],
+    "answer": "Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs."
+  },
+  {
+    "id": "food_safety_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "food_safety",
+    "topic_anchors": [
+      "food",
+      "eat",
+      "diet"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry food_safety.",
+    "triggers": [
+      "Does food cleanliness matter in pregnancy?",
+      "Should I make sure food is safe and clean during pregnancy?",
+      "Is food safety important when pregnant?",
+      "Should food be safe and clean during pregnancy?",
+      "Why is clean and safe food important in pregnancy?",
+      "How do I keep food safe during pregnancy?"
+    ],
+    "answer": "Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy."
+  },
+  {
+    "id": "birth_preparation_en",
+    "review_status": "pending",
+    "language": "en",
+    "kb_ref": "birth_preparation",
+    "topic_anchors": [
+      "birth",
+      "delivery",
+      "deliver",
+      "childbirth"
+    ],
+    "source_note": "Sourced from WHO starter KB v0.1 entry birth_preparation.",
+    "triggers": [
+      "What should I discuss when planning for birth?",
+      "Should I plan where I will give birth?",
+      "How should I prepare for childbirth?",
+      "Should I plan and prepare for where I will give birth?",
+      "What is a birth preparedness plan?",
+      "How do I plan for birth and complications?"
+    ],
+    "answer": "Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance."
+  },
+  {
+    "id": "anc_purpose_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "anc_purpose",
+    "topic_anchors": [
+      "anc",
+      "ujauzito",
+      "kliniki",
+      "ziara"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (anc_purpose).",
+    "triggers": [
+      "Niende kliniki ya ujauzito kwa nini?",
+      "Ziara za ujauzito ni kwa nini?",
+      "Niende ANC kwa sababu gani?",
+      "Huduma ya kabla ya kujifungua ni kwa nini?",
+      "Nini lengo la ziara za ANC?",
+      "Kwa nini ninahitaji kuhudhuria ziara za kabla ya kujifungua?"
+    ],
+    "answer": "Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza."
+  },
+  {
+    "id": "pregnancy_records_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "pregnancy_records",
+    "topic_anchors": [
+      "rekodi",
+      "kumbukumbu",
+      "hifadhi"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (pregnancy_records).",
+    "triggers": [
+      "Je, nihifadhi rekodi zangu za ujauzito?",
+      "Kwa nini nishike kumbukumbu za huduma ya ujauzito?",
+      "Vipi niandike rekodi za afya ya ujauzito wangu?",
+      "Ni muhimu kushika rekodi za ujauzito?",
+      "Kwa nini kuweka rekodi ya afya ya ujauzito ni muhimu?",
+      "Ninahifadhije rekodi zangu za afya ya uzazi?"
+    ],
+    "answer": "Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi."
+  },
+  {
+    "id": "food_variety_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "food_variety",
+    "topic_anchors": [
+      "chakula",
+      "kula",
+      "lishe",
+      "mboga",
+      "matunda"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_variety).",
+    "triggers": [
+      "Ninapaswa kula chakula gani wakati wa ujauzito?",
+      "Nini lishe nzuri kwa mjamzito?",
+      "Nini chakula cha aina mbalimbali kwa mjamzito?",
+      "Ninaweza kula nini wakati wa ujauzito?",
+      "Nini inajumuishwa katika lishe ya aina mbalimbali ya ujauzito?",
+      "Ni lishe gani nzuri ya mjamzito?"
+    ],
+    "answer": "Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi."
+  },
+  {
+    "id": "food_safety_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "food_safety",
+    "topic_anchors": [
+      "chakula",
+      "kula",
+      "lishe"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_safety).",
+    "triggers": [
+      "Je, usafi wa chakula ni muhimu wakati wa ujauzito?",
+      "Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?",
+      "Usalama wa chakula ni muhimu kwa mjamzito?",
+      "Chakula kiwe salama na safi wakati wa ujauzito?",
+      "Kwa nini chakula salama na safi ni muhimu katika ujauzito?",
+      "Ninahifadhije usalama wa chakula wakati wa ujauzito?"
+    ],
+    "answer": "Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito."
+  },
+  {
+    "id": "birth_preparation_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "birth_preparation",
+    "topic_anchors": [
+      "kujifungua",
+      "mpango",
+      "maandalizi",
+      "uzazi"
+    ],
+    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (birth_preparation).",
+    "triggers": [
+      "Ninapaswa kujadili nini kuhusu mipango ya kujifungua?",
+      "Je, nipange mahali pa kujifungua?",
+      "Nijiandaeje kwa kujifungua?",
+      "Nini mpango wa kujiandaa kwa kujifungua?",
+      "Nijiandaeje kwa kujifungua na matatizo yanayoweza kutokea?",
+      "Nini maandalizi ya kujifungua?"
+    ],
+    "answer": "Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao."
+  }
+]
