@@ -556,7 +556,7 @@ def test_g201_emergency_registered_no_model(pipeline_default, fake_llm_safe, cat
     reply = output["messages"][-1]
     prefix = "DHARURA:" if language == "sw" else "URGENT:"
     assert reply.startswith(prefix), f"G201: expected {prefix!r}, got: {reply[:50]!r}"
-    assert "999" in reply and "922" in reply and "1199" in reply
+    assert "999" in reply and "922" in reply and "0740 587 479" in reply
     assert f"danger_sign:{category}" in _tags(output)
     assert "danger_router:EMERGENCY" in _tags(output)
     assert fake_llm_safe.calls == []

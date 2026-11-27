@@ -39,16 +39,16 @@ def main(input: str, **kwargs) -> str:
     footer_sw = "\n\nHii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya."
 
     numbers_en = (
-        "Emergency numbers (anywhere in Kenya):\n"
+        "Emergency numbers:\n"
+        "- Ambulance: 922 (free)\n"
         "- Emergency services: 999 or 112\n"
-        "- National ambulance: 922\n"
-        "- Kenya Red Cross: 1199 or 1514"
+        "- Migori County ambulance: 0740 587 479"
     )
     numbers_sw = (
-        "Nambari za dharura (popote nchini Kenya):\n"
+        "Nambari za dharura:\n"
+        "- Ambulensi: 922 (bila malipo)\n"
         "- Huduma za dharura: 999 au 112\n"
-        "- Ambulensi ya kitaifa: 922\n"
-        "- Kenya Red Cross: 1199 au 1514"
+        "- Ambulensi ya Kaunti ya Migori: 0740 587 479"
     )
 
     language = (get_participant_data() or {}).get("language_preference")

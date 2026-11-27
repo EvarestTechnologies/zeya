@@ -104,6 +104,7 @@ Zeya explains and always points back to the health worker. It never diagnoses. U
 - Small, frequent dry meals. Small sips of fluid often. Eat something before getting out of bed.
 - Ginger, lemon or peppermint tea can help.
 - Go to the clinic if she cannot keep fluids down or is losing weight.
+- Tell your health worker if vomiting starts late in pregnancy (NG24 p52: symptoms presenting later in pregnancy should prompt the clinician to consider other causes).
 
 **Heartburn, pending (NG12 p50).** Small meals eaten slowly. Drink between meals. Avoid spicy food. Stay upright for one to two hours after eating. Raise the head of the bed. No antacids without asking a health worker.
 
@@ -263,4 +264,5 @@ Every mother is tested. A positive mother starts treatment for life. A negative 
   - Row 11, section 11: two-week mood rule replaced with worsening or prolonged low mood (NG24 p291).
   - Extra, section 4: vitamin A "not routinely given in pregnancy" (NG24 p42, p109).
   - Source table: NG12 identified as the 2012 edition.
+  - Row 10a, section 6 (second round): "Tell your health worker if vomiting starts late in pregnancy" reinstated with NG24 p52, because answer K5 found the source.
 - v1.0 adds NG24 antenatal, labour, mental health, nutrition and newborn chapters, folds in NG12 items as pending, and settles the visit count, malaria timing, tetanus misprint and vitamin A questions.

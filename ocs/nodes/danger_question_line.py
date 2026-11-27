@@ -25,12 +25,12 @@ def main(input, **kwargs):
     if data.get("language_preference") == "sw":
         line = (
             "Kama hili linakutokea sasa, nenda kituo cha afya sasa hivi. "
-            "Nambari za dharura: 999 au 112, ambulensi ya kitaifa 922, Kenya Red Cross 1199 au 1514."
+            "Nambari za dharura: ambulensi 922 (bila malipo), 999 au 112, ambulensi ya Kaunti ya Migori 0740 587 479."
         )
     else:
         line = (
             "If this is happening to you now, go to a health facility now. "
-            "Emergency numbers: 999 or 112, national ambulance 922, Kenya Red Cross 1199 or 1514."
+            "Emergency numbers: ambulance 922 (free), 999 or 112, Migori County ambulance 0740 587 479."
         )
 
     add_message_tag("danger_question_line")

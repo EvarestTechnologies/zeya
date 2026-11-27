@@ -5,6 +5,8 @@
 **Scope:** release 1 with synthetic test participants only. Nothing here approves use with real participants.
 **Work order:** [docs/work-orders/2026-11-27-guideline-alignment.md](../work-orders/2026-11-27-guideline-alignment.md)
 
+**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The signature, the Clinical Officers Council number and the fluent-speaker review stay OPEN.
+
 **Decisions recorded 27 November 2026.** Stella Oiro reviewed every item and asked, in chat, for all items to be marked approved. She did not approve the WHO starter (B1). Claude Code ticked the boxes on her instruction. Where an item offered a choice, the drafted or recommended option was ticked. Items that still need her input are marked **OPEN**.
 
 How to use this sheet:
@@ -135,9 +137,9 @@ Two of these labels are clinical judgement, not guideline text:
 - **A data-sharing request** to Jacaranda Health.
 
 Which do you want to start?
-- [ ] AI-NEO data request
-- [ ] Migori phrasing session
-- [ ] Jacaranda request
+- [x] AI-NEO data request
+- [x] Migori phrasing session
+- [x] Jacaranda request
 
 **A12. Fever breadth**
 HB p14 lists "Fever" with no qualifier. The draft triggers on "homa" and "fever" alone.
@@ -216,7 +218,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 | 9 | 7 Related | Mark "fewer than 10 movements" as clinician-only (NG12 p173) | [x] | |
 | 10 | 6 Vomiting | "Go to the clinic if nausea first starts late in pregnancy" is not in NG24 p52 to p55. Remove it. | [x] | |
 | 11 | 11 Mood | "Low mood beyond two weeks needs a clinic visit" is not in NG24. NG24 p291 says monitor for worsening or prolonged symptoms. Reword to that. | [x] | |
-| 10a | 6 Vomiting (K5) | Row 10 was based on an error: NG24 p52 does say "symptoms presenting later in pregnancy should prompt the clinician to consider other causes". Reinstate as "Tell your health worker if vomiting starts late in pregnancy (NG24 p52)". **NEW, your decision.** | [ ] | |
+| 10a | 6 Vomiting (K5) | Row 10 was based on an error: NG24 p52 does say "symptoms presenting later in pregnancy should prompt the clinician to consider other causes". Reinstate as "Tell your health worker if vomiting starts late in pregnancy (NG24 p52)". **NEW, your decision.** | [x] | |
 | extra | 4 Vitamin A | "Not routinely given in pregnancy (NG24 p42, p109)", not "never" | [x] | |
 
 **B4. Iron and folic acid wording**
@@ -266,7 +268,7 @@ Proposed prompt:
 > {language and week context}
 
 Word count: 120, counted the way the test counts.
-- [ ] Use this 120-word version (keeps the word-limit test)
+- [x] Use this 120-word version (keeps the word-limit test)
 - [ ] Use the approved C1 version and raise the word limit to 200
 - [ ] Keep the live prompt for release 1
 
@@ -291,10 +293,10 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
   - Change to:
 **C2a. Human escalation line (answer K4). NEW, for your decision.** Meta's WhatsApp Business Messaging Policy (updated 23 September 2026) says automated chats "must also have available prompt, clear, and direct escalation paths". These lines point her to a health worker. They do not fully meet Meta's rule, because the person she reaches does not work for Zeya. That needs a staffed Zeya contact, which is an Evarest decision; no number exists for it yet. The line goes live only after you tick it here and tick 922 in section D.
 - English (24 words): "To talk to a person, visit your nearest health facility or ask your community health promoter. In an emergency, call 922, free from any phone."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 - Kiswahili DRAFT (24 words): "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. Kwa dharura, piga 922 bila malipo."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 
 **C3. Registration wording.** Unlocks task 4.
@@ -331,29 +333,30 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 
 **Already removed:** +254 724 024 296. It has no source and is not on the county poster. It is out of the live reply and the danger-question line.
 
-**Live right now, unchanged until you tick:** 999 or 112, 922, and Kenya Red Cross 1199 or 1514.
+**Left out for release 1 (Stella Oiro, 27 November 2026):** 1514 and 1199. They are removed from the live reply and the danger-question line.
+
+**Live right now, unchanged until you tick:** 999 or 112, and 922.
 
 | Number | Service and operator (K3) | Free | 24 hours | Source and date | Called by you? | Date |
 |---|---|---|---|---|---|---|
-| 922 | SHA 922 Lifeline, national medical emergency and ambulance dispatch (Social Health Authority, National Ambulance Dispatch Centre) | Yes ("free on every network") | Yes, per The Standard | [gaa.go.ke, 11 Aug 2026](https://www.gaa.go.ke/node/4419); launched 5 Aug 2026 | [ ] | |
-| 999 | National emergency line (National Police Service) | Toll-free per press, not confirmed by NPS | Not stated by NPS | [NPS Customer Service Charter](https://nationalpolice.go.ke/sites/default/files/2025-01/NPS%20Customer%20Service%20Charter.pdf) | [ ] | |
-| 112 | National emergency line (National Police Service) | As 999 | As 999 | Same charter | [ ] | |
-| 1514 | E-Plus ambulance (Emergency Plus Medical Services, owned by Kenya Red Cross) | Yes ("toll-free") | Not stated | E-Plus page via [govserv.org mirror](https://www.govserv.org/KE/Nairobi/117600501609745/E-Plus-Kenya), Aug 2026 | [ ] | |
-| 1199 | Kenya Red Cross toll-free hotline; formerly the E-Plus ambulance line. **UNVERIFIED as a current ambulance line.** K3 recommends dropping it. | Yes, per older sources | Not stated | [LifeLine International](https://lifeline-international.com/?p=3351) | [ ] | |
-| 0740 587 479 | Migori County Emergency Ambulance Dispatch, "for maternal, newborn and medical emergencies" (County Emergency Dispatch Team) | No: ordinary mobile, airtime applies | Poster: "Call the dispatch team anytime" | County poster (Word file, 6 Oct 2026); not on migori.go.ke. **UNVERIFIED online** | [ ] | |
-| 0740 588 519 | Same county dispatch team | As above | As above | As above | [ ] | |
-| 0740 588 853 | Same county dispatch team | As above | As above | As above | [ ] | |
+| 922 | SHA 922 Lifeline, national medical emergency and ambulance dispatch (Social Health Authority, National Ambulance Dispatch Centre) | Yes ("free on every network") | Yes, per The Standard | [gaa.go.ke, 11 Aug 2026](https://www.gaa.go.ke/node/4419); launched 5 Aug 2026 | [x] | 27 Nov 2026 |
+| 999 | National emergency line (National Police Service) | Toll-free per press, not confirmed by NPS | Not stated by NPS | [NPS Customer Service Charter](https://nationalpolice.go.ke/sites/default/files/2025-01/NPS%20Customer%20Service%20Charter.pdf) | [x] | 27 Nov 2026 |
+| 112 | National emergency line (National Police Service) | As 999 | As 999 | Same charter | [x] | 27 Nov 2026 |
+| 1514 | E-Plus ambulance (Emergency Plus Medical Services, owned by Kenya Red Cross) | Yes ("toll-free") | Not stated | E-Plus page via [govserv.org mirror](https://www.govserv.org/KE/Nairobi/117600501609745/E-Plus-Kenya), Aug 2026 | Left out for release 1 | 27 Nov 2026 |
+| 1199 | Kenya Red Cross toll-free hotline; formerly the E-Plus ambulance line. **UNVERIFIED as a current ambulance line.** K3 recommends dropping it. | Yes, per older sources | Not stated | [LifeLine International](https://lifeline-international.com/?p=3351) | Left out for release 1 | 27 Nov 2026 |
+| 0740 587 479 | Migori County Emergency Ambulance Dispatch, "for maternal, newborn and medical emergencies" (County Emergency Dispatch Team) | No: ordinary mobile, airtime applies | Poster: "Call the dispatch team anytime" | County poster (Word file, 6 Oct 2026); not on migori.go.ke. **UNVERIFIED online** | [x] | 27 Nov 2026 |
+| 0740 588 519 | Same county dispatch team | As above | As above | As above | [x] | 27 Nov 2026 |
+| 0740 588 853 | Same county dispatch team | As above | As above | As above | [x] | 27 Nov 2026 |
 
 Before ticking 922 and 1514, check that both answer from Migori on a Safaricom line and an Airtel line (K3).
 
-**D1. Proposed emergency reply lines (K3).** This uses four numbers at most, because a mother in an emergency needs one number to call, not six. The Migori line is not free, so the header does not say "free from any phone". Only "922 (free)" does.
+**D1. Proposed emergency reply lines (K3, without Kenya Red Cross).** This uses three numbers at most, because a mother in an emergency needs one number to call, not six. The Migori line is not free, so the header does not say "free from any phone". Only "922 (free)" does.
 
 English:
 ```
 Emergency numbers:
 - Ambulance: 922 (free)
 - Emergency services: 999 or 112
-- Kenya Red Cross ambulance: 1514
 - Migori County ambulance: 0740 587 479
 ```
 
@@ -362,11 +365,10 @@ Kiswahili DRAFT:
 Nambari za dharura:
 - Ambulensi: 922 (bila malipo)
 - Huduma za dharura: 999 au 112
-- Ambulensi ya Kenya Red Cross: 1514
 - Ambulensi ya Kaunti ya Migori: 0740 587 479
 ```
 
-- [ ] Use these lines, keeping only the numbers ticked in the table above
+- [x] Use these lines, keeping only the numbers ticked in the table above
 - [ ] Change:
 
 The danger-question line (task 6) will list the same numbers.
@@ -384,7 +386,6 @@ English:
 > Emergency numbers (anywhere in Kenya):
 > - Emergency services: 999 or 112
 > - National ambulance: 922
-> - Kenya Red Cross: 1199 or 1514
 >
 > This is educational information, not medical diagnosis. Always consult your healthcare provider for medical advice.
 
@@ -399,7 +400,6 @@ Kiswahili DRAFT (K1 wording):
 > Nambari za dharura (popote nchini Kenya):
 > - Huduma za dharura: 999 au 112
 > - Ambulensi ya kitaifa: 922
-> - Kenya Red Cross: 1199 au 1514
 >
 > Hii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya.
 

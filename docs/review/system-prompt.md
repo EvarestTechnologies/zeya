@@ -2,7 +2,7 @@
 
 **Reviewer:** Stella Oiro, licensed clinical officer
 **Sign-off:** `docs/review/clinical-signoff.md`, item C1 (approved 27 November 2026)
-**Status: OPEN.** The approved prompt is not live yet, because two existing tests conflict with it (see "Decision needed"). The live prompt is unchanged.
+**Status: the 120-word K6 version is live** (sign-off C1a, ticked 27 November 2026). It keeps every approved rule and passes every prompt test, so no test was changed.
 
 ## What has changed since the last review
 
@@ -40,7 +40,7 @@ Two existing tests cannot pass with the approved prompt unless either a test or 
 **Answer K6 (27 November 2026)** wrote a 120-word version that keeps every rule and passes every prompt test: `docs/review/system-prompt-120.txt`, shown in sign-off item C1a. Choose there.
 
 Options:
-- [ ] **(K6)** Use the 120-word version. No test changes.
+- [x] **(K6)** Use the 120-word version. No test changes.
 - [ ] **(a)** Keep the approved prompt, add back the guard sentence, and raise the word limit to 200. The 4,000-byte budget still applies, and the gate enforces it on every turn. *Recommended: the byte budget is the real limit, and every rule in the approved prompt is clinical.*
 - [ ] **(b)** Shorten the approved prompt to 120 words. Needs a new wording and a fresh C1 tick.
 - [ ] **(c)** Keep the live prompt for release 1.

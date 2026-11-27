@@ -25,10 +25,18 @@ def main(input, **kwargs):
 
     if lang == "sw":
         # Draft Swahili referral — pending fluent-speaker and clinical review.
-        referral = "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
+        referral = (
+            "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya.\n\n"
+            "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. "
+            "Kwa dharura, piga 922 bila malipo."
+        )
     else:
         # English referral — default for all non-Swahili or absent preferences.
-        referral = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+        referral = (
+            "I do not have reviewed information to answer that question. Please ask your healthcare provider.\n\n"
+            "To talk to a person, visit your nearest health facility or ask your community health promoter. "
+            "In an emergency, call 922, free from any phone."
+        )
 
     set_temp_state_key("knowledge_referral_route", "REFERRAL")
     add_message_tag("route:knowledge_referral")
