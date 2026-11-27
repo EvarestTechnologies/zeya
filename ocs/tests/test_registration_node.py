@@ -47,8 +47,8 @@ CONSENT_RETRY_MSG = "Please reply YES or NO to consent to participate in the stu
 STUDY = {"study_participant": True, "language_preference": "en"}
 PUBLIC_WELCOME_EN = (
     "Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\n\n"
-    "I share educational information about maternal health based on WHO and Kenya Ministry "
-    "of Health guidelines.\n\n"
+    "I share educational information about maternal health based on Kenya Ministry "
+    "of Health materials.\n\n"
     "Important: This is educational information, not medical diagnosis. Always consult your "
     "healthcare provider for medical advice.\n\n"
     "Your messages are stored securely so that ZEYA can reply to you. "
@@ -57,7 +57,7 @@ PUBLIC_WELCOME_EN = (
 )
 PUBLIC_WELCOME_SW = (
     "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
-    "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na "
+    "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na nyaraka za "
     "Wizara ya Afya ya Kenya.\n\n"
     "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
     "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
@@ -505,7 +505,7 @@ class TestRegistered:
         # Enrolled at 20 weeks 10 days ago -> 21 weeks (whole weeks, as in User.current_gestational_age).
         harness = _run("hello", REGISTERED)
         assert harness.temp_state["llm_context"] == _expected_context(21, "en")
-        assert "Second trimester" in harness.temp_state["llm_context"]
+        assert "Danger signs in pregnancy" in harness.temp_state["llm_context"]
 
     def test_context_in_swahili(self):
         harness = _run("habari", REGISTERED | {"language_preference": "sw"})

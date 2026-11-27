@@ -52,13 +52,16 @@ provider for medical advice."
 Respond in a warm, supportive tone. Address the user as "Mama" when appropriate. \
 If the user writes in Swahili, respond in Swahili. If in English, respond in English."""
 
+# Week context for the model, not a message to the user: the NG24 p107 ANC teaching
+# topics (National Guidelines on Quality Obstetrics and Perinatal Care, 2024).
 GESTATIONAL_GUIDANCE = {
-    (1, 12): "First trimester: Focus on nutrition (folate, iron), managing morning sickness, "
-    "first ANC visit importance, and avoiding harmful substances.",
-    (13, 26): "Second trimester: Focus on balanced diet, fetal movement awareness, "
-    "anomaly screening, dental care, and preparing for birth.",
-    (27, 40): "Third trimester: Focus on birth preparedness, recognizing labor signs, "
-    "danger signs awareness, breastfeeding preparation, and newborn care.",
+    (1, 12): "First contact: history, examination and the ANC profile",
+    (13, 20): "Why ANC matters, iron and folic acid, self care",
+    (21, 26): "Danger signs in pregnancy, why to give birth in a health facility",
+    (27, 30): "Birth plan, danger signs, exclusive breastfeeding",
+    (31, 34): "Newborn care, breastfeeding position and attachment, family planning after birth",
+    (35, 36): "Kangaroo mother care, keeping the newborn warm, cord care",
+    (37, 42): "Signs of labour, newborn care recap",
 }
 
 # Maximum conversation turns to include in context
