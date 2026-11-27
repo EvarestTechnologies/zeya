@@ -72,7 +72,7 @@
           "label": "",
           "params": {
             "name": "emergency_response",
-            "code": "\"\"\"\nOpen Chat Studio Python node: emergency response for detected danger signs.\n\nRuns on the EMERGENCY branch of the danger router. There is no LLM on this branch,\nso the message never waits on model latency or availability.\n\nThe header and footer are the same as backend/app/services/danger_signs.py\nget_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is\nopen to women anywhere in Kenya, so this lists national emergency numbers instead\n(methodological change 9). Each number must be confirmed by calling it before a\nrelease; see docs/ocs-migration.md.\n\nLanguage comes from participant data ``language_preference``; anything other than\n\"sw\" gets English, as in Zeya.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    header_en = (\n        \"URGENT: This sounds like it could be a danger sign that requires immediate \"\n        \"medical attention. Please do the following right away:\\n\\n\"\n        \"1. Go to your nearest health facility immediately or call emergency services.\\n\"\n        \"2. If you cannot travel, ask someone nearby to help you get to the hospital.\\n\"\n        \"3. Do NOT wait to see if symptoms improve on their own.\\n\\n\"\n    )\n    header_sw = (\n        \"DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. \"\n        \"Tafadhali fanya yafuatayo mara moja:\\n\\n\"\n        \"1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.\\n\"\n        \"2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.\\n\"\n        \"3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.\\n\\n\"\n    )\n    footer_en = (\n        \"\\n\\nThis is educational information, not medical diagnosis. \"\n        \"Always consult your healthcare provider for medical advice.\"\n    )\n    footer_sw = (\n        \"\\n\\nHii ni taarifa ya kielimu, si utambuzi wa kimatibabu. \"\n        \"Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\"\n    )\n\n    numbers_en = (\n        \"Emergency numbers (anywhere in Kenya):\\n\"\n        \"- Emergency services: 999 or 112\\n\"\n        \"- National ambulance: 922\\n\"\n        \"- Kenya Red Cross: 1199\"\n    )\n    numbers_sw = (\n        \"Nambari za dharura (popote nchini Kenya):\\n\"\n        \"- Huduma za dharura: 999 au 112\\n\"\n        \"- Ambulensi ya kitaifa: 922\\n\"\n        \"- Shirika la Msalaba Mwekundu Kenya: 1199\"\n    )\n\n    language = (get_participant_data() or {}).get(\"language_preference\")\n    if language == \"sw\":\n        return header_sw + numbers_sw + footer_sw\n    return header_en + numbers_en + footer_en\n"
+            "code": "\"\"\"\nOpen Chat Studio Python node: emergency response for detected danger signs.\n\nRuns on the EMERGENCY branch of the danger router. There is no LLM on this branch,\nso the message never waits on model latency or availability.\n\nThe header and footer are the same as backend/app/services/danger_signs.py\nget_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is\nopen to women anywhere in Kenya, so this lists national emergency numbers instead\n(methodological change 9). Each number must be confirmed by calling it before a\nrelease; see docs/ocs-migration.md. The numbers below were verified by calling\n(docs/review/clinical-signoff.md, section D, 27 November 2026). The Migori County\ndispatch line is staffed 24 hours and shown to every participant (D1).\n\nLanguage comes from participant data ``language_preference``; anything other than\n\"sw\" gets English, as in Zeya.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    header_en = (\n        \"URGENT: This sounds like it could be a danger sign that requires immediate \"\n        \"medical attention. Please do the following right away:\\n\\n\"\n        \"1. Go to your nearest health facility immediately or call emergency services.\\n\"\n        \"2. If you cannot travel, ask someone nearby to help you get to the hospital.\\n\"\n        \"3. Do NOT wait to see if symptoms improve on their own.\\n\\n\"\n    )\n    header_sw = (\n        \"DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. \"\n        \"Tafadhali fanya yafuatayo mara moja:\\n\\n\"\n        \"1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.\\n\"\n        \"2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.\\n\"\n        \"3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.\\n\\n\"\n    )\n    footer_en = (\n        \"\\n\\nThis is educational information, not medical diagnosis. \"\n        \"Always consult your healthcare provider for medical advice.\"\n    )\n    footer_sw = (\n        \"\\n\\nHii ni taarifa ya kielimu, si utambuzi wa kimatibabu. \"\n        \"Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\"\n    )\n\n    numbers_en = (\n        \"Emergency numbers (anywhere in Kenya):\\n\"\n        \"- Emergency services: 999 or 112\\n\"\n        \"- National ambulance: 922\\n\"\n        \"- Kenya Red Cross: 1199 or 1514\\n\"\n        \"- Migori County emergency dispatch: +254 724 024 296\"\n    )\n    numbers_sw = (\n        \"Nambari za dharura (popote nchini Kenya):\\n\"\n        \"- Huduma za dharura: 999 au 112\\n\"\n        \"- Ambulensi ya kitaifa: 922\\n\"\n        \"- Shirika la Msalaba Mwekundu Kenya: 1199 au 1514\\n\"\n        \"- Huduma ya dharura ya Kaunti ya Migori: +254 724 024 296\"\n    )\n\n    language = (get_participant_data() or {}).get(\"language_preference\")\n    if language == \"sw\":\n        return header_sw + numbers_sw + footer_sw\n    return header_en + numbers_en + footer_en\n"
           }
         }
       },
@@ -315,6 +315,23 @@
         }
       },
       {
+        "id": "danger_question_line",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3150,
+          "y": 300
+        },
+        "data": {
+          "id": "danger_question_line",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "danger_question_line",
+            "code": "\"\"\"\nOpen Chat Studio Python node: fixed line before answers to danger-sign questions.\n\nSits in front of End on every SAFE path (registration reply, fixed referral and\noutput guard). When the danger gate set ``danger_question`` (a match that is a\ngeneral question or history, not happening now), the participant first receives a\nfixed line telling her to go to a health facility now if it is happening to her,\nwith the verified emergency numbers, and then the normal reply.\n\nApproved in docs/review/clinical-signoff.md, A4 (c) and A9 (\"go now\").\nThe numbers are the verified numbers in ocs/nodes/emergency_response.py; a test\nkeeps them in step. No model, network, file I/O or credentials.\n\nLanguage copies:\n  English, approved.\n  Swahili, DRAFT, pending fluent-speaker and clinical review.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    if get_temp_state_key(\"danger_question\") is not True:\n        return input\n\n    data = get_participant_data() or {}\n    if data.get(\"language_preference\") == \"sw\":\n        line = (\n            \"Kama hili linakutokea sasa, nenda kituo cha afya sasa hivi. \"\n            \"Nambari za dharura: 999 au 112, ambulensi ya kitaifa 922, \"\n            \"Msalaba Mwekundu Kenya 1199 au 1514, huduma ya dharura ya Kaunti ya Migori +254 724 024 296.\"\n        )\n    else:\n        line = (\n            \"If this is happening to you now, go to a health facility now. \"\n            \"Emergency numbers: 999 or 112, national ambulance 922, \"\n            \"Kenya Red Cross 1199 or 1514, Migori County emergency dispatch +254 724 024 296.\"\n        )\n\n    add_message_tag(\"danger_question_line\")\n    return line + \"\\n\\n\" + input\n"
+          }
+        }
+      },
+      {
         "id": "end",
         "type": "endNode",
         "position": {
@@ -375,9 +392,9 @@
         "targetHandle": "input"
       },
       {
-        "id": "registration_router:output_0->end",
+        "id": "registration_router:output_0->danger_question_line",
         "source": "registration_router",
-        "target": "end",
+        "target": "danger_question_line",
         "sourceHandle": "output_0",
         "targetHandle": "input"
       },
@@ -410,9 +427,9 @@
         "targetHandle": "input"
       },
       {
-        "id": "knowledge_referral:output->end",
+        "id": "knowledge_referral:output->danger_question_line",
         "source": "knowledge_referral",
-        "target": "end",
+        "target": "danger_question_line",
         "sourceHandle": "output",
         "targetHandle": "input"
       },
@@ -473,8 +490,15 @@
         "targetHandle": "input"
       },
       {
-        "id": "output_guard:output->end",
+        "id": "output_guard:output->danger_question_line",
         "source": "output_guard",
+        "target": "danger_question_line",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "danger_question_line:output->end",
+        "source": "danger_question_line",
         "target": "end",
         "sourceHandle": "output",
         "targetHandle": "input"

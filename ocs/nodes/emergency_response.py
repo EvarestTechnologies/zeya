@@ -8,7 +8,9 @@ The header and footer are the same as backend/app/services/danger_signs.py
 get_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is
 open to women anywhere in Kenya, so this lists national emergency numbers instead
 (methodological change 9). Each number must be confirmed by calling it before a
-release; see docs/ocs-migration.md.
+release; see docs/ocs-migration.md. The numbers below were verified by calling
+(docs/review/clinical-signoff.md, section D, 27 November 2026). The Migori County
+dispatch line is staffed 24 hours and shown to every participant (D1).
 
 Language comes from participant data ``language_preference``; anything other than
 "sw" gets English, as in Zeya.
@@ -43,13 +45,15 @@ def main(input: str, **kwargs) -> str:
         "Emergency numbers (anywhere in Kenya):\n"
         "- Emergency services: 999 or 112\n"
         "- National ambulance: 922\n"
-        "- Kenya Red Cross: 1199"
+        "- Kenya Red Cross: 1199 or 1514\n"
+        "- Migori County emergency dispatch: +254 724 024 296"
     )
     numbers_sw = (
         "Nambari za dharura (popote nchini Kenya):\n"
         "- Huduma za dharura: 999 au 112\n"
         "- Ambulensi ya kitaifa: 922\n"
-        "- Shirika la Msalaba Mwekundu Kenya: 1199"
+        "- Shirika la Msalaba Mwekundu Kenya: 1199 au 1514\n"
+        "- Huduma ya dharura ya Kaunti ya Migori: +254 724 024 296"
     )
 
     language = (get_participant_data() or {}).get("language_preference")

@@ -235,6 +235,13 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
             3000,
             600,
         ),
+        _node(
+            "danger_question_line",
+            "CodeNode",
+            {"name": "danger_question_line", "code": _code("danger_question_line")},
+            3150,
+            300,
+        ),
         _node("end", "EndNode", {"name": "end"}, 3300, 300, flow_type="endNode"),
     ]
     edges = [
@@ -244,13 +251,13 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         _edge("danger_router", "registration", "output_1"),
         _edge("emergency_response", "end"),
         _edge("registration", "registration_router"),
-        _edge("registration_router", "end", "output_0"),
+        _edge("registration_router", "danger_question_line", "output_0"),
         # REGISTERED → knowledge context selection (not directly to LLM)
         _edge("registration_router", "kb_context", "output_1"),
         _edge("kb_context", "kb_router"),
         _edge("kb_router", "knowledge_referral", "output_0"),  # FALSE: no KB → referral
         _edge("kb_router", "answer_match", "output_1"),  # TRUE: KB available
-        _edge("knowledge_referral", "end"),
+        _edge("knowledge_referral", "danger_question_line"),
         _edge("answer_match", "answer_router"),
         _edge("answer_router", "output_guard", "output_0"),  # CARD → guard
         _edge("answer_router", "llm_input", "output_1"),  # ASK_AI → privacy filter
@@ -259,7 +266,9 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         _edge("budget_router", "knowledge_referral", "output_0"),  # OVER_BUDGET → referral
         _edge("budget_router", "llm", "output_1"),  # VALID → LLM
         _edge("llm", "output_guard"),
-        _edge("output_guard", "end"),
+        _edge("output_guard", "danger_question_line"),
+        # Fixed line first when the gate flagged a danger-sign question (sign-off A4 (c)).
+        _edge("danger_question_line", "end"),
     ]
     return {"name": PIPELINE_NAME, "data": {"nodes": nodes, "edges": edges}}
 

@@ -22,7 +22,8 @@ def test_registered_answers_are_grounded_and_checked_before_delivery():
         ("budget_router", "knowledge_referral", "output_0"),  # OVER_BUDGET → referral
         ("budget_router", "llm", "output_1"),  # VALID → LLM
         ("llm", "output_guard", "output"),
-        ("output_guard", "end", "output"),
+        ("output_guard", "danger_question_line", "output"),
+        ("danger_question_line", "end", "output"),
     }
     assert required <= edges, (
         "Registered answers must not bypass source selection, privacy filtering, "
@@ -34,7 +35,7 @@ def test_registered_answers_are_grounded_and_checked_before_delivery():
     assert ("llm_input", "llm", "output") not in edges
     assert ("danger_router", "emergency_response", "output_0") in edges
     assert ("emergency_response", "end", "output") in edges
-    assert ("registration_router", "end", "output_0") in edges
+    assert ("registration_router", "danger_question_line", "output_0") in edges
 
 
 def test_kb_router_config_is_fail_closed():
@@ -130,7 +131,8 @@ def test_default_pipeline_no_kb_routes_to_referral_not_model():
     assert ("kb_router", "knowledge_referral", "output_0") in edges
     # TRUE path → answer_match (only reached when KB is available)
     assert ("kb_router", "answer_match", "output_1") in edges
-    # knowledge_referral terminates without reaching llm
-    assert ("knowledge_referral", "end", "output") in edges
+    # knowledge_referral terminates (through the fixed danger-question line) without reaching llm
+    assert ("knowledge_referral", "danger_question_line", "output") in edges
+    assert ("danger_question_line", "end", "output") in edges
     # llm is NOT reachable from knowledge_referral
     assert ("knowledge_referral", "llm", "output") not in edges
