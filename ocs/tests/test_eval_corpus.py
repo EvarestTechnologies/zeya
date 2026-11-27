@@ -13,15 +13,33 @@ from collections import Counter
 from ocs.eval.cards import CARDS
 from ocs.eval.corpus import CASES, CATEGORIES, CORPUS_CSV, KB_SECTIONS, LABELS, LANGUAGES
 
-V3_COLUMNS = ["id", "language", "message", "expected_label", "expected_categories",
-              "expected_card", "kb_section", "note"]
-NINE_SIGNS = ["bleeding", "headache_vision", "pallor_anaemia", "fever", "abdominal_pain",
-              "swelling", "fetal_movement", "water_breaking", "convulsions"]
+V3_COLUMNS = [
+    "id",
+    "language",
+    "message",
+    "expected_label",
+    "expected_categories",
+    "expected_card",
+    "kb_section",
+    "note",
+]
+NINE_SIGNS = [
+    "bleeding",
+    "headache_vision",
+    "pallor_anaemia",
+    "fever",
+    "abdominal_pain",
+    "swelling",
+    "fetal_movement",
+    "water_breaking",
+    "convulsions",
+]
 # Words that make a routine message a trap for a keyword gate.
 DANGER_WORDS = re.compile(
     r"bleed|blood|damu|headache|kichwa|pale|pauka|fever|homa|pain|maumivu|uchungu|tumbo|"
     r"swell|vimba|kick|move|mateke|cheza|water|maji|convuls|degedege|fit|faint|danger|hatari",
-    re.IGNORECASE)
+    re.IGNORECASE,
+)
 
 
 def test_csv_has_the_v3_columns_then_batch():

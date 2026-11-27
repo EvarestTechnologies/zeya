@@ -46,8 +46,16 @@ CORPUS_CSV = Path(__file__).resolve().parent.parent / "tests" / "danger_eval_cor
 LABELS = ("EMERGENCY", "SAME_DAY", "ROUTINE")
 LANGUAGES = ("en", "sw", "sheng", "mixed")
 CATEGORIES = (
-    "bleeding", "headache_vision", "pallor_anaemia", "fever", "abdominal_pain",
-    "swelling", "fetal_movement", "water_breaking", "convulsions", "newborn",
+    "bleeding",
+    "headache_vision",
+    "pallor_anaemia",
+    "fever",
+    "abdominal_pain",
+    "swelling",
+    "fetal_movement",
+    "water_breaking",
+    "convulsions",
+    "newborn",
 )
 # Knowledge base section numbers, plus "registration" for greetings and sign-up replies.
 KB_SECTIONS = tuple(str(n) for n in range(1, 14)) + ("registration",)

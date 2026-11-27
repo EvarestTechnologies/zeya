@@ -22,7 +22,10 @@ def test_recall_counts_only_in_scope_emergencies():
 
 def test_false_alarm_rate_uses_routine_and_same_day_is_separate():
     results = [
-        _res("ROUTINE", True), _res("ROUTINE", False), _res("ROUTINE", False), _res("ROUTINE", False),
+        _res("ROUTINE", True),
+        _res("ROUTINE", False),
+        _res("ROUTINE", False),
+        _res("ROUTINE", False),
         _res("SAME_DAY", True, kb="6"),
     ]
     s = summarise(results)
@@ -41,9 +44,15 @@ def test_misses_and_false_alarms_are_listed():
 def test_recall_and_false_alarms_are_split_by_batch():
     def r(label, triggered, batch, category=None):
         return Result(Case("X", "en", "t", label, category, "7", batch=batch), triggered, [])
-    s = summarise([
-        r("EMERGENCY", True, "v1", "fever"), r("EMERGENCY", False, "v2", "fever"),
-        r("EMERGENCY", True, "v2", "fever"), r("ROUTINE", True, "v2"), r("ROUTINE", False, "v1"),
-    ])
+
+    s = summarise(
+        [
+            r("EMERGENCY", True, "v1", "fever"),
+            r("EMERGENCY", False, "v2", "fever"),
+            r("EMERGENCY", True, "v2", "fever"),
+            r("ROUTINE", True, "v2"),
+            r("ROUTINE", False, "v1"),
+        ]
+    )
     assert s["recall_by_batch"] == {"v1": (1, 1), "v2": (1, 2)}
     assert s["false_alarms_by_batch"] == {"v1": (0, 1), "v2": (1, 1)}
