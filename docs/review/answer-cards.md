@@ -1,11 +1,10 @@
 # Answer cards — review record
 
-**Status: PENDING CLINICAL AND LANGUAGE REVIEW. Not approved for public use.**
+**Status: Runtime content eligibility pending. Not deployed.**
 
 This document lists every answer card in `docs/answer-cards.yaml` for review before
-any card is set to `"review_status": "approved"`. No card may be shown to participants
-until a clinician (preferably Achar or Kenya MoH-aligned reviewer) explicitly approves
-it and a language reviewer approves any translated text.
+any card is set to `"review_status": "approved"`. Content records, runtime
+eligibility and publication are tracked separately.
 
 ---
 
@@ -16,10 +15,10 @@ five-entry WHO-linked starter KB (`knowledge-base-draft.md`, v0.1). They do not
 provide diagnoses, prescriptions, drug doses, symptom assessments, emergency guidance
 or facility-specific information.
 
-**Swahili / Sheng translations:** No translated cards exist in v0. The trigger strings
-and answers are English only. Kiswahili translations require a separate fluent-speaker
-and clinical review before `language: sw` cards can be added. This is explicitly a
-follow-up work item and is not silently fulfilled here.
+**Swahili / Sheng translations:** Five Kiswahili draft counterpart cards have been
+added in `feat/kiswahili-starter-cards` (see `docs/review/kiswahili-starter.md`).
+All five sw cards retain pending runtime eligibility.
+Sheng and regional dialect matching phrases remain a follow-up work item.
 
 **Original ~60-card ambition:** Issue #23 originally described approximately sixty
 cards covering ANC contacts, discomforts, danger signs and newborn care. These five
@@ -187,8 +186,9 @@ Reviewer action needed:
 
 ## Follow-up work (not completed in v0)
 
-- **Kiswahili translations:** Prepare draft translations; submit for fluent-speaker and
-  clinical review; add `language: sw` cards only after sign-off.
+- **Kiswahili review:** Five sw draft cards added in `feat/kiswahili-starter-cards`;
+  submit for fluent-speaker and clinical review; approve only after explicit sign-off
+  (see `docs/review/kiswahili-starter.md`).
 - **Sheng matching phrases:** Add to trigger lists after community review.
 - **Full ~60-card library:** Extend to cover ANC contacts, discomforts, danger signs
   awareness, newborn care, breastfeeding — each requiring its own clinical source and
