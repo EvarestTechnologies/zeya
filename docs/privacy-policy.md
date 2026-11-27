@@ -1,13 +1,15 @@
 # Zeya Privacy Policy
 
+**DRAFT, pending legal review.** Not yet published to participants.
+
 **Operator:** Evarest Technologies Ltd, Kenya  
 **Service:** Zeya, an antenatal education chatbot on WhatsApp  
-**Last updated:** 17 October 2026  
+**Last updated:** 27 November 2026  
 **Contact:** contact@evarestke.com · +254723469406
 
 ## 1. About Zeya
 
-Zeya provides educational information about pregnancy based on World Health Organization (WHO) and Kenya Ministry of Health guidelines.
+Zeya provides educational information about pregnancy based on Kenya Ministry of Health materials. Some answers are written by an AI model.
 
 Zeya is part of a research study. It does not diagnose medical conditions, provide emergency medical care, or replace advice from a qualified health worker. If you experience a pregnancy-related danger sign, seek medical attention immediately.
 
@@ -46,9 +48,11 @@ The service involves the following providers:
 
 - **Meta (WhatsApp):** Transmits messages between you and Zeya.
 - **Open Chat Studio:** Runs Zeya and stores conversations within the infrastructure configured by Evarest Technologies Ltd.
-- **OpenRouter and Google (Gemini):** May process messages and relevant conversation context to generate educational responses to questions that are not classified as danger signs.
+- **Groq, Inc. (United States):** Runs the AI model that writes some answers, for questions that are not classified as danger signs and that no reviewed answer card covers. Evarest Technologies Ltd uses Groq with zero data retention, so Groq does not keep the messages it processes.
 
-Information sent to AI providers may include your message, relevant earlier messages and responses, your stage of pregnancy and your preferred language. Your phone number is not intentionally included in the AI prompt.
+Information sent to the AI provider is your current message, with your saved name and any phone numbers or email addresses removed, plus your stage of pregnancy, your preferred language and the reviewed Ministry of Health content. Earlier messages are not sent. Your phone number is not included in the AI prompt.
+
+**Processing outside Kenya.** Your messages are processed outside Kenya: by Meta, to deliver WhatsApp messages, and by Groq in the United States, when an AI model writes an answer.
 
 The processing, retention and deletion practices of these providers are subject to their applicable terms, configurations and agreements.
 
