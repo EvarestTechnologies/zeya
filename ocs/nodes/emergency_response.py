@@ -36,10 +36,7 @@ def main(input: str, **kwargs) -> str:
         "\n\nThis is educational information, not medical diagnosis. "
         "Always consult your healthcare provider for medical advice."
     )
-    footer_sw = (
-        "\n\nHii ni taarifa ya kielimu, si utambuzi wa ugonjwa. "
-        "Kwa ushauri, wasiliana na muhudumu wa afya."
-    )
+    footer_sw = "\n\nHii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya."
 
     numbers_en = (
         "Emergency numbers (anywhere in Kenya):\n"
