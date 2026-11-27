@@ -392,11 +392,11 @@ EMERGENCY_RESPONSE_HEADER_EN = (
 )
 
 EMERGENCY_RESPONSE_HEADER_SW = (
-    "DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. "
-    "Tafadhali fanya yafuatayo mara moja:\n\n"
-    "1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.\n"
-    "2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.\n"
-    "3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.\n\n"
+    "DHARURA: Hii inaweza kuwa dalili ya hatari inayohitaji matibabu ya haraka. "
+    "Fanya yafuatayo sasa hivi:\n\n"
+    "1. Nenda kituo cha afya kilicho karibu nawe mara moja, au piga simu ya dharura.\n"
+    "2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kufika kituo cha afya.\n"
+    "3. USISUBIRI kuona kama dalili zitapungua zenyewe.\n\n"
 )
 
 EMERGENCY_RESPONSE_FOOTER_EN = (
@@ -405,8 +405,8 @@ EMERGENCY_RESPONSE_FOOTER_EN = (
 )
 
 EMERGENCY_RESPONSE_FOOTER_SW = (
-    "\n\nHii ni taarifa ya kielimu, si utambuzi wa kimatibabu. "
-    "Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu."
+    "\n\nHii ni taarifa ya kielimu, si utambuzi wa ugonjwa. "
+    "Kwa ushauri, wasiliana na muhudumu wa afya."
 )
 
 # Fallback emergency contacts (used only if database is unavailable)

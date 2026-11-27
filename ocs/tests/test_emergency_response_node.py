@@ -26,15 +26,13 @@ NUMBERS = {
         "Emergency numbers (anywhere in Kenya):\n"
         "- Emergency services: 999 or 112\n"
         "- National ambulance: 922\n"
-        "- Kenya Red Cross: 1199 or 1514\n"
-        "- Migori County emergency dispatch: +254 724 024 296"
+        "- Kenya Red Cross: 1199 or 1514"
     ),
     "sw": (
         "Nambari za dharura (popote nchini Kenya):\n"
         "- Huduma za dharura: 999 au 112\n"
         "- Ambulensi ya kitaifa: 922\n"
-        "- Shirika la Msalaba Mwekundu Kenya: 1199 au 1514\n"
-        "- Huduma ya dharura ya Kaunti ya Migori: +254 724 024 296"
+        "- Kenya Red Cross: 1199 au 1514"
     ),
 }
 
@@ -58,19 +56,16 @@ def test_defaults_to_english(participant_data):
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-@pytest.mark.parametrize("number", ["999", "112", "922", "1199", "1514", "+254 724 024 296"])
+@pytest.mark.parametrize("number", ["999", "112", "922", "1199", "1514"])
 def test_every_national_number_is_listed(language, number):
     assert number in _run({"language_preference": language})
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-def test_only_county_line_is_the_approved_migori_dispatch(language):
-    # Sign-off D1 (27 November 2026): the Migori County emergency dispatch line is shown
-    # to every participant. No other county facility is listed.
-    reply = _run({"language_preference": language})
-    county_lines = [line for line in reply.splitlines() if "Migori" in line]
-    assert county_lines == [NUMBERS[language].splitlines()[-1]]
-    assert "Hospital" not in reply and "Hospitali" not in reply
+def test_no_county_specific_facilities(language):
+    # +254 724 024 296 was removed on 27 November 2026 because it has no source.
+    # A Migori County line goes back only after its box in section D is ticked.
+    assert "Migori" not in _run({"language_preference": language})
 
 
 @pytest.mark.parametrize("message", ["", "mtoto hatembei", "x" * 5000], ids=["empty", "swahili", "long"])
