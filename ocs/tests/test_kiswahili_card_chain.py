@@ -82,7 +82,14 @@ def test_birth_preparation_triggers_use_prepare_wording():
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-def test_actual_default_builder_excludes_pending_content(language):
+def test_actual_default_builder_delivers_approved_content(language):
+    """Default build_pipeline (no include_pending) must deliver approved KB and cards.
+
+    With all 10 entries/cards approved:
+    - kb_available must be True for both en and sw participants.
+    - The birth_preparation question must route CARD via the approved content.
+    - All loaded entries and cards must have review_status='approved'.
+    """
     entries, cards = corpus()
     flow = build_pipeline(0, 0)
     nodes = {node["id"]: node["data"]["params"] for node in flow["data"]["nodes"]}
@@ -90,12 +97,16 @@ def test_actual_default_builder_excludes_pending_content(language):
     kb = NodeHarness(nodes["kb_context"]["code"], participant_data=data)
     question = "Nijiandae vipi kwa kujifungua?" if language == "sw" else "How should I prepare for birth?"
     assert kb.run(question) == question
-    assert kb.temp_state["kb_available"] is False
-    assert kb.temp_state["kb_ids"] == []
-    assert kb.temp_state["kb_section"] == ""
+    assert kb.temp_state["kb_available"] is True
+    assert "birth_preparation" in kb.temp_state["kb_ids"]
+    assert kb.temp_state["kb_section"] != ""
     matcher = NodeHarness(nodes["answer_match"]["code"], temp_state=kb.temp_state, participant_data=data)
-    assert matcher.run(question) == question
-    assert matcher.temp_state["answer_route"] == "ASK_AI"
-    assert matcher.temp_state["matched_card"] == ""
-    assert all(entry["review_status"] == "pending" for entry in entries)
-    assert all(card["review_status"] == "pending" for card in cards)
+    answer = matcher.run(question)
+    assert matcher.temp_state["answer_route"] == "CARD"
+    expected_card = f"birth_preparation_{language}"
+    assert matcher.temp_state["matched_card"] == expected_card
+    # Verify the returned answer is the approved card text (not the question).
+    assert answer != question, "CARD route must return card answer, not the original question"
+    assert len(answer) > 10, "Card answer must be non-empty substantive text"
+    assert all(entry["review_status"] == "approved" for entry in entries)
+    assert all(card["review_status"] == "approved" for card in cards)

@@ -28,10 +28,10 @@ Full graph (registered path):
                         VALID       -> llm -> output_guard -> end
 
 Default approved-only build:
-    All five KB entries and answer cards are pending review.  load_knowledge and
-    load_answer_cards return empty lists.  kb_context bakes KB_JSON='[]'; the node
-    always sets kb_available=False at runtime; kb_router always routes FALSE to
-    knowledge_referral; no model is ever called.
+    All five English and five Kiswahili KB entries and answer cards are approved.
+    load_knowledge and load_answer_cards return 10 entries/cards.  kb_context bakes
+    KB_JSON with all 10 entries; the node sets kb_available=True at runtime when the
+    participant language matches available entries; kb_router routes TRUE to answer_match.
 
 Staging flag (--include-pending):
     Pending entries are eligible with an explicit runtime flag; pending review_status
@@ -88,9 +88,9 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
     """Build the full pipeline.
 
     include_pending=False (default / production): only approved KB entries and
-        answer cards are eligible.  With the current all-pending starter content
-        this produces kb_available=False at runtime and always routes to
-        knowledge_referral — no model calls.
+        answer cards are eligible.  With the approved bilingual starter content
+        this produces kb_available=True at runtime for participants whose language
+        matches the 10 approved entries (5 en + 5 sw).
     include_pending=True (synthetic staging ONLY): pending entries carry an
         explicit eligible=True runtime flag without changing their review_status.
         Never deployed to production; used only for integration test fixtures.

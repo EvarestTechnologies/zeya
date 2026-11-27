@@ -111,15 +111,16 @@ class TestKBCounterpartCoverage:
             "Each English topic must have a corresponding pending sw entry."
         )
 
-    def test_all_sw_kb_entries_are_pending(self):
-        """All sw KB entries must remain pending — no clinical/language approval."""
+    def test_all_sw_kb_entries_are_approved(self):
+        """All sw KB entries must be approved for production eligibility."""
         _require_import()
         entries = load_knowledge(KB_PATH, include_pending=True)
         sw_entries = [e for e in entries if e["language"] == "sw"]
         assert len(sw_entries) == 5, f"Expected 5 sw KB entries, got {len(sw_entries)}"
         for entry in sw_entries:
-            assert entry["review_status"] == "pending", (
-                f"sw KB entry '{entry['id']}' must remain pending — no clinical or language approval has been given."
+            assert entry["review_status"] == "approved", (
+                f"sw KB entry '{entry['id']}' must be approved — "
+                "owner has approved the Kiswahili starter pack for production eligibility."
             )
 
     def test_sw_kb_entries_have_matching_topic_ids(self):
@@ -153,13 +154,13 @@ class TestKBCounterpartCoverage:
         for entry in sw_entries:
             assert entry["text"].strip(), f"sw KB entry '{entry['id']}' has empty body text."
 
-    def test_sw_kb_entries_excluded_from_default_production_load(self):
-        """Default load (include_pending=False) must return zero entries — all pending."""
+    def test_sw_kb_entries_included_in_default_production_load(self):
+        """Default load (include_pending=False) must return 5 sw entries — all approved."""
         _require_import()
         entries = load_knowledge(KB_PATH)  # default: include_pending=False
         sw_entries = [e for e in entries if e["language"] == "sw"]
-        assert sw_entries == [], (
-            f"sw KB entries must be absent from default production load; found: {[e['id'] for e in sw_entries]}"
+        assert len(sw_entries) == 5, (
+            f"Expected 5 sw KB entries in production load; found: {[e['id'] for e in sw_entries]}"
         )
 
 
@@ -192,14 +193,16 @@ class TestCardCounterpartCoverage:
             f"Missing sw answer cards: {missing}. Each topic must have a pending sw card with _sw ID suffix."
         )
 
-    def test_all_sw_cards_are_pending(self):
-        """All five sw answer cards must remain pending."""
+    def test_all_sw_cards_are_approved(self):
+        """All five sw answer cards must be approved for production eligibility."""
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         sw_cards = [c for c in cards if c.get("language") == "sw"]
         assert len(sw_cards) == 5, f"Expected 5 sw cards, got {len(sw_cards)}"
         for card in sw_cards:
-            assert card["review_status"] == "pending", f"sw card '{card['id']}' must remain pending."
+            assert card["review_status"] == "approved", (
+                f"sw card '{card['id']}' must be approved — owner has approved the Kiswahili starter pack."
+            )
 
     def test_sw_card_ids_are_exactly_the_five_expected(self):
         """sw card IDs must exactly match the expected set (no extras, no missing)."""
@@ -252,14 +255,12 @@ class TestCardCounterpartCoverage:
         for card in sw_cards:
             assert card.get("answer", "").strip(), f"sw card '{card['id']}' has empty answer text."
 
-    def test_sw_cards_excluded_from_default_production_build(self):
-        """Default load (include_pending=False) must return zero cards — all pending."""
+    def test_sw_cards_included_in_default_production_build(self):
+        """Default load (include_pending=False) must return 5 sw cards — all approved."""
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=False)
         sw_cards = [c for c in cards if c.get("language") == "sw"]
-        assert sw_cards == [], (
-            f"sw cards must be absent from approved-only production build; found: {[c['id'] for c in sw_cards]}"
-        )
+        assert len(sw_cards) == 5, f"Expected 5 sw cards in production build; found: {[c['id'] for c in sw_cards]}"
 
 
 # ---------------------------------------------------------------------------
@@ -287,8 +288,8 @@ class TestCombinedCorpusInvariants:
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         assert len(cards) == 10, f"Expected 10 answer cards (5 en + 5 sw), got {len(cards)}"
 
-    def test_en_kb_entries_unchanged(self):
-        """The five English KB entries must remain unchanged (IDs, language, status)."""
+    def test_en_kb_entries_approved(self):
+        """The five English KB entries must remain unchanged (IDs, language) and be approved."""
         _require_import()
         entries = load_knowledge(KB_PATH, include_pending=True)
         en_entries = [e for e in entries if e["language"] == "en"]
@@ -296,11 +297,11 @@ class TestCombinedCorpusInvariants:
         assert len(en_entries) == 5, f"Expected 5 en KB entries, got {len(en_entries)}"
         assert en_ids == FIVE_TOPIC_IDS, f"en IDs mismatch: {en_ids}"
         for entry in en_entries:
-            assert entry["review_status"] == "pending"
+            assert entry["review_status"] == "approved"
             assert entry["language"] == "en"
 
-    def test_en_cards_unchanged(self):
-        """The five English answer cards must remain unchanged (IDs, language, status)."""
+    def test_en_cards_approved(self):
+        """The five English answer cards must remain unchanged (IDs, language) and be approved."""
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
         en_cards = [c for c in cards if c.get("language") == "en"]
@@ -308,7 +309,7 @@ class TestCombinedCorpusInvariants:
         assert len(en_cards) == 5, f"Expected 5 en cards, got {len(en_cards)}"
         assert en_ids == EN_CARD_IDS, f"en card IDs mismatch: {en_ids}"
         for card in en_cards:
-            assert card["review_status"] == "pending"
+            assert card["review_status"] == "approved"
             assert card["language"] == "en"
 
     def test_all_entries_either_en_or_sw(self):
@@ -587,38 +588,46 @@ class TestSwahiliMatcherBehavior:
 # ---------------------------------------------------------------------------
 
 
-class TestSwahiliProductionExclusion:
-    """sw content must be entirely absent from default production build.
+class TestBilingualProductionPresence:
+    """sw and en content must be fully present in the default production build.
 
-    These tests prove the pending filter works at both KB and card render level.
-    They must remain GREEN at all times; sw content is NOT approved for production.
+    Owner has approved all 10 starter KB entries and cards.
+    These tests verify the approved filter correctly returns all 10 entries/cards.
+    Pending-exclusion logic is verified separately via synthetic fixtures in
+    test_bilingual_production_build.py::TestPendingExclusionSafety.
     """
 
-    def test_sw_kb_entries_absent_from_production_load(self):
-        """KB production load (include_pending=False) returns zero entries total."""
+    def test_sw_kb_entries_in_production_load(self):
+        """KB production load (include_pending=False) returns 10 entries total (5 en + 5 sw)."""
         _require_import()
         entries = load_knowledge(KB_PATH)  # default: include_pending=False
-        assert len(entries) == 0, (
-            f"Expected 0 approved KB entries (all pending), got {len(entries)}: {[e['id'] for e in entries]}"
+        assert len(entries) == 10, (
+            f"Expected 10 approved KB entries (5 en + 5 sw), got {len(entries)}: {[e['id'] for e in entries]}"
         )
+        sw_entries = [e for e in entries if e["language"] == "sw"]
+        assert len(sw_entries) == 5, f"Expected 5 sw KB entries in production load; got {len(sw_entries)}"
 
-    def test_sw_cards_absent_from_production_load(self):
-        """Card production load (include_pending=False) returns zero cards total."""
+    def test_sw_cards_in_production_load(self):
+        """Card production load (include_pending=False) returns 10 cards total (5 en + 5 sw)."""
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=False)
-        assert len(cards) == 0, f"Expected 0 approved cards (all pending), got {len(cards)}: {[c['id'] for c in cards]}"
+        card_ids = [c["id"] for c in cards]
+        assert len(cards) == 10, f"Expected 10 approved cards (5 en + 5 sw), got {len(cards)}: {card_ids}"
+        sw_cards = [c for c in cards if c.get("language") == "sw"]
+        assert len(sw_cards) == 5, f"Expected 5 sw cards in production load; got {len(sw_cards)}"
 
-    def test_sw_card_ids_absent_from_production_render(self):
-        """sw card IDs must not appear in a production render (approved-only)."""
+    def test_sw_card_ids_present_in_production_render(self):
+        """sw card IDs must appear in a production render (all approved)."""
         _require_import()
-        # Render with no cards (all pending excluded)
-        source = render_answer_match([])
+        cards = load_answer_cards(CARDS_PATH)  # approved only
+        source = render_answer_match(cards)
         for sw_id in SW_CARD_IDS:
-            assert sw_id not in source, f"sw card ID '{sw_id}' leaked into production render source."
+            assert sw_id in source, f"sw card ID '{sw_id}' missing from production render source."
 
-    def test_en_card_ids_absent_from_production_render(self):
-        """en card IDs must also not appear in production render (all pending)."""
+    def test_en_card_ids_present_in_production_render(self):
+        """en card IDs must appear in production render (all approved)."""
         _require_import()
-        source = render_answer_match([])
+        cards = load_answer_cards(CARDS_PATH)  # approved only
+        source = render_answer_match(cards)
         for en_id in EN_CARD_IDS:
-            assert en_id not in source, f"en card ID '{en_id}' leaked into production render source."
+            assert en_id in source, f"en card ID '{en_id}' missing from production render source."

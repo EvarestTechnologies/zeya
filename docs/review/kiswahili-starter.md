@@ -1,20 +1,20 @@
 # Kiswahili starter cards — review record
 
-**Status: Runtime content eligibility pending. Not deployed.**
+**Status: Starter runtime content eligible. This record is not publication evidence.**
 
-This document lists every Kiswahili (sw) draft answer card and KB entry in
-`docs/answer-cards.yaml` and `docs/zeya-knowledge-base.md` for review before
-any sw card is set to `"review_status": "approved"`. Runtime flags and deployment
-remain separate from this content record.
+This document lists the five Kiswahili (sw) answer cards and KB entries in
+`docs/answer-cards.yaml` and `docs/zeya-knowledge-base.md`.
+They have approved runtime eligibility. Hosted publication remains separate
+from this content record.
 
 ---
 
 ## Translation status and limitations
 
-These five Kiswahili draft translations were machine-authored by an AI model for
+These five Kiswahili translations were machine-authored by an AI model for
 the purpose of establishing the data schema and test coverage. No clinical
-validation is claimed. The entries and cards remain `pending` until explicit
-release preparation updates their eligibility.
+validation is claimed. The entries and cards have `approved` runtime eligibility;
+production still excludes any records whose eligibility is `pending`.
 
 **Specific limitations (must be verified by a fluent reviewer):**
 

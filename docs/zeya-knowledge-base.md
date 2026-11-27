@@ -1,6 +1,6 @@
 # Zeya knowledge base v0.1
 
-Status: Runtime eligibility pending; not deployed to OCS.
+Status: Production-eligible starter content.
 Language: English (en) with Kiswahili (sw) counterparts. No clinical validation is claimed.
 Purpose: source-linked starting point for knowledge selection, answer-card matching, prompt grounding and evaluation tooling.
 
@@ -14,7 +14,7 @@ Sources:
 
 ## anc_purpose
 
-Review-state: pending
+Review-state: approved
 Language: en
 Topics: anc, pregnancy, education
 Min-week:
@@ -27,7 +27,7 @@ Antenatal visits provide health care, information, advice and emotional support 
 
 ## pregnancy_records
 
-Review-state: pending
+Review-state: approved
 Language: en
 Topics: records, pregnancy, education
 Min-week:
@@ -40,7 +40,7 @@ Keep a record of your pregnancy health care and vaccines at home. Ask your healt
 
 ## food_variety
 
-Review-state: pending
+Review-state: approved
 Language: en
 Topics: nutrition, food, pregnancy, education
 Min-week:
@@ -53,7 +53,7 @@ Aim for a variety of foods, including vegetables, fruit, whole grains, beans and
 
 ## food_safety
 
-Review-state: pending
+Review-state: approved
 Language: en
 Topics: nutrition, food, safety, education
 Min-week:
@@ -66,7 +66,7 @@ Make sure the food you eat is safe and clean. Ask your health worker if you need
 
 ## birth_preparation
 
-Review-state: pending
+Review-state: approved
 Language: en
 Topics: birth, preparation, planning, education
 Min-week:
@@ -79,7 +79,7 @@ Discuss where you will receive care for childbirth with your health worker. Make
 
 ## anc_purpose
 
-Review-state: pending
+Review-state: approved
 Language: sw
 Topics: anc, ujauzito, elimu
 Min-week:
@@ -92,7 +92,7 @@ Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa
 
 ## pregnancy_records
 
-Review-state: pending
+Review-state: approved
 Language: sw
 Topics: rekodi, ujauzito, elimu
 Min-week:
@@ -105,7 +105,7 @@ Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mf
 
 ## food_variety
 
-Review-state: pending
+Review-state: approved
 Language: sw
 Topics: lishe, chakula, ujauzito, elimu
 Min-week:
@@ -118,7 +118,7 @@ Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizo
 
 ## food_safety
 
-Review-state: pending
+Review-state: approved
 Language: sw
 Topics: lishe, chakula, usalama, elimu
 Min-week:
@@ -131,7 +131,7 @@ Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya 
 
 ## birth_preparation
 
-Review-state: pending
+Review-state: approved
 Language: sw
 Topics: kujifungua, maandalizi, mipango, elimu
 Min-week:

@@ -1,10 +1,10 @@
 # Answer cards — review record
 
-**Status: Runtime content eligibility pending. Not deployed.**
+**Status: Starter runtime content eligible. This record is not publication evidence.**
 
-This document lists every answer card in `docs/answer-cards.yaml` for review before
-any card is set to `"review_status": "approved"`. Content records, runtime
-eligibility and publication are tracked separately.
+This document lists the starter answer cards in `docs/answer-cards.yaml`.
+The five English and five Kiswahili cards have `"review_status": "approved"`.
+Content records, runtime eligibility and publication are tracked separately.
 
 ---
 
@@ -15,9 +15,8 @@ five-entry WHO-linked starter KB (`knowledge-base-draft.md`, v0.1). They do not
 provide diagnoses, prescriptions, drug doses, symptom assessments, emergency guidance
 or facility-specific information.
 
-**Swahili / Sheng translations:** Five Kiswahili draft counterpart cards have been
-added in `feat/kiswahili-starter-cards` (see `docs/review/kiswahili-starter.md`).
-All five sw cards retain pending runtime eligibility.
+**Swahili / Sheng translations:** Five Kiswahili counterpart cards are included
+(see `docs/review/kiswahili-starter.md`) and have approved runtime eligibility.
 Sheng and regional dialect matching phrases remain a follow-up work item.
 
 **Original ~60-card ambition:** Issue #23 originally described approximately sixty
@@ -29,7 +28,8 @@ coverage remains a visible follow-up requirement.
 suffix stemming and English stopword removal. It does not use AI or external tools.
 Limitations: near-synonyms without shared word stems may miss; short questions
 (<2 content tokens) fall below the token guard; typos reduce but do not eliminate
-overlap; no Swahili matching in v0.
+overlap. Kiswahili authored regression examples are covered, but the inherited
+English-oriented token processing and generic-food ambiguity limit generalisation.
 
 ---
 
