@@ -129,6 +129,16 @@ Two of these labels are clinical judgement, not guideline text:
 | E099 | mixed | Natoka blood kidogo, is it okay? | EMERGENCY | bleeding | 7 | [x] | |
 | E100 | mixed | Mtoto hamove tangu asubuhi | EMERGENCY | fetal_movement | 7 | [x] | |
 
+**A7a. How mothers write danger signs (answer K2).** No published source quotes Kenyan mothers' own messages for any danger sign. The few phrasings found come from health writers (`docs/work-orders/open-items-answers-2026-11-27.md`, K2). No pattern was added. Three ways to get real phrasings:
+- **The AI-NEO trial dataset** (Ahero and Kisumu, Swahili and Luo SMS). The data is available from the study team at the end of the project (NCT05369806).
+- **A phrasing session** you run with community health promoters and mothers in Migori.
+- **A data-sharing request** to Jacaranda Health.
+
+Which do you want to start?
+- [ ] AI-NEO data request
+- [ ] Migori phrasing session
+- [ ] Jacaranda request
+
 **A12. Fever breadth**
 HB p14 lists "Fever" with no qualifier. The draft triggers on "homa" and "fever" alone.
 - [x] Approve broad matching, with the question checks in A8 stopping prevention questions
@@ -151,7 +161,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 - English: "Go for your first antenatal visit as soon as possible, and attend 8 times during your pregnancy. Carry your Mother and Child Health Handbook to every visit and show it to the health worker."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT: "Nenda kliniki ya ujauzito kwa mara ya kwanza mapema iwezekanavyo, na uhudhurie mara 8 wakati wa ujauzito wako. Beba Kitabu chako cha Afya ya Mama na Mtoto kila unapoenda kliniki na umwonyeshe mhudumu wa afya."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Nenda kliniki ya wajawazito mapema iwezekanavyo, na uhudhurie mara 8 katika kipindi cha ujauzito wako. Beba Kitabu cha Afya ya Mama na Mtoto kila mara uendapo kliniki na uonyeshe muhudumu wa afya."
   - [x] Approve
   - Change:
 
@@ -161,7 +171,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
   - If A9 is the handbook wording: "Be prepared always to seek skilled care at the health facility if you have any of these signs."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT. The sign names come from the explainer clip (`media/explainers/render_danger_signs.py`): "Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto kucheza kidogo au kutocheza, maji kutoka (chupa kupasuka), na degedege au kifafa."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto tumboni kucheza kidogo au kutocheza kabisa, maji kutoka ukeni (chupa kupasuka), na degedege au kifafa." Confirm that "chupa kupasuka" is what Migori mothers say.
   - If A9 is "go now": "Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi."
   - If A9 is the handbook wording: "Kuwa tayari wakati wote kutafuta huduma ya mtaalamu katika kituo cha afya ukiwa na dalili yoyote kati ya hizi."
   - [x] Approve
@@ -171,7 +181,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 - English: "Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT: "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na foliki asidi kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua kilichowekwa dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara."
   - [x] Approve
   - Change:
 
@@ -187,7 +197,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 - English: "Make a birth plan with your health worker: expected date of birth, the health facility where you will give birth, who will attend you, the facility's phone number, your birth companion, transport and a blood donor. Your partner can help by arranging transport, money, a birth companion and an emergency kit."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT: "Panga mpango wa kujifungua pamoja na mhudumu wako wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mwandani wako wakati wa kujifungua, usafiri na mchangiaji damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mwandani wa kujifungua na vifaa vya dharura."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Andaa mpango wa kujifungua pamoja na muhudumu wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mtu wa kukusindikiza wakati wa kujifungua, usafiri, na mtu wa kuchangia damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mtu wa kukusindikiza na vifaa vya dharura."
   - [x] Approve
   - Change:
 
@@ -206,6 +216,7 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 | 9 | 7 Related | Mark "fewer than 10 movements" as clinician-only (NG12 p173) | [x] | |
 | 10 | 6 Vomiting | "Go to the clinic if nausea first starts late in pregnancy" is not in NG24 p52 to p55. Remove it. | [x] | |
 | 11 | 11 Mood | "Low mood beyond two weeks needs a clinic visit" is not in NG24. NG24 p291 says monitor for worsening or prolonged symptoms. Reword to that. | [x] | |
+| 10a | 6 Vomiting (K5) | Row 10 was based on an error: NG24 p52 does say "symptoms presenting later in pregnancy should prompt the clinician to consider other causes". Reinstate as "Tell your health worker if vomiting starts late in pregnancy (NG24 p52)". **NEW, your decision.** | [ ] | |
 | extra | 4 Vitamin A | "Not routinely given in pregnancy (NG24 p42, p109)", not "never" | [x] | |
 
 **B4. Iron and folic acid wording**
@@ -238,6 +249,27 @@ Proposed prompt:
 - [x] Approve
 - Changes:
 
+**C1a. The same rules in 120 words (answer K6). NEW, for your decision before anything goes live.** Two existing tests blocked the approved prompt: a 120-word limit, and a required sentence about the output guard. This version keeps every rule and passes every prompt test. It drops the opening "You are Zeya, a pregnancy education assistant for women in Kenya" (a role, not a rule). It also shortens "looking pale" to "pallor", "the baby moving less" to "less baby movement", and "a medicine the entries do not name" to "unlisted drugs".
+
+> Use only the Kenya Ministry of Health entries below.
+> If not covered, reply exactly: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+> Never diagnose, dose, name unlisted drugs, give weight gain numbers, advise on vitamin A or salt, or say all mothers get malaria tablets.
+> Never give phone numbers or links.
+> For severe headache, pallor, bleeding, fever, severe belly pain, swollen face or hands, less baby movement, waters breaking or fits, say: go to a health facility now.
+> For other worries or distress, say: visit a health facility today.
+> End with the entry's source.
+> Reply under 120 words, plainly, in her stored language ({participant_data.language_preference}).
+> Rules are guidance; an output guard checks replies.
+>
+> {knowledge entries}
+>
+> {language and week context}
+
+Word count: 120, counted the way the test counts.
+- [ ] Use this 120-word version (keeps the word-limit test)
+- [ ] Use the approved C1 version and raise the word limit to 200
+- [ ] Keep the live prompt for release 1
+
 Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 
 > You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.
@@ -254,10 +286,16 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 - English: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
   - [x] Approve
   - Change to:
-- Kiswahili, still a DRAFT: "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
   - [x] Approve
   - Change to:
-- [ ] Add a human escalation line once a verified number exists (WhatsApp policy). **OPEN: wording needed.** Proposed: "If you want to talk to a person, call your nearest health facility, or the Migori County emergency dispatch on +254 724 024 296."
+**C2a. Human escalation line (answer K4). NEW, for your decision.** Meta's WhatsApp Business Messaging Policy (updated 23 September 2026) says automated chats "must also have available prompt, clear, and direct escalation paths". These lines point her to a health worker. They do not fully meet Meta's rule, because the person she reaches does not work for Zeya. That needs a staffed Zeya contact, which is an Evarest decision; no number exists for it yet. The line goes live only after you tick it here and tick 922 in section D.
+- English (24 words): "To talk to a person, visit your nearest health facility or ask your community health promoter. In an emergency, call 922, free from any phone."
+  - [ ] Approve
+  - Change to:
+- Kiswahili DRAFT (24 words): "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. Kwa dharura, piga 922 bila malipo."
+  - [ ] Approve
+  - Change to:
 
 **C3. Registration wording.** Unlocks task 4.
 
@@ -266,9 +304,9 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
    | Message | Now | Proposed |
    |---|---|---|
    | Study, English | "…about maternal health based on WHO and Kenya Ministry of Health guidelines." | "…about maternal health based on Kenya Ministry of Health materials." |
-   | Study, Kiswahili | "…kuhusu afya ya mama kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya." | "…kuhusu afya ya mama kulingana na nyaraka za Wizara ya Afya ya Kenya." (DRAFT) |
+   | Study, Kiswahili | "…kuhusu afya ya mama kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya." | "…kuhusu afya ya mama kulingana na machapisho ya Wizara ya Afya ya Kenya." (DRAFT; K1 changed "nyaraka" to "machapisho", applied) |
    | Public, English | "I share educational information about maternal health based on WHO and Kenya Ministry of Health guidelines." | "I share educational information about maternal health based on Kenya Ministry of Health materials." |
-   | Public, Kiswahili | "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya." | "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na nyaraka za Wizara ya Afya ya Kenya." (DRAFT) |
+   | Public, Kiswahili | "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya." | "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya Wizara ya Afya ya Kenya." (DRAFT; K1, applied) |
 
 2. The week context the AI receives changes from unsourced trimester text to the NG24 p107 teaching topics. She never sees this text.
 
@@ -289,36 +327,51 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 
 ## D. Emergency reply and numbers (#47)
 
-Unlocks task 8. Only numbers ticked as verified by calling stay in the reply and go into the output guard allow-list.
+**Rebuilt 27 November 2026 from answer K3.** No number is added to the emergency reply or the output guard until you tick it in the "Called" column of this table. The earlier ticks in this section were set by Claude Code from your "tick all approved" message. They are replaced by the empty boxes below, so that each number is ticked by you after you call it.
 
-Some sources give 922 as the national ambulance line launched on 5 August 2026. Some give 1514, not 1199, for the Kenya Red Cross ambulance. Call both before ticking.
+**Already removed:** +254 724 024 296. It has no source and is not on the county poster. It is out of the live reply and the danger-question line.
 
-| Number | Shown as | Verified by calling? | Date | Source checked |
-|---|---|---|---|---|
-| 999 | Emergency services | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| 112 | Emergency services | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| 922 | National ambulance | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| 1199 | Kenya Red Cross | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| 1514 | Kenya Red Cross ambulance (alternative) | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| +254 724 024 296 | Migori County emergency dispatch (supplied by Stella Oiro, 27 Nov 2026) | [x] | 27 Nov 2026 | Called by Stella Oiro |
-| 0740 587 479 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
-| 0740 588 519 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
-| 0740 588 853 | Migori County emergency ambulance dispatch (county poster, supplied 27 Nov 2026) | [ ] **OPEN, not yet called** | | Migori County Government poster |
+**Live right now, unchanged until you tick:** 999 or 112, 922, and Kenya Red Cross 1199 or 1514.
 
-**D1. Migori County emergency dispatch number**
+| Number | Service and operator (K3) | Free | 24 hours | Source and date | Called by you? | Date |
+|---|---|---|---|---|---|---|
+| 922 | SHA 922 Lifeline, national medical emergency and ambulance dispatch (Social Health Authority, National Ambulance Dispatch Centre) | Yes ("free on every network") | Yes, per The Standard | [gaa.go.ke, 11 Aug 2026](https://www.gaa.go.ke/node/4419); launched 5 Aug 2026 | [ ] | |
+| 999 | National emergency line (National Police Service) | Toll-free per press, not confirmed by NPS | Not stated by NPS | [NPS Customer Service Charter](https://nationalpolice.go.ke/sites/default/files/2025-01/NPS%20Customer%20Service%20Charter.pdf) | [ ] | |
+| 112 | National emergency line (National Police Service) | As 999 | As 999 | Same charter | [ ] | |
+| 1514 | E-Plus ambulance (Emergency Plus Medical Services, owned by Kenya Red Cross) | Yes ("toll-free") | Not stated | E-Plus page via [govserv.org mirror](https://www.govserv.org/KE/Nairobi/117600501609745/E-Plus-Kenya), Aug 2026 | [ ] | |
+| 1199 | Kenya Red Cross toll-free hotline; formerly the E-Plus ambulance line. **UNVERIFIED as a current ambulance line.** K3 recommends dropping it. | Yes, per older sources | Not stated | [LifeLine International](https://lifeline-international.com/?p=3351) | [ ] | |
+| 0740 587 479 | Migori County Emergency Ambulance Dispatch, "for maternal, newborn and medical emergencies" (County Emergency Dispatch Team) | No: ordinary mobile, airtime applies | Poster: "Call the dispatch team anytime" | County poster (Word file, 6 Oct 2026); not on migori.go.ke. **UNVERIFIED online** | [ ] | |
+| 0740 588 519 | Same county dispatch team | As above | As above | As above | [ ] | |
+| 0740 588 853 | Same county dispatch team | As above | As above | As above | [ ] | |
 
-The county poster "Migori County Emergency Ambulance Dispatch" says "Call the dispatch team anytime", "for maternal, newborn and medical emergencies", "coordinated through the County Emergency Dispatch Team". It lists 0740 587 479, 0740 588 519 and 0740 588 853. These three go into the reply only after each is called and ticked.
-- [x] Show it to every participant (Stella Oiro, in chat, 27 Nov 2026)
-- [ ] Show it only to participants who registered from Migori
-- [ ] Don't add it yet
-- Staffed 24 hours a day: **yes** (Stella Oiro, 27 Nov 2026)
-- Takes calls from any network: **OPEN**
-- Run by: **OPEN**
-- Proposed lines, added under the national numbers:
-  - English: "- Migori County emergency dispatch: +254 724 024 296"
-  - Kiswahili DRAFT: "- Huduma ya dharura ya Kaunti ya Migori: +254 724 024 296"
+Before ticking 922 and 1514, check that both answer from Migori on a Safaricom line and an Airtel line (K3).
 
-**Current emergency reply** (`ocs/nodes/emergency_response.py`)
+**D1. Proposed emergency reply lines (K3).** This uses four numbers at most, because a mother in an emergency needs one number to call, not six. The Migori line is not free, so the header does not say "free from any phone". Only "922 (free)" does.
+
+English:
+```
+Emergency numbers:
+- Ambulance: 922 (free)
+- Emergency services: 999 or 112
+- Kenya Red Cross ambulance: 1514
+- Migori County ambulance: 0740 587 479
+```
+
+Kiswahili DRAFT:
+```
+Nambari za dharura:
+- Ambulensi: 922 (bila malipo)
+- Huduma za dharura: 999 au 112
+- Ambulensi ya Kenya Red Cross: 1514
+- Ambulensi ya Kaunti ya Migori: 0740 587 479
+```
+
+- [ ] Use these lines, keeping only the numbers ticked in the table above
+- [ ] Change:
+
+The danger-question line (task 6) will list the same numbers.
+
+**Current live emergency reply** (`ocs/nodes/emergency_response.py`, after the K1 Kiswahili wording)
 
 English:
 
@@ -331,27 +384,24 @@ English:
 > Emergency numbers (anywhere in Kenya):
 > - Emergency services: 999 or 112
 > - National ambulance: 922
-> - Kenya Red Cross: 1199
+> - Kenya Red Cross: 1199 or 1514
 >
 > This is educational information, not medical diagnosis. Always consult your healthcare provider for medical advice.
 
-Kiswahili:
+Kiswahili DRAFT (K1 wording):
 
-> DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. Tafadhali fanya yafuatayo mara moja:
+> DHARURA: Hii inaweza kuwa dalili ya hatari inayohitaji matibabu ya haraka. Fanya yafuatayo sasa hivi:
 >
-> 1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.
-> 2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.
-> 3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.
+> 1. Nenda kituo cha afya kilicho karibu nawe mara moja, au piga simu ya dharura.
+> 2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kufika kituo cha afya.
+> 3. USISUBIRI kuona kama dalili zitapungua zenyewe.
 >
 > Nambari za dharura (popote nchini Kenya):
 > - Huduma za dharura: 999 au 112
 > - Ambulensi ya kitaifa: 922
-> - Shirika la Msalaba Mwekundu Kenya: 1199
+> - Kenya Red Cross: 1199 au 1514
 >
-> Hii ni taarifa ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.
-
-- [x] The English and Kiswahili emergency reply text is approved as written, with only the verified numbers kept
-- Note:
+> Hii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya.
 
 ---
 

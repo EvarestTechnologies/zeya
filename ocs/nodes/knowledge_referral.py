@@ -25,7 +25,7 @@ def main(input, **kwargs):
 
     if lang == "sw":
         # Draft Swahili referral — pending fluent-speaker and clinical review.
-        referral = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+        referral = "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
     else:
         # English referral — default for all non-Swahili or absent preferences.
         referral = "I do not have reviewed information to answer that question. Please ask your healthcare provider."

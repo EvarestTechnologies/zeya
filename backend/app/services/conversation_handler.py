@@ -44,7 +44,7 @@ WELCOME_MESSAGE_SW = (
     "Karibu kwenye Chatbot ya Elimu ya Ujauzito! Niko hapa kukusaidia na "
     "habari kuhusu safari yako ya ujauzito.\n\n"
     "Hii ni chatbot ya utafiti inayotoa habari za kielimu kuhusu afya ya mama "
-    "kulingana na nyaraka za Wizara ya Afya ya Kenya.\n\n"
+    "kulingana na machapisho ya Wizara ya Afya ya Kenya.\n\n"
     "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima "
     "wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
     "Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya "

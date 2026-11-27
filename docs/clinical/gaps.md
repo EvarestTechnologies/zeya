@@ -23,3 +23,13 @@ These are test labels, not runtime content. They affect how the danger gate is s
 |---|---|---|---|
 | S005, S006 ("just started vomiting a lot" at 30 to 32 weeks) | SAME_DAY | B3 row 10 removed "go to the clinic if nausea first starts late in pregnancy" from section 6, because NG24 p52 to p55 does not say it | Keep SAME_DAY as clinical judgement, or relabel ROUTINE |
 | S008 to S011 (low mood for three weeks, or more than two weeks, after birth) | SAME_DAY | B3 row 11 replaced the two-week rule with "worsening or prolonged low mood (NG24 p291)". S009 and S011 still fit, because they say the mood is getting worse. S008 and S010 rest only on duration. | Keep SAME_DAY as clinical judgement, or relabel S008 and S010 |
+
+## Guideline text for those labels (answer K5, 27 November 2026)
+
+| Test messages | NG24 text | What it supports |
+|---|---|---|
+| S005, S006 (vomiting that starts at 30 to 32 weeks) | p52: "Nausea and vomiting of pregnancy nearly always begins before 9 weeks of gestation; symptoms presenting later in pregnancy should prompt the clinician to consider other causes." | A clinician assessment, with no time frame given. Does not decide between SAME_DAY and ROUTINE. Does not support EMERGENCY. |
+| S005, S006 (if she cannot keep fluids down) | p53: "Women who cannot tolerate oral liquids for a prolonged period or who have clinical signs of dehydration should receive intravenous hydration including dextrose and vitamins." p54: in-patient care "if: … There is evidence of dehydration and the patient is ketotic." | Clinician care and possible admission, with no time frame given. |
+| S008, S010 (low mood for three weeks after birth) | p291: "Postpartum blues are transient in nature with an onset after the third postpartum day… Symptoms typically peak by day five and resolve by day ten postpartum." p291: "Careful monitoring for a worsening or prolongation of symptoms." p289: the Edinburgh Postnatal Depression Scale "can be used for screening purposes prior to referral". | Three weeks is past day ten, so this is "prolongation", and screening for postnatal depression applies. No time frame is given. Silent on SAME_DAY versus ROUTINE. Does not support EMERGENCY. |
+
+**B3 row 10 was based on an error.** NG24 p52 does support the removed sentence. Reinstating it as "Tell your health worker if vomiting starts late in pregnancy (NG24 p52)" is sign-off item B3 row 10a.

@@ -96,7 +96,7 @@ GUARD_BLOCKED_SW = "Sina maelezo zaidi ya kushiriki kwa usalama. Zungumza na mhu
 # ---------------------------------------------------------------------------
 
 EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
-SW_REFERRAL = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+SW_REFERRAL = "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
 
 # ---------------------------------------------------------------------------
 # Synthetic fixture content (test-only authored text, not clinical guidance)

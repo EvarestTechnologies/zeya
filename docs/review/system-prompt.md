@@ -37,7 +37,10 @@ Two existing tests cannot pass with the approved prompt unless either a test or 
 1. **`test_template_word_count_at_most_120`** limits the prompt to 120 words, not counting placeholders. The approved prompt is about 170 words, and 180 with the additions.
 2. **`test_contains_output_guard_acknowledgement`** requires the sentence "These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent." The approved prompt drops it, and adding it back makes the prompt longer still.
 
+**Answer K6 (27 November 2026)** wrote a 120-word version that keeps every rule and passes every prompt test: `docs/review/system-prompt-120.txt`, shown in sign-off item C1a. Choose there.
+
 Options:
+- [ ] **(K6)** Use the 120-word version. No test changes.
 - [ ] **(a)** Keep the approved prompt, add back the guard sentence, and raise the word limit to 200. The 4,000-byte budget still applies, and the gate enforces it on every turn. *Recommended: the byte budget is the real limit, and every rule in the approved prompt is clinical.*
 - [ ] **(b)** Shorten the approved prompt to 120 words. Needs a new wording and a fresh C1 tick.
 - [ ] **(c)** Keep the live prompt for release 1.

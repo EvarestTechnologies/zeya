@@ -56,7 +56,7 @@ def main(input: str, **kwargs) -> str:
         "Karibu kwenye Chatbot ya Elimu ya Ujauzito! Niko hapa kukusaidia na "
         "habari kuhusu safari yako ya ujauzito.\n\n"
         "Hii ni chatbot ya utafiti inayotoa habari za kielimu kuhusu afya ya mama "
-        "kulingana na nyaraka za Wizara ya Afya ya Kenya.\n\n"
+        "kulingana na machapisho ya Wizara ya Afya ya Kenya.\n\n"
         "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima "
         "wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
         'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.\n\n'
@@ -76,7 +76,7 @@ def main(input: str, **kwargs) -> str:
     )
     public_welcome_sw = (
         "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
-        "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na nyaraka za "
+        "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya "
         "Wizara ya Afya ya Kenya.\n\n"
         "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
         "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"

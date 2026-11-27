@@ -17,7 +17,7 @@ Superseded and not a runtime source: National Guidelines for Quality Obstetrics 
 ## Reuse terms
 
 - **BOP.** Page 2 says the document "may be quoted or reproduced, provided the source is acknowledged… may not be sold or used for any commercial purposes". © 2026 Government of Kenya. Zeya acknowledges the source and is free to participants.
-- **HB and NG24** carry no reuse statement. Written permission to adapt their wording has been requested from the Division of Reproductive, Maternal, Newborn, Child and Adolescent Health (RMNCAH). **OPEN: record the date of the request and the reply here.**
+- **HB and NG24** carry no reuse statement. Written permission to adapt their wording will be requested from the Division of Reproductive, Maternal, Newborn, Child and Adolescent Health (RMNCAH). The draft request is in `docs/permission-letter-drmncah.md`, addressed to comms.rmncah@health.go.ke. **OPEN: record the date it is sent and the reply here.**
 
 ## How Zeya shows its source
 

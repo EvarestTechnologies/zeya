@@ -41,7 +41,7 @@ LLM_REPLY = "Eat a balanced diet, Mama."
 # Exact referral texts from ocs/nodes/knowledge_referral.py.
 # Never changed here; changing the node is the single source of truth.
 EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
-SW_REFERRAL = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+SW_REFERRAL = "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
 
 REGISTERED = {
     "welcome_sent": True,

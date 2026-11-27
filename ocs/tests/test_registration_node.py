@@ -57,7 +57,7 @@ PUBLIC_WELCOME_EN = (
 )
 PUBLIC_WELCOME_SW = (
     "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
-    "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na nyaraka za "
+    "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya "
     "Wizara ya Afya ya Kenya.\n\n"
     "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
     "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"

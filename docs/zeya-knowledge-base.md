@@ -96,7 +96,7 @@ Min-week:
 Max-week:
 Source-refs: HB p13, HB cover
 
-Nenda kliniki ya ujauzito kwa mara ya kwanza mapema iwezekanavyo, na uhudhurie mara 8 wakati wa ujauzito wako. Beba Kitabu chako cha Afya ya Mama na Mtoto kila unapoenda kliniki na umwonyeshe mhudumu wa afya.
+Nenda kliniki ya wajawazito mapema iwezekanavyo, na uhudhurie mara 8 katika kipindi cha ujauzito wako. Beba Kitabu cha Afya ya Mama na Mtoto kila mara uendapo kliniki na uonyeshe muhudumu wa afya.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
@@ -110,7 +110,7 @@ Min-week:
 Max-week:
 Source-refs: HB p14
 
-Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto kucheza kidogo au kutocheza, maji kutoka (chupa kupasuka), na degedege au kifafa. Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi.
+Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto tumboni kucheza kidogo au kutocheza kabisa, maji kutoka ukeni (chupa kupasuka), na degedege au kifafa. Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
@@ -124,7 +124,7 @@ Min-week:
 Max-week:
 Source-refs: HB p13
 
-Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na foliki asidi kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua kilichowekwa dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
@@ -152,5 +152,5 @@ Min-week:
 Max-week:
 Source-refs: HB inside cover, HB p3
 
-Panga mpango wa kujifungua pamoja na mhudumu wako wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mwandani wako wakati wa kujifungua, usafiri na mchangiaji damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mwandani wa kujifungua na vifaa vya dharura.
+Andaa mpango wa kujifungua pamoja na muhudumu wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mtu wa kukusindikiza wakati wa kujifungua, usafiri, na mtu wa kuchangia damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mtu wa kukusindikiza na vifaa vya dharura.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
