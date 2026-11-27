@@ -130,4 +130,4 @@ Never run these database tests against production. The final replay used isolate
 
 ## Remaining release work
 
-All five real starter KB/card topics remain pending clinical/fluent-language review; the original approximately 60-card ambition is not completed. Expanded authored/held-out evaluation, approved content/contact review, any provider-backed judge, hosted deployment/source-drift verification, Meta templates and handset delivery tests are separate work. Merging source does not publish WhatsApp or establish clinical safety.
+All five real starter KB/card topics retain pending runtime eligibility; the original approximately 60-card ambition is not completed. Five Kiswahili (sw) counterpart entries and cards are now included, also with pending eligibility. Expanded authored/held-out evaluation, content/contact verification, any provider-backed judge, hosted deployment/source-drift verification, Meta templates and handset delivery tests are separate work. Merging source does not publish WhatsApp or establish clinical safety.

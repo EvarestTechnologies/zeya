@@ -84,5 +84,90 @@
       "How do I plan for birth and complications?"
     ],
     "answer": "Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance."
+  },
+  {
+    "id": "anc_purpose_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "anc_purpose",
+    "topic_anchors": ["anc", "ujauzito", "kliniki", "ziara"],
+    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (anc_purpose). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "triggers": [
+      "Niende kliniki ya ujauzito kwa nini?",
+      "Ziara za ujauzito ni kwa nini?",
+      "Niende ANC kwa sababu gani?",
+      "Huduma ya kabla ya kujifungua ni kwa nini?",
+      "Nini lengo la ziara za ANC?",
+      "Kwa nini ninahitaji kuhudhuria ziara za kabla ya kujifungua?"
+    ],
+    "answer": "Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza."
+  },
+  {
+    "id": "pregnancy_records_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "pregnancy_records",
+    "topic_anchors": ["rekodi", "kumbukumbu", "hifadhi"],
+    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (pregnancy_records). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "triggers": [
+      "Je, nihifadhi rekodi zangu za ujauzito?",
+      "Kwa nini nishike kumbukumbu za huduma ya ujauzito?",
+      "Vipi niandike rekodi za afya ya ujauzito wangu?",
+      "Ni muhimu kushika rekodi za ujauzito?",
+      "Kwa nini kuweka rekodi ya afya ya ujauzito ni muhimu?",
+      "Ninahifadhije rekodi zangu za afya ya uzazi?"
+    ],
+    "answer": "Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi."
+  },
+  {
+    "id": "food_variety_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "food_variety",
+    "topic_anchors": ["chakula", "kula", "lishe", "mboga", "matunda"],
+    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (food_variety). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "triggers": [
+      "Ninapaswa kula chakula gani wakati wa ujauzito?",
+      "Nini lishe nzuri kwa mjamzito?",
+      "Nini chakula cha aina mbalimbali kwa mjamzito?",
+      "Ninaweza kula nini wakati wa ujauzito?",
+      "Nini inajumuishwa katika lishe ya aina mbalimbali ya ujauzito?",
+      "Ni lishe gani nzuri ya mjamzito?"
+    ],
+    "answer": "Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi."
+  },
+  {
+    "id": "food_safety_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "food_safety",
+    "topic_anchors": ["chakula", "kula", "lishe"],
+    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (food_safety). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "triggers": [
+      "Je, usafi wa chakula ni muhimu wakati wa ujauzito?",
+      "Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?",
+      "Usalama wa chakula ni muhimu kwa mjamzito?",
+      "Chakula kiwe salama na safi wakati wa ujauzito?",
+      "Kwa nini chakula salama na safi ni muhimu katika ujauzito?",
+      "Ninahifadhije usalama wa chakula wakati wa ujauzito?"
+    ],
+    "answer": "Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito."
+  },
+  {
+    "id": "birth_preparation_sw",
+    "review_status": "pending",
+    "language": "sw",
+    "kb_ref": "birth_preparation",
+    "topic_anchors": ["kujifungua", "mpango", "maandalizi", "uzazi"],
+    "source_note": "Tafsiri ya rasimu kutoka entry ya KB ya WHO v0.1 (birth_preparation). Inasubiri ukaguzi wa kliniki na lugha. Haijaidhinishwa kwa matumizi ya umma.",
+    "triggers": [
+      "Ninapaswa kujadili nini kuhusu mipango ya kujifungua?",
+      "Je, nipange mahali pa kujifungua?",
+      "Nijiandaeje kwa kujifungua?",
+      "Nini mpango wa kujiandaa kwa kujifungua?",
+      "Nijiandaeje kwa kujifungua na matatizo yanayoweza kutokea?",
+      "Nini maandalizi ya kujifungua?"
+    ],
+    "answer": "Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao."
   }
 ]

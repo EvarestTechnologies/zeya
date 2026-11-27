@@ -243,10 +243,10 @@ def test_malformed_review_status_treated_as_pending(malformed_md):
 
 def test_real_kb_all_entries_are_pending(real_kb_path):
     entries = load_knowledge(real_kb_path, include_pending=True)
-    assert len(entries) == 5, f"Expected 5 entries, got {len(entries)}"
+    assert len(entries) == 10, f"Expected 10 entries (5 en + 5 sw), got {len(entries)}"
     for entry in entries:
         assert entry["review_status"] == "pending", (
-            f"Entry '{entry['id']}' must remain pending — "
+            f"Entry '{entry['id']}' (lang={entry['language']}) must remain pending — "
             "no clinical or language approval has been given for the v0.1 draft"
         )
 
@@ -263,11 +263,33 @@ def test_real_kb_expected_ids(real_kb_path):
     assert ids == expected
 
 
-def test_real_kb_all_entries_english_draft(real_kb_path):
+def test_real_kb_english_entries_remain_english(real_kb_path):
+    """The five English KB entries must remain language='en', pending, and unchanged."""
     entries = load_knowledge(real_kb_path, include_pending=True)
-    for entry in entries:
-        assert entry["language"] == "en", (
-            f"Entry '{entry['id']}' must be 'en' — Kiswahili requires separate language review"
+    en_entries = [e for e in entries if e["language"] == "en"]
+    assert len(en_entries) == 5, (
+        f"Expected exactly 5 en KB entries; got {len(en_entries)}. "
+        "No new English entries should be added in this branch."
+    )
+    for entry in en_entries:
+        assert entry["language"] == "en", f"Entry '{entry['id']}' classified as en but language={entry['language']!r}"
+        assert entry["review_status"] == "pending"
+
+
+def test_real_kb_sw_entries_are_sw_and_pending(real_kb_path):
+    """The five Kiswahili draft KB entries must have language='sw' and remain pending.
+
+    Kiswahili translations require a separate fluent-speaker and clinical review
+    before any entry can be approved.  All five sw entries must remain pending.
+    """
+    entries = load_knowledge(real_kb_path, include_pending=True)
+    sw_entries = [e for e in entries if e["language"] == "sw"]
+    assert len(sw_entries) == 5, f"Expected exactly 5 sw KB entries (pending draft), got {len(sw_entries)}."
+    for entry in sw_entries:
+        assert entry["language"] == "sw", f"Entry '{entry['id']}' classified as sw but language={entry['language']!r}"
+        assert entry["review_status"] == "pending", (
+            f"sw entry '{entry['id']}' must remain pending — "
+            "Kiswahili translation requires separate fluent-speaker and clinical review."
         )
 
 

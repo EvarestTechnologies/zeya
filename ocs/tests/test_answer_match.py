@@ -231,17 +231,25 @@ class TestNoForceMatch:
 
 
 # ---------------------------------------------------------------------------
-# Language eligibility — no Swahili cards in v0
+# Language eligibility — sw cards added in feat/kiswahili-starter-cards
 # ---------------------------------------------------------------------------
 
 
 class TestLanguageEligibility:
-    def test_swahili_participant_routes_ask_ai_no_sw_cards(self):
-        """No Swahili cards in v0 starter; Swahili participants get ASK_AI."""
+    def test_swahili_participant_natural_question_routes_sw_card(self):
+        """Swahili participant asking about ANC in Swahili routes to sw ANC card.
+
+        Before sw card addition (v0): no sw cards → ASK_AI for all sw questions.
+        After sw card addition (feat/kiswahili-starter-cards): sw participant asking
+        "Kwa nini niende ANC?" shares "ANC" (topic anchor) and "niende" with the
+        anc_purpose_sw trigger "Niende ANC kwa sababu gani?" — matcher routes CARD.
+        Test updated from the original v0 ASK_AI assertion because the premise
+        "no sw cards exist" no longer holds; sw cards are now present (pending draft).
+        """
         h = _harness(ALL_KB_IDS, language="sw")
         h.run("Kwa nini niende ANC?")
-        assert h.temp_state["answer_route"] == "ASK_AI"
-        assert h.temp_state["matched_card"] == ""
+        assert h.temp_state["answer_route"] == "CARD"
+        assert h.temp_state["matched_card"] == "anc_purpose_sw"
 
     def test_english_trigger_does_not_match_swahili_participant(self):
         """English trigger text must not match even if content words overlap."""

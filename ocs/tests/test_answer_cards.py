@@ -74,10 +74,10 @@ def _write_cards_file(tmp_path, cards):
 
 
 class TestLoadAnswerCards:
-    def test_loads_all_five_starter_cards_when_include_pending(self):
+    def test_loads_all_ten_starter_cards_when_include_pending(self):
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
-        assert len(cards) == 5, f"Expected 5 starter cards, got {len(cards)}"
+        assert len(cards) == 10, f"Expected 10 starter cards (5 en + 5 sw), got {len(cards)}"
 
     def test_returns_empty_when_all_pending_and_not_include_pending(self):
         _require_import()
@@ -92,11 +92,33 @@ class TestLoadAnswerCards:
             missing = required - card.keys()
             assert not missing, f"Card {card.get('id')!r} missing keys: {missing}"
 
-    def test_all_starter_cards_are_english(self):
+    def test_english_starter_cards_are_english(self):
+        """The five English starter cards must have language='en'."""
         _require_import()
         cards = load_answer_cards(CARDS_PATH, include_pending=True)
-        non_en = [c["id"] for c in cards if c.get("language") != "en"]
-        assert non_en == [], f"Non-English cards in v0 starter: {non_en}"
+        en_cards = [c for c in cards if c.get("language") == "en"]
+        assert len(en_cards) == 5, f"Expected exactly 5 en cards, got {len(en_cards)}"
+        for card in en_cards:
+            assert card["language"] == "en", (
+                f"Card {card.get('id')!r} classified as en but language={card.get('language')!r}"
+            )
+
+    def test_swahili_draft_cards_are_sw(self):
+        """The five Kiswahili draft cards must have language='sw' and remain pending.
+
+        Kiswahili translations require separate fluent-speaker and clinical review
+        before any sw card can be approved.
+        """
+        _require_import()
+        cards = load_answer_cards(CARDS_PATH, include_pending=True)
+        sw_cards = [c for c in cards if c.get("language") == "sw"]
+        assert len(sw_cards) == 5, f"Expected exactly 5 sw cards (pending draft), got {len(sw_cards)}"
+        for card in sw_cards:
+            assert card["language"] == "sw"
+            assert card["review_status"] == "pending", (
+                f"sw card {card.get('id')!r} must remain pending — "
+                "Kiswahili translation requires separate fluent-speaker and clinical review."
+            )
 
     def test_all_starter_cards_are_pending(self):
         _require_import()
