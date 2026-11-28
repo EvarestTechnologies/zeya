@@ -26,8 +26,8 @@ advancing registration. A participant with an already-valid preference (explicit
 imported) bypasses the choice entirely, and a fully registered participant is never
 sent back through it.
 
-The Swahili wording below is a draft translation for fluent-speaker review. It is not
-clinically approved, and this change does not claim fluent-speaker or clinical sign-off.
+The Swahili wording below was approved by Stella Oiro on 28 November 2026
+(docs/review/kiswahili-starter.md).
 
 Outputs (temp state):
     registration_route: "REPLY" (return this node's text to the user) or

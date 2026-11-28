@@ -132,7 +132,7 @@
       "mara",
       "kitabu"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry anc_visits.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry anc_visits.",
     "triggers": [
       "Niende ANC kwa sababu gani?",
       "Nianze kliniki ya ujauzito lini?",
@@ -154,7 +154,7 @@
       "hatari",
       "hospitali"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry danger_signs.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry danger_signs.",
     "triggers": [
       "Dalili za hatari ni zipi?",
       "Dalili za hatari wakati wa ujauzito ni zipi?",
@@ -182,7 +182,7 @@
       "nipumzike",
       "upumzike"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry daily_care.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry daily_care.",
     "triggers": [
       "Nijitunze vipi nikiwa mjamzito?",
       "Ninywe maji kiasi gani nikiwa mjamzito?",
@@ -208,7 +208,7 @@
       "lishe",
       "makundi"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry food_groups.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry food_groups.",
     "triggers": [
       "Nikule nini nikiwa na mimba?",
       "Nile nini nikiwa mjamzito?",
@@ -232,7 +232,7 @@
       "mume",
       "mwenzi"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry birth_plan.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry birth_plan.",
     "triggers": [
       "Mpango wa kujifungua ni nini?",
       "Nijiandae vipi kwa kujifungua?",

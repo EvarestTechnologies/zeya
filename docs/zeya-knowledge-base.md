@@ -1,7 +1,7 @@
 # Zeya runtime knowledge entries
 
 Status: Ministry of Health entries for release 1. An entry goes live only when its box in `docs/review/clinical-signoff.md` (section B2) is ticked.
-Language: English (en) with Kiswahili (sw) counterparts. Every Kiswahili entry is a DRAFT, pending fluent-speaker and clinical review.
+Language: English (en) with Kiswahili (sw) counterparts. Every Kiswahili entry was approved by Stella Oiro on 28 November 2026 (docs/review/kiswahili-starter.md).
 Purpose: the only text the knowledge context, answer cards and AI prompt may use.
 
 Scope: general antenatal education only, in Mother and Child Health Handbook wording. No diagnoses, medicine doses, personalised visit schedules, symptom reassurance, new emergency contacts or facility recommendations. The deterministic danger-sign check runs before any knowledge selection and is not changed by this file. Unsupported-question reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider."

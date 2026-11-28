@@ -5,7 +5,9 @@
 **Scope:** release 1 with synthetic test participants only. Nothing here approves use with real participants.
 **Work order:** [docs/work-orders/2026-11-27-guideline-alignment.md](../work-orders/2026-11-27-guideline-alignment.md)
 
-**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The fluent-speaker review stays OPEN. The sheet was signed on 28 November 2026.
+**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The sheet was signed on 28 November 2026.
+
+**Kiswahili, 28 November 2026:** Stella Oiro approved every Kiswahili message as clinical reviewer and Kiswahili reviewer (`docs/review/kiswahili-starter.md`). The bed net wording was corrected to "neti" first. The Kiswahili lines below marked DRAFT were written before that approval, and they are now approved.
 
 **Decisions recorded 27 November 2026.** Stella Oiro reviewed every item and asked, in chat, for all items to be marked approved. She did not approve the WHO starter (B1). Claude Code ticked the boxes on her instruction. Where an item offered a choice, the drafted or recommended option was ticked. Items that still need her input are marked **OPEN**.
 
