@@ -243,7 +243,7 @@ Registered:
 > Andika swali lako tu nami nitafanya niwezalo kukusaidia, Mama!
 
 - [x] Wording correct
-- **Still open, a code fix rather than wording:** the date prints with an English month, for example "takriban March 05, 2027". Choose the format the reply should use (for example "5 Machi 2027"), and it will be fixed in code.
+- **Date format, fixed 28 November 2026:** the date now reads day, Kiswahili month, year, for example "takriban 5 Machi 2027". Format chosen by Stella Oiro. It used to print an English month ("March 05, 2027").
 
 ## Not covered here
 
