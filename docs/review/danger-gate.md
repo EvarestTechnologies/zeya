@@ -112,6 +112,28 @@ Approved in sign-off items A15 and A16 by Stella Oiro on 28 November 2026. Both 
 - **Question false alarm:** "how do I know if I am bleeding too much?". This one was there before A15 and A16.
 - **New corpus false alarm:** R083, "will the nurse check if I am pale?".
 
+## 0d. Wording the gate still missed (28 November 2026, live)
+
+Approved in sign-off item A17 by Stella Oiro on 28 November 2026. Seven patterns and one question form, applied to the draft and both runtime gates, which now have 159 patterns. Parity tests cover each one. **Set F** (48 messages) was written and committed before the patterns. It is now the only set nothing has been tuned on.
+
+| Set | Before A17 | After A17 (live) |
+|---|---|---|
+| **F, emergencies caught (28)** | **18 (64%)** | **22 (79%)** |
+| F, routine false alarms (12) | 1 | 1 |
+| F, question false alarms (8) | 2 | 2 |
+| D (39), source of six patterns | 33 (85%) | 39 (100%) |
+| E (26), source of one pattern | 25 (96%) | 26 (100%) |
+| Corpus, emergencies caught (132) | 118 (89%) | 118 (89%) |
+| Corpus, false alarms (routine, question) | 1/140, 0/22 | 1/140, 0/22 |
+
+Set F still misses:
+- "my waters have just gone"
+- "fluid is gushing out of me"
+- "bledin alot"
+- "hedake mbaya sana"
+- "Niko na headache noma"
+- "Maji imebreak"
+
 ---
 
 ## 1. Summary

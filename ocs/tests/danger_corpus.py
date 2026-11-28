@@ -152,7 +152,8 @@ PATTERN_EXAMPLES: list[tuple[str, int, str]] = [
     ("headache_vision", 27, "Macho yangu hayaoni vizuri"),
     ("pallor_anaemia", 17, "I'm white as paper and so weak"),
     ("fever", 15, "I am burning up"),
-    ("fever", 16, "my body is very hot"),
+    ("fever", 16, "i hav a feva"),
+    ("fever", 17, "my body is very hot"),
     ("fetal_movement", 15, "I haven't felt any movement since morning"),
     ("fetal_movement", 16, "the baby is quiet today, no kicks"),
     ("fetal_movement", 17, "Mtoi hachezi kabisa leo"),
@@ -162,6 +163,13 @@ PATTERN_EXAMPLES: list[tuple[str, int, str]] = [
     ("convulsions", 16, "she is convulsing"),
     ("convulsions", 17, "Ako na fits"),
     ("convulsions", 18, "she fell down and is foaming at the mouth"),
+    # sign-off A17
+    ("headache_vision", 28, "my headache is unbearable"),
+    ("fetal_movement", 18, "Bebi hajakick siku mbili"),
+    ("water_breaking", 13, "my water just broke"),
+    ("water_breaking", 14, "my wter broke"),
+    ("water_breaking", 15, "Maji imetoka"),
+    ("swelling", 8, "I have swelling of my face"),
 ]
 
 # One natural message per category in each language. Each Swahili message only

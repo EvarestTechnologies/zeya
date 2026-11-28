@@ -98,6 +98,8 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
         ),
         re.compile(r"\bkichwa\b.{0,30}\bkupita\s+kiasi\b", re.IGNORECASE),
         re.compile(r"\b(hayaoni|haoni)\s+vizuri\b", re.IGNORECASE),
+        # sign-off A17
+        re.compile(r"\bhead\s*ache\b.{0,20}\b(unbearable|won'?t\s+stop|too\s+much|is\s+(so|very|really)\s+bad)\b", re.IGNORECASE),
     ],
     "pallor_anaemia": [
         re.compile(
@@ -182,6 +184,8 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             re.IGNORECASE,
         ),
         re.compile(r"\bburning\s+up\b", re.IGNORECASE),
+        # sign-off A17
+        re.compile(r"\b(feva|fiva)\b", re.IGNORECASE),
         re.compile(r"\b(body|i\s+am|i'?m)\b.{0,10}\b(very|so)\s+hot\b", re.IGNORECASE),
     ],
     "fetal_movement": [
@@ -236,6 +240,8 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             r"\b(bebi|mtoi)\b.{0,20}\b(hachezi|hajacheza|hajamove|hamove)\b",
             re.IGNORECASE,
         ),
+        # sign-off A17
+        re.compile(r"\bha(ja)?kicki?\b", re.IGNORECASE),
     ],
     "abdominal_pain": [
         re.compile(r"\bsevere\s+(abdominal\s+)?pain\b", re.IGNORECASE),
@@ -306,6 +312,10 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
         re.compile(
             r"\bmaji\b.{0,10}\b(imevunja|imevunjika|imepasuka)\b", re.IGNORECASE
         ),
+        # sign-off A17
+        re.compile(r"\bwaters?\s+(just|has\s+just|have\s+just|already|suddenly)\s+(broke|broken|burst)\b", re.IGNORECASE),
+        re.compile(r"\b(wter|watr|wata|warer)\b.{0,15}\b(broke|broken|burst)\b", re.IGNORECASE),
+        re.compile(r"\bmaji\b.{0,10}\bimetoka\b", re.IGNORECASE),
     ],
     "convulsions": [
         re.compile(r"\bconvulsion\b", re.IGNORECASE),
@@ -349,6 +359,8 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             r"\b(uso|mikono|vidole|macho)\b.{0,20}\b(umevimba|imevimba|vimevimba|yamevimba|kuvimba|umefura|imefura|vimefura|kufura)\b",
             re.IGNORECASE,
         ),
+        # sign-off A17
+        re.compile(r"\bswell(ing|ed)\s+(of|in|on)\s+(my\s+|the\s+)?(face|hands?|fingers|eyes)\b", re.IGNORECASE),
     ],
 }
 
@@ -358,6 +370,8 @@ INFO_QUESTION_PATTERNS: list[re.Pattern] = [
     re.compile(r"\bsigns\s+of\b", re.IGNORECASE),
     re.compile(r"\bis\s+(it\s+|\w+\s+){0,3}normal\b", re.IGNORECASE),
     re.compile(r"\bis\s+(it\s+|\w+\s+){0,2}(dangerous|serious)\b", re.IGNORECASE),
+    # sign-off A17
+    re.compile(r"\bwhat\s+does\b.{0,40}\bmean\b", re.IGNORECASE),
     re.compile(r"\bcan\s+(a|an)\s+\w+\s+harm\b", re.IGNORECASE),
     re.compile(r"\bhow\s+(can|do)\s+i\s+(avoid|prevent|know|stop)\b", re.IGNORECASE),
     re.compile(r"\bkuzui\w*|\bnawezaje\b", re.IGNORECASE),
