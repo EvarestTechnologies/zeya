@@ -63,6 +63,7 @@ def test_registered_user():
         "study_group": "control",
         "zeya_user_id": "0f3c9a2e-0000-0000-0000-000000000001",
         "study_participant": True,
+        "approved_tester": True,
     }
 
 

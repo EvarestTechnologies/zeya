@@ -114,6 +114,9 @@ def _make_run(pipeline):
     config = {"configurable": {"repo": ORMRepository(session=session)}}
 
     def _run(message: str, participant_data: dict) -> dict:
+        # The access gate (#21) lets only approved testers through; these engine tests exercise
+        # the pipeline after it, so the synthetic participant is an approved tester by default.
+        participant_data = {"approved_tester": True, **participant_data}
         state = PipelineState(messages=[message], experiment_session=session, participant_data=participant_data)
         return runnable.invoke(state, config=config)
 
