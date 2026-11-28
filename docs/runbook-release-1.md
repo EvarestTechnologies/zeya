@@ -121,7 +121,7 @@ Routine messages wrongly sent to the emergency reply: 0 of 140 on the corpus.
 
 | Problem | Do this |
 |---|---|
-| The AI provider fails or is slow | Publish the **rules-only** version: build `ocs/pipeline/zeya_pipeline_rules_only.json` (`python -m ocs.build_pipeline --rules-only --write`), load it, and publish. Questions with no card then get "Sina taarifa iliyokaguliwa ya kujibu swali hilo…" with the line about reaching a person. Cards, emergencies, the access gate and the clip still work, and there is no AI at all. Roll back to the normal version afterwards. Check it with `python -m ocs.check_drift live.json … --rules-only`. |
+| The AI provider fails or is slow | Publish the **rules-only** version: build `ocs/pipeline/zeya_pipeline_rules_only.json` (`python -m ocs.build_pipeline --rules-only --write`), load it, and publish. Questions with no card then get "Sina taarifa iliyokaguliwa ya kujibu swali hilo…" with the line about reaching a person. Cards, emergencies, the access gate and the clip still work, and there is no AI at all. Roll back to the normal version afterwards. Check it with `python -m ocs.check_drift live.json --rules-only`. |
 | A turn errors while the normal version is live | OCS sends its own generic English error message. Zeya cannot replace it yet, because OCS has no hook for a fixed Kiswahili reply (#26, needs an OCS change). Switch to the rules-only version. |
 | Anything that must stop the bot at once | Turn off **Enabled** on the WhatsApp channel in OCS (optional static reply). Incoming messages are then not processed. |
 | The clip does not arrive | The card text still goes, and the turn is tagged `explainer_clip:failed`. Check the raw GitHub link in section 1. |

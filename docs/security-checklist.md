@@ -1,6 +1,6 @@
 # Zeya security checklist
 
-Issue #33, with the hardening items from #29. Each line has an owner. Tick a line only when it has been checked on the live system, not just planned.
+Issue #33, with the hardening items from #29. Each line has an owner. Tick a line only when it has been checked on the live system, not just planned. Server ticks dated 28 Nov are from Raymond's report on PR #64.
 
 **Owners:**
 - **Raymond:** OCS team and server.
@@ -33,16 +33,20 @@ OCS ships with unsafe defaults in `config/settings.py`. Check each one on the ru
 | Record the OCS version, the cloud, the country and who has SSH access (#46). The running image currently reports `OCS_VERSION=unknown`. | Raymond | [ ] |
 | `DEBUG=False` | Raymond | [ ] |
 | nginx drops unknown Host headers, because `ALLOWED_HOSTS` is `["*"]` in OCS | Raymond | [ ] |
-| `RATE_LIMIT_ENFORCE=True` | Raymond | [ ] |
+| `RATE_LIMIT_ENFORCE=True`, with the proxy count set to 1 | Raymond | [x] 28 Nov |
 | `CRYPTOGRAPHY_SALT` set to a non-empty secret | Raymond | [ ] |
 | Sentry unset, or set with `send_default_pii` off | Raymond | [ ] |
 | Langfuse host unset, or sample rate 0 | Raymond | [ ] |
 | Meta App Secret set on the WhatsApp provider, and a forged unsigned POST to the webhook is rejected | Raymond | [ ] |
+| Admin ports closed (8001, 8081, 6001, 6002, 8080) | Raymond | [x] 28 Nov |
+| SSH by key only | Raymond | [x] 28 Nov |
 | External port scan: only 443 open, plus 22 from a VPN. Postgres and Redis not reachable from outside, and Redis has a password. | Raymond | [ ] |
-| Disk encryption on, TLS valid, OS patch schedule written down | Raymond | [ ] |
-| Encrypted backups, with one restore actually tested | Raymond | [ ] |
+| Disk encryption on | Raymond | [ ] |
+| Server patched and rebooted onto the latest kernel | Raymond | [x] 28 Nov |
+| TLS valid, OS patch schedule written down | Raymond | [ ] |
+| Encrypted OCS database backups, with one restore actually tested (not set up yet) | Raymond | [ ] |
 | RestrictedPython 8.4 or later (CVE-2026-55830) | Raymond | [ ] |
-| Know where WhatsApp voice notes and uploaded files are stored | Raymond | [ ] |
+| Media and uploaded files stored on a persistent volume (before this, saved files had nowhere to go) | Raymond | [x] 28 Nov |
 | Legacy FastAPI backend (`/api/v1/webhook`, Gemini) not running or reachable anywhere (#30) | Raymond | [ ] |
 
 ### Pipeline (verified in this repository)

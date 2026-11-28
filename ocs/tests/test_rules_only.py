@@ -76,3 +76,16 @@ def test_drift_check_accepts_the_rules_only_build(tmp_path):
     path = tmp_path / "live.json"
     path.write_text(json.dumps(live))
     assert main([str(path), "--llm-provider-id", "7", "--llm-provider-model-id", "31", "--rules-only"]) == 0
+
+
+def test_drift_check_needs_no_provider_ids_for_the_rules_only_build(tmp_path):
+    import pytest
+
+    from ocs.check_drift import main
+
+    path = tmp_path / "live.json"
+    path.write_text(json.dumps(build_pipeline(0, 0, rules_only=True)))
+    assert main([str(path), "--rules-only"]) == 0
+    # The normal build has an AI node, so it still needs both ids.
+    with pytest.raises(SystemExit):
+        main([str(path)])

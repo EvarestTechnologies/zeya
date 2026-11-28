@@ -9,6 +9,7 @@ rule 3). Run it after every deploy and on a schedule; it exits 1 on any differen
     curl -s -b "sessionid=$OCS_SESSION" \\
         https://openchatstudio.co.ke/a/evarest/pipelines/data/<pipeline id>/ > live.json
     python -m ocs.check_drift live.json --llm-provider-id 7 --llm-provider-model-id 31
+    python -m ocs.check_drift live.json --rules-only     # rules-only version, no AI node
 
 Compared: node set, node types, edges (by node name and handle), all Python node
 code, router settings, the LLM prompt, history and model parameters.
@@ -120,8 +121,12 @@ def find_drift(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("live", help="JSON from GET /a/<team>/pipelines/data/<id>/ ('-' for stdin)")
-    parser.add_argument("--llm-provider-id", type=int, required=True, help="the Gemini provider id on the instance")
-    parser.add_argument("--llm-provider-model-id", type=int, required=True, help="the deployed model id")
+    parser.add_argument(
+        "--llm-provider-id", type=int, help="the AI provider id on the instance (not needed with --rules-only)"
+    )
+    parser.add_argument(
+        "--llm-provider-model-id", type=int, help="the deployed model id (not needed with --rules-only)"
+    )
     parser.add_argument(
         "--include-pending",
         action="store_true",
@@ -135,6 +140,8 @@ def main(argv: list[str] | None = None) -> int:
         help="compare against the rules-only build (#26) when that version is published",
     )
     args = parser.parse_args(argv)
+    if not args.rules_only and (args.llm_provider_id is None or args.llm_provider_model_id is None):
+        parser.error("--llm-provider-id and --llm-provider-model-id are required unless --rules-only is given")
 
     with sys.stdin if args.live == "-" else open(args.live, encoding="utf-8") as f:
         problems = find_drift(

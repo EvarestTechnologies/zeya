@@ -35,7 +35,8 @@ make test-ocs-engine OCS_SOURCE=/path/to/open-chat-studio   # real OCS engine te
 
 python -m ocs.build_pipeline --write               # regenerate ocs/pipeline/zeya_pipeline.json after any node, prompt, card or knowledge change
 python -m ocs.build_pipeline --rules-only --write  # regenerate the rules-only pipeline (no AI node, #26)
-python -m ocs.check_drift live.json --llm-provider-id <id> --llm-provider-model-id <id> [--rules-only]
+python -m ocs.check_drift live.json --llm-provider-id <id> --llm-provider-model-id <id>
+python -m ocs.check_drift live.json --rules-only     # when the rules-only version is live
 python -m ocs.seed_participants --zeya-users users.csv --out ocs_participants.csv
 
 python -m ocs.eval.score_gate                      # danger gate on the 310-message corpus
