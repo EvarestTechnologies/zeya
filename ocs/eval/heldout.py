@@ -204,3 +204,85 @@ SET_C_QUESTION = [
     "what are the signs of pre-eclampsia?",
     "Je, homa ni hatari kwa mjamzito?",
 ]
+
+
+# ---------------------------------------------------------------------------
+# SET_D, written 28 November 2026, before typo tolerance and the near-miss
+# patterns were drafted. Set C is used to choose those patterns, so set D is the
+# untuned check. Labels are drafts for clinical review.
+# ---------------------------------------------------------------------------
+
+SET_D_EMERGENCY = [
+    # English
+    "blood is coming out and I am 34 weeks",
+    "I soaked two pads with blood in an hour",
+    "my headache is unbearable and the light hurts my eyes",
+    "I keep seeing black spots",
+    "my temperature is very high and I am shivering",
+    "the pain in my tummy is so bad I cannot walk",
+    "my face is very puffy this morning",
+    "baby has stopped kicking",
+    "I have not felt my baby move for a whole day",
+    "my water just broke",
+    "clear water keeps running down my legs",
+    "she had a seizure on the bus",
+    "my wife fainted and won't wake up",
+    "I look so pale and I'm always tired",
+    "I am too breathless to talk",
+    "heavy bleeding after delivery",
+    # English with spelling mistakes
+    "bledding since last night",
+    "terible hedache",
+    "i hav a feva",
+    "my wter broke",
+    "baby nt moving",
+    "swolen face",
+    "sever stomach pain",
+    # Swahili
+    "Natokwa damu nyingi tangu asubuhi",
+    "Kichwa kinaniuma sana na sioni vizuri",
+    "Nina homa kali usiku wote",
+    "Mtoto haachezi tumboni tangu jana",
+    "Maji yamepasuka",
+    "Uso na mikono vimevimba",
+    "Tumbo linaniuma sana siwezi kutembea",
+    "Ameanguka na kupoteza fahamu",
+    "Nimepauka na nachoka haraka",
+    # Sheng
+    "Manze bebi hajakick siku mbili",
+    "Niko na fever kali mbaya",
+    "Damu inatoka mob",
+    "Kichwa inauma mbaya sana",
+    "Maji imetoka",
+    # Mixed Swahili and English
+    "Nina bleeding tangu jana",
+    "Mtoto hamove na nina pain",
+]
+
+SET_D_ROUTINE = [
+    "my blood group is O positive",
+    "the baby kicks every evening",
+    "I drink 8 glasses of water a day",
+    "my headache last week went away with rest",
+    "Nimekunywa maji mengi leo",
+    "Mtoto anapiga mateke vizuri",
+    "is it ok to sleep on my left side?",
+    "I have a small cough",
+    "Asante kwa msaada",
+    "when should I go for my next clinic visit?",
+    "I want to keep fit during pregnancy",
+    "Ninapenda kula mboga za majani",
+]
+
+SET_D_QUESTION = [
+    "what causes bleeding in pregnancy?",
+    "is a headache dangerous when pregnant?",
+    "how do I know if my waters have broken?",
+    "Dalili za degedege ni zipi?",
+    "Kwa nini homa ni hatari kwa mjamzito?",
+    "what should I do if the baby stops moving?",
+    "can swelling of the face be serious?",
+    "Je, kutokwa na damu ni hatari?",
+    "what are the signs of labour?",
+    "how can I tell if I am anaemic?",
+]
