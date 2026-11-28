@@ -26,13 +26,13 @@ NUMBERS = {
         "Emergency numbers:\n"
         "- Ambulance: 922 (free)\n"
         "- Emergency services: 999 or 112\n"
-        "- Migori County ambulance: 0740 587 479"
+        "- Migori County ambulance: 0740 587 479, 0740 588 519, 0740 588 853 or +254 724 024 296"
     ),
     "sw": (
         "Nambari za dharura:\n"
         "- Ambulensi: 922 (bila malipo)\n"
         "- Huduma za dharura: 999 au 112\n"
-        "- Ambulensi ya Kaunti ya Migori: 0740 587 479"
+        "- Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296"
     ),
 }
 
@@ -56,19 +56,20 @@ def test_defaults_to_english(participant_data):
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-@pytest.mark.parametrize("number", ["999", "112", "922", "0740 587 479"])
+@pytest.mark.parametrize(
+    "number", ["999", "112", "922", "0740 587 479", "0740 588 519", "0740 588 853", "+254 724 024 296"]
+)
 def test_every_national_number_is_listed(language, number):
     assert number in _run({"language_preference": language})
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
 def test_only_county_line_is_the_ticked_migori_ambulance(language):
-    # Sign-off D1 (27 November 2026): the Migori County ambulance dispatch line
-    # 0740 587 479 is shown to every participant. +254 724 024 296 was removed (no source).
+    # Sign-off D (28 November 2026): the four Migori County ambulance dispatch numbers,
+    # confirmed by Stella Oiro, are shown to every participant on one line.
     reply = _run({"language_preference": language})
     county_lines = [line for line in reply.splitlines() if "Migori" in line]
     assert county_lines == [NUMBERS[language].splitlines()[-1]]
-    assert "724 024 296" not in reply
 
 
 @pytest.mark.parametrize("message", ["", "mtoto hatembei", "x" * 5000], ids=["empty", "swahili", "long"])

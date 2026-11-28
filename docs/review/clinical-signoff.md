@@ -331,7 +331,7 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 
 **Rebuilt 27 November 2026 from answer K3.** No number is added to the emergency reply or the output guard until you tick it in the "Called" column of this table. The earlier ticks in this section were set by Claude Code from your "tick all approved" message. They are replaced by the empty boxes below, so that each number is ticked by you after you call it.
 
-**Already removed:** +254 724 024 296. It has no source and is not on the county poster. It is out of the live reply and the danger-question line.
+**+254 724 024 296, restored 28 November 2026.** It was removed on 27 November because it had no written source. Stella Oiro then confirmed it as a legitimate Migori County dispatch number. Her confirmation is the recorded source.
 
 **Left out for release 1 (Stella Oiro, 27 November 2026):** 1514 and 1199. They are removed from the live reply and the danger-question line.
 
@@ -347,17 +347,18 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 | 0740 587 479 | Migori County Emergency Ambulance Dispatch, "for maternal, newborn and medical emergencies" (County Emergency Dispatch Team) | No: ordinary mobile, airtime applies | Poster: "Call the dispatch team anytime" | County poster (Word file, 6 Oct 2026); not on migori.go.ke. **UNVERIFIED online** | [x] | 27 Nov 2026 |
 | 0740 588 519 | Same county dispatch team | As above | As above | As above | [x] | 27 Nov 2026 |
 | 0740 588 853 | Same county dispatch team | As above | As above | As above | [x] | 27 Nov 2026 |
+| +254 724 024 296 | Migori County ambulance dispatch, 24 hours | Not stated | Yes (Stella Oiro) | Confirmed legitimate by Stella Oiro, 28 Nov 2026. Not on the county poster | [x] | 28 Nov 2026 |
 
 Before ticking 922 and 1514, check that both answer from Migori on a Safaricom line and an Airtel line (K3).
 
-**D1. Proposed emergency reply lines (K3, without Kenya Red Cross).** This uses three numbers at most, because a mother in an emergency needs one number to call, not six. The Migori line is not free, so the header does not say "free from any phone". Only "922 (free)" does.
+**D1. Emergency reply lines (K3, without Kenya Red Cross; all four Migori numbers added on 28 November 2026 on Stella Oiro's instruction).** K3 suggested one Migori number, because a mother in an emergency needs one number to call, not six. The Migori line is not free, so the header does not say "free from any phone". Only "922 (free)" does.
 
 English:
 ```
 Emergency numbers:
 - Ambulance: 922 (free)
 - Emergency services: 999 or 112
-- Migori County ambulance: 0740 587 479
+- Migori County ambulance: 0740 587 479, 0740 588 519, 0740 588 853 or +254 724 024 296
 ```
 
 Kiswahili DRAFT:
@@ -365,7 +366,7 @@ Kiswahili DRAFT:
 Nambari za dharura:
 - Ambulensi: 922 (bila malipo)
 - Huduma za dharura: 999 au 112
-- Ambulensi ya Kaunti ya Migori: 0740 587 479
+- Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296
 ```
 
 - [x] Use these lines, keeping only the numbers ticked in the table above

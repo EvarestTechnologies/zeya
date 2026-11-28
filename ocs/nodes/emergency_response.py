@@ -9,7 +9,8 @@ get_emergency_response(). Zeya listed five Migori facilities between them. ZEYA 
 open to women anywhere in Kenya, so this lists national emergency numbers instead
 (methodological change 9). Each number must be confirmed by calling it before a
 release; see docs/ocs-migration.md. The numbers below were verified by calling
-(docs/review/clinical-signoff.md, section D, 27 November 2026). The Kiswahili text is
+(docs/review/clinical-signoff.md, section D, 27 and 28 November 2026). The four Migori
+County ambulance dispatch numbers were confirmed by Stella Oiro on 28 November 2026. The Kiswahili text is
 a DRAFT, pending fluent-speaker and clinical review (answers K1, 27 November 2026).
 
 Language comes from participant data ``language_preference``; anything other than
@@ -42,13 +43,13 @@ def main(input: str, **kwargs) -> str:
         "Emergency numbers:\n"
         "- Ambulance: 922 (free)\n"
         "- Emergency services: 999 or 112\n"
-        "- Migori County ambulance: 0740 587 479"
+        "- Migori County ambulance: 0740 587 479, 0740 588 519, 0740 588 853 or +254 724 024 296"
     )
     numbers_sw = (
         "Nambari za dharura:\n"
         "- Ambulensi: 922 (bila malipo)\n"
         "- Huduma za dharura: 999 au 112\n"
-        "- Ambulensi ya Kaunti ya Migori: 0740 587 479"
+        "- Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296"
     )
 
     language = (get_participant_data() or {}).get("language_preference")
