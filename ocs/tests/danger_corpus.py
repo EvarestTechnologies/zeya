@@ -246,4 +246,37 @@ EDGE_CASE_MESSAGES: list[str] = [
     "seizures",  # not matched today: \bseizure\b
     "baby stop moving",  # not matched today: stopped? needs "stoppe"
     "I pass out",  # not matched today: passed? needs "passe"
+    # Sign-off A15 and A16 (review on #62)
+    "I'm bleeding heavily, same as last year",
+    "I had a seizure last year, could it happen again in this pregnancy?",
+    "the weather is chilly",
+    "I am painting the baby's room",
+]
+
+# Sign-off A15: present-tense words win over history, and other people's emergencies
+# count as happening now. Messages from Raymond's review on #62.
+A15_EMERGENCY_MESSAGES: list[str] = [
+    "I'm bleeding heavily, same as last year",
+    "I am bleeding now, my first pregnancy had no problems",
+    "I had a seizure last year and now I have a severe headache",
+    "I am bleeding heavily and the nurse at the clinic said to check",
+    "Nina damu nyingi, nimeenda clinic mwaka jana pia",
+    "My sister fainted, what should I do",
+    "She had a fit just now, is it dangerous",
+    "how do i know if the baby is ok? the baby is not moving",
+]
+# History questions that must stay on the question line ("I had" and "nili..." are not
+# present-tense words in A15).
+A15_HISTORY_QUESTIONS: list[str] = [
+    "I had a seizure last year, could it happen again in this pregnancy?",
+    "my first pregnancy had bleeding, will it happen again?",
+]
+# Sign-off A16: real words that typo tolerance no longer misreads.
+A16_ORDINARY_MESSAGES: list[str] = [
+    "the weather is chilly",
+    "I want to chill this weekend",
+    "I am painting the baby's room",
+    "my sister painted a picture",
+    "we keep chickens for breeding",
+    "I like blending fruit",
 ]

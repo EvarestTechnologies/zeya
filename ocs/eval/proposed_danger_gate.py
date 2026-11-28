@@ -317,7 +317,17 @@ def main(input: str, **kwargs) -> str:
         rx(r"\bmy\s+baby\s+(has|is|hasn'?t|isn'?t|stopped|won'?t|doesn'?t)\b"),
         rx(r"\b(nina|niko|natoka|naona|naumwa|nahisi|sihisi|simhisi|nimeona|nimeanza)\b"),
         rx(r"\bnime\w+|\bnili\w+"),
+        # approved in sign-off A15: someone else's emergency, "just now", and the baby now
+        rx(
+            r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+(just\s+)?(fainted|collapsed|had\s+a\s+fit)\b"
+        ),
+        rx(r"\b(just|right)\s+now\b"),
+        rx(r"\bthe\s+baby\s+(is|isn'?t)\b"),
     ]
+    # Approved in sign-off A15: present-tense words that override general_context, so
+    # history ("last year", "first pregnancy") cannot soften a message about now.
+    # "I had" and "nili..." are left out on purpose, so history questions stay questions.
+    present_now = rx(r"\b(i'?m|i\s+am|i\s+have|i\s+feel|i\s+can'?t|now|nina|niko|natoka|naona|nahisi|sasa|nimeanza)\b")
 
     # Typo tolerance (approved in sign-off A13). A word one letter away from a danger word of
     # six or more letters is read as that word, for pattern matching only. Shorter danger
@@ -366,6 +376,23 @@ def main(input: str, **kwargs) -> str:
         "kutokwa",
     ]
 
+    # Approved in sign-off A16: real words that typo tolerance would misread as danger
+    # words ("chilly" as "chills"). They are never corrected.
+    typo_exempt = [
+        "chilly",
+        "chill",
+        "painted",
+        "painting",
+        "sainted",
+        "fainter",
+        "blending",
+        "breeding",
+        "flurry",
+        "slurry",
+        "burry",
+        "burred",
+    ]
+
     def one_edit(word, target):
         if word == target or abs(len(word) - len(target)) > 1:
             return False
@@ -389,7 +416,7 @@ def main(input: str, **kwargs) -> str:
     corrected_words = []
     for word in re.findall(r"[a-z']+|[^a-z']+", input.lower()):
         replacement = word
-        if len(word) >= 5 and word not in typo_vocabulary:
+        if len(word) >= 5 and word not in typo_vocabulary and word not in typo_exempt:
             for target in typo_vocabulary:
                 if one_edit(word, target):
                     replacement = target
@@ -439,7 +466,7 @@ def main(input: str, **kwargs) -> str:
             if pattern.search(input):
                 general = True
                 break
-        question = general or (asks and not now)
+        question = (general and not present_now.search(input)) or (asks and not now)
 
     route = "EMERGENCY" if categories_found and not question else "SAFE"
     set_temp_state_key("danger_route", route)

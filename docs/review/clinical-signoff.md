@@ -195,7 +195,7 @@ Set D still misses:
 
 These were not added, so that set D stays a fair test.
 
-**A15. Present-tense words override the history check. Pending. Not applied to either runtime gate.** This one came from Raymond's review on #62. The A8 history check ("last year", "first pregnancy", "nurse … check") currently wins over a message that says it is happening now, so these get the softer question line instead of the emergency reply. On `main` they all got the emergency reply.
+**A15. Present-tense words override the history check. Approved by Stella Oiro, 28 November 2026. Applied to both runtime gates.** This one came from Raymond's review on #62. The A8 history check ("last year", "first pregnancy", "nurse … check") currently wins over a message that says it is happening now, so these get the softer question line instead of the emergency reply. On `main` they all got the emergency reply.
 
 | Message | Now | With A15 |
 |---|---|---|
@@ -210,58 +210,58 @@ These were not added, so that set D stays a fair test.
 
 The change has two parts:
 1. A history match is ignored when the message also has one of these words. Tick each word you approve:
-   - [ ] i'm
-   - [ ] i am
-   - [ ] i have
-   - [ ] i feel
-   - [ ] i can't
-   - [ ] now
-   - [ ] nina
-   - [ ] niko
-   - [ ] natoka
-   - [ ] naona
-   - [ ] nahisi
-   - [ ] sasa
-   - [ ] nimeanza
+   - [x] i'm
+   - [x] i am
+   - [x] i have
+   - [x] i feel
+   - [x] i can't
+   - [x] now
+   - [x] nina
+   - [x] niko
+   - [x] natoka
+   - [x] naona
+   - [x] nahisi
+   - [x] sasa
+   - [x] nimeanza
 
    "I had" and "nili…" are left out on purpose, so "I had a seizure last year, could it happen again in this pregnancy?" and "my first pregnancy had bleeding, will it happen again?" stay on the question line.
 2. Three new signs that it is happening now, which also stop a question from softening the reply. Tick each pattern you approve:
-   - [ ] "she / he / my sister, mother… fainted, collapsed or had a fit"
-   - [ ] "just now", "right now"
-   - [ ] "the baby is / isn't …"
+   - [x] "she / he / my sister, mother… fainted, collapsed or had a fit"
+   - [x] "just now", "right now"
+   - [x] "the baby is / isn't …"
 
 **Measured on 28 November 2026 by applying the change to a copy:**
 - Held-out sets B, C and D: unchanged (29/30, 37/39, 33/39).
 - Corpus emergencies caught: unchanged (118/132).
 - **New false alarm:** "will the nurse check if I am pale?" now gets the emergency reply. Routine false alarms on the corpus go from 0 to 1 of 140.
-- These patterns were written from Raymond's 8 messages, and no untuned set has tested them yet. Before applying them, write held-out set E without looking at the patterns, then score them on it.
+- These patterns were written from Raymond's 8 messages. Held-out set E (`ocs/eval/heldout.py`) was then written and committed before applying them. On set E, A15 and A16 together raise emergencies caught from 16 to 25 of 26, and cut routine false alarms from 5 of 12 to 0. Details are in `docs/review/danger-gate.md`, section 0c.
 
-- [ ] Approve the ticked words and patterns
+- [x] Approve the ticked words and patterns
 - [ ] Leave out
 - [ ] Change:
 
-**A16. Real words that typo tolerance misreads. Pending. Not applied to either runtime gate.** Typo tolerance (A13) reads some real English words as danger words, and each of these sends a message to the emergency reply wherever it appears. Example: "the weather is chilly" is read as "chills". The fix leaves the ticked words out of typo matching. **The risk:** some of these may be how a mother actually types the danger word, such as "I have chill" for chills, or "breeding" for bleeding. Leave a word unticked if you would rather keep the false alarm.
+**A16. Real words that typo tolerance misreads. Approved by Stella Oiro, 28 November 2026. Applied to both runtime gates.** Typo tolerance (A13) reads some real English words as danger words, and each of these sends a message to the emergency reply wherever it appears. Example: "the weather is chilly" is read as "chills". The fix leaves the ticked words out of typo matching. **The risk:** some of these may be how a mother actually types the danger word, such as "I have chill" for chills, or "breeding" for bleeding. Leave a word unticked if you would rather keep the false alarm.
 
 | Word | Read as | Leave out of typo matching |
 |---|---|---|
-| chilly | chills | [ ] |
-| chill | chills | [ ] |
-| painted | fainted | [ ] |
-| painting | fainting | [ ] |
-| sainted | fainted | [ ] |
-| fainter | fainted | [ ] |
-| blending | bleeding | [ ] |
-| breeding | bleeding | [ ] |
-| flurry | blurry | [ ] |
-| slurry | blurry | [ ] |
-| burry | blurry | [ ] |
-| burred | blurred | [ ] |
+| chilly | chills | [x] |
+| chill | chills | [x] |
+| painted | fainted | [x] |
+| painting | fainting | [x] |
+| sainted | fainted | [x] |
+| fainter | fainted | [x] |
+| blending | bleeding | [x] |
+| breeding | bleeding | [x] |
+| flurry | blurry | [x] |
+| slurry | blurry | [x] |
+| burry | blurry | [x] |
+| burred | blurred | [x] |
 
 "I have chill and fever" still gets the emergency reply with A16, because "fever" matches on its own.
 
 Some other real words are misread only in "my water is …" (leaving, leading, leaning, leaping, leasing, peaking, all read as "leaking"). They stay in typo matching, because in that sentence "leaking" is the likely meaning.
 
-- [ ] Approve the ticked words
+- [x] Approve the ticked words
 - [ ] Leave out
 
 ---
