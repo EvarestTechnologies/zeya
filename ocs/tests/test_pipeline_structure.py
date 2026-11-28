@@ -148,7 +148,9 @@ def test_registration_router_defaults_away_from_llm(graph):
     )
 
 
-@pytest.mark.parametrize("name", ["danger_gate", "emergency_response", "registration", "danger_question_line"])
+@pytest.mark.parametrize(
+    "name", ["danger_gate", "emergency_response", "registration", "danger_question_line", "attach_explainer"]
+)
 def test_code_nodes_match_repository_sources(graph, name):
     nodes, _ = graph
     node = _by_name(nodes, name)

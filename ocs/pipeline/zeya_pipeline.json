@@ -315,6 +315,23 @@
         }
       },
       {
+        "id": "attach_explainer",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 300
+        },
+        "data": {
+          "id": "attach_explainer",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "attach_explainer",
+            "code": "\"\"\"\nOpen Chat Studio Python node: attach the danger-signs explainer clip.\n\nSits between the output guard and the danger-question line. When the approved\ndanger_signs answer card was sent and passed the guard, it downloads the clip from\na fixed public address and attaches it to the reply (issue #31, approved by Stella\nOiro on 28 November 2026). The clip is drawn from Mother and Child Health Handbook\npage 14, with English and Kiswahili captions.\n\nIf the download fails, the card text is still sent and the turn is tagged\n``explainer_clip:failed``. No model, no participant data, no credentials.\n\nLimits: OCS caps a Python node download at 1 MB on some releases, so the clip is\nkept under 1 MB (913,976 bytes). WhatsApp needs MP4 with H.264 video and AAC audio;\nthe clip carries a silent AAC track.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    if get_temp_state_key(\"answer_route\") != \"CARD\":\n        return input\n    if get_temp_state_key(\"guard_route\") != \"PASS\":\n        return input\n    card = get_temp_state_key(\"matched_card\") or \"\"\n    if not card.startswith(\"danger_signs_\"):\n        return input\n\n    url = \"https://raw.githubusercontent.com/EvarestTechnologies/zeya/main/media/explainers/zeya_danger_signs.mp4\"\n    try:\n        response = http.get(url, timeout=20)\n    except Exception:\n        add_message_tag(\"explainer_clip:failed\")\n        return input\n\n    content = response.get(\"content\")\n    if not response.get(\"is_success\") or not isinstance(content, bytes):\n        add_message_tag(\"explainer_clip:failed\")\n        return input\n\n    add_file_attachment(\"zeya_danger_signs.mp4\", content, \"video/mp4\")\n    add_message_tag(\"explainer_clip:danger_signs\")\n    return input\n"
+          }
+        }
+      },
+      {
         "id": "danger_question_line",
         "type": "pipelineNode",
         "position": {
@@ -490,8 +507,15 @@
         "targetHandle": "input"
       },
       {
-        "id": "output_guard:output->danger_question_line",
+        "id": "output_guard:output->attach_explainer",
         "source": "output_guard",
+        "target": "attach_explainer",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "attach_explainer:output->danger_question_line",
+        "source": "attach_explainer",
         "target": "danger_question_line",
         "sourceHandle": "output",
         "targetHandle": "input"

@@ -236,6 +236,13 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
             600,
         ),
         _node(
+            "attach_explainer",
+            "CodeNode",
+            {"name": "attach_explainer", "code": _code("attach_explainer")},
+            3000,
+            300,
+        ),
+        _node(
             "danger_question_line",
             "CodeNode",
             {"name": "danger_question_line", "code": _code("danger_question_line")},
@@ -266,7 +273,9 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         _edge("budget_router", "knowledge_referral", "output_0"),  # OVER_BUDGET → referral
         _edge("budget_router", "llm", "output_1"),  # VALID → LLM
         _edge("llm", "output_guard"),
-        _edge("output_guard", "danger_question_line"),
+        _edge("output_guard", "attach_explainer"),
+        # Danger-signs card: attach the approved explainer clip (#31). Fixed, no AI.
+        _edge("attach_explainer", "danger_question_line"),
         # Fixed line first when the gate flagged a danger-sign question (sign-off A4 (c)).
         _edge("danger_question_line", "end"),
     ]

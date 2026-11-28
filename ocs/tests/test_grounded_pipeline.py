@@ -22,7 +22,8 @@ def test_registered_answers_are_grounded_and_checked_before_delivery():
         ("budget_router", "knowledge_referral", "output_0"),  # OVER_BUDGET → referral
         ("budget_router", "llm", "output_1"),  # VALID → LLM
         ("llm", "output_guard", "output"),
-        ("output_guard", "danger_question_line", "output"),
+        ("output_guard", "attach_explainer", "output"),
+        ("attach_explainer", "danger_question_line", "output"),
         ("danger_question_line", "end", "output"),
     }
     assert required <= edges, (
