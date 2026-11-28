@@ -15,9 +15,9 @@ Routes (temp state ``access_route``, read by the access router):
                 channel would otherwise pass the image to the model as a link.
 
 The reply never repeats her message. With no saved language, the fixed reply is
-given in English and Kiswahili. Kiswahili is DRAFT, pending fluent-speaker and
-clinical review. The replies were approved in docs/review/clinical-signoff.md,
-item F, by Stella Oiro on 28 November 2026.
+given in English and Kiswahili. The replies were approved by Stella Oiro on
+28 November 2026 (docs/review/clinical-signoff.md, item F). The Kiswahili stays
+DRAFT until a fluent speaker reviews it.
 """
 
 
