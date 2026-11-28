@@ -17,15 +17,18 @@ POST /a/<team>/pipelines/data/<pk>/. See docs/ocs-migration.md for the shape.
 Full graph (registered path):
     danger_gate -> danger_router
         EMERGENCY -> emergency_response -> end
-        SAFE -> registration -> registration_router
-            REPLY -> end
+        SAFE -> access_gate -> access_router
+            NOT_TESTER -> danger_question_line -> end   (fixed reply, no AI)
+            MEDIA      -> danger_question_line -> end   (fixed reply, no AI)
+            OK         -> registration -> registration_router
+            REPLY -> danger_question_line -> end
             REGISTERED -> kb_context -> kb_router
-                FALSE (no approved KB) -> knowledge_referral -> end
+                FALSE (no approved KB) -> knowledge_referral -> danger_question_line -> end
                 TRUE  (KB available)   -> answer_match -> answer_router
-                    CARD   -> output_guard -> end
+                    CARD   -> output_guard -> attach_explainer -> danger_question_line -> end
                     ASK_AI -> llm_input -> prompt_budget -> budget_router
-                        OVER_BUDGET -> knowledge_referral -> end
-                        VALID       -> llm -> output_guard -> end
+                        OVER_BUDGET -> knowledge_referral -> danger_question_line -> end
+                        VALID       -> llm -> output_guard -> attach_explainer -> danger_question_line -> end
 
 Default approved-only build:
     All five English and five Kiswahili KB entries and answer cards are approved.
@@ -134,6 +137,23 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
             {"name": "emergency_response", "code": _code("emergency_response")},
             900,
             0,
+        ),
+        _node("access_gate", "CodeNode", {"name": "access_gate", "code": _code("access_gate")}, 750, 350),
+        _node(
+            "access_router",
+            "StaticRouterNode",
+            {
+                "name": "access_router",
+                "data_source": "temp_state",
+                "route_key": "access_route",
+                # output_0 = NOT_TESTER, output_1 = MEDIA, output_2 = OK.
+                # NOT_TESTER is the default: a missing or unexpected value never reaches the AI.
+                "keywords": ["NOT_TESTER", "MEDIA", "OK"],
+                "default_keyword_index": 0,
+                "tag_output_message": False,
+            },
+            825,
+            350,
         ),
         _node("registration", "CodeNode", {"name": "registration", "code": _code("registration")}, 900, 350),
         _node(
@@ -255,7 +275,12 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         _edge("start", "danger_gate"),
         _edge("danger_gate", "danger_router"),
         _edge("danger_router", "emergency_response", "output_0"),
-        _edge("danger_router", "registration", "output_1"),
+        _edge("danger_router", "access_gate", "output_1"),
+        _edge("access_gate", "access_router"),
+        # Fixed replies for anyone not approved, and for images or files (#21). No AI.
+        _edge("access_router", "danger_question_line", "output_0"),
+        _edge("access_router", "danger_question_line", "output_1"),
+        _edge("access_router", "registration", "output_2"),
         _edge("emergency_response", "end"),
         _edge("registration", "registration_router"),
         _edge("registration_router", "danger_question_line", "output_0"),
