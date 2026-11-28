@@ -27,7 +27,7 @@ def main(input, **kwargs):
 
     url = "https://raw.githubusercontent.com/EvarestTechnologies/zeya/main/media/explainers/zeya_danger_signs.mp4"
     try:
-        response = http.get(url, timeout=20)
+        response = http.get(url, timeout=8)
     except Exception:
         add_message_tag("explainer_clip:failed")
         return input
