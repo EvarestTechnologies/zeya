@@ -20,6 +20,7 @@ SETS = {
     "B": (heldout.SET_B_EMERGENCY, heldout.SET_B_ROUTINE, []),
     "C": (heldout.SET_C_EMERGENCY, heldout.SET_C_ROUTINE, heldout.SET_C_QUESTION),
     "D": (heldout.SET_D_EMERGENCY, heldout.SET_D_ROUTINE, heldout.SET_D_QUESTION),
+    "E": (heldout.SET_E_EMERGENCY, heldout.SET_E_ROUTINE, heldout.SET_E_QUESTION),
 }
 
 

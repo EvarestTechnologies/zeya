@@ -89,6 +89,29 @@ Reproduce:
 python -m ocs.eval.score_heldout --node ocs/eval/proposed_danger_gate.py --details
 ```
 
+## 0c. Happening now beats history, and fewer typo misreads (28 November 2026, live)
+
+Approved in sign-off items A15 and A16 by Stella Oiro on 28 November 2026. Both came from Raymond's review on #62. Applied to the draft and to both runtime gates, with the same patterns, logic and word list in each.
+- **A15:** a history or health-worker match no longer softens a message that also has a present-tense word (i'm, i am, i have, i feel, i can't, now, nina, niko, natoka, naona, nahisi, sasa, nimeanza). There are also three new happening-now patterns: someone else fainting, collapsing or having a fit; "just now" or "right now"; and "the baby is / isn't".
+- **A16:** 12 real words are never typo-corrected (chilly, chill, painted, painting, sainted, fainter, blending, breeding, flurry, slurry, burry, burred).
+- **Set E** (46 messages) was written and committed before either change was applied, and nothing was tuned on it.
+
+| Set | Before A15 and A16 | After (live) |
+|---|---|---|
+| **E, emergencies caught (26)** | **16 (62%)** | **25 (96%)** |
+| E, routine false alarms (12) | 5 | 0 |
+| E, question false alarms (8) | 1 | 1 |
+| D, emergencies caught (39) | 33 (85%) | 33 (85%) |
+| C, emergencies caught (39) | 37 (95%) | 37 (95%) |
+| B, emergencies caught (30) | 29 (97%) | 29 (97%) |
+| Corpus, emergencies caught (132) | 118 (89%) | 118 (89%) |
+| Corpus, routine false alarms (140) | 0 | 1 |
+
+**Still wrong, left alone so that set E stays a fair test:**
+- **Missed:** "I have swelling of my face and hands, same as last year". This is a wording gap in the swelling patterns, not the history check.
+- **Question false alarm:** "how do I know if I am bleeding too much?". This one was there before A15 and A16.
+- **New corpus false alarm:** R083, "will the nurse check if I am pale?".
+
 ---
 
 ## 1. Summary

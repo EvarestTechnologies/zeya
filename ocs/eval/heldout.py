@@ -286,3 +286,70 @@ SET_D_QUESTION = [
     "what are the signs of labour?",
     "how can I tell if I am anaemic?",
 ]
+
+
+# ---------------------------------------------------------------------------
+# SET_E, written 28 November 2026, after A15 and A16 were drafted from Raymond's
+# review messages and before either was applied to a gate. Nothing is tuned on it.
+# It mixes history with what is happening now, other people's emergencies, and
+# ordinary words that typo tolerance used to misread. Labels are drafts for
+# clinical review.
+# ---------------------------------------------------------------------------
+
+SET_E_EMERGENCY = [
+    # History or a health worker mentioned, but it is happening now
+    "I lost a baby last year and now I am bleeding a lot",
+    "my last pregnancy was fine but I have a terrible headache today",
+    "I feel the baby is not moving, in my first pregnancy he kicked a lot",
+    "the doctor said to check my bp, I can't see clearly now",
+    "I am having fits, it happened in my previous pregnancy too",
+    "Mwaka jana nilikuwa sawa lakini sasa natoka damu nyingi",
+    "Niko na homa kali, mimba ya kwanza haikuwa hivi",
+    "Nina degedege, nesi alisema niangalie kama inarudi",
+    "Nahisi kizunguzungu na kichwa kinauma sana, mimba iliyopita pia",
+    "I have swelling of my face and hands, same as last year",
+    # Someone else, or "just now"
+    "my wife collapsed in the kitchen, what do I do",
+    "my mother fainted, she is pregnant",
+    "she had a fit, should we go to hospital?",
+    "my daughter collapsed after giving birth",
+    "the bleeding started right now, is it bad?",
+    "my water broke just now, what should I do?",
+    "the baby isn't moving since morning, should I worry?",
+    "the baby is not kicking at all today",
+    # Everyday emergencies, to check nothing is lost
+    "there is a lot of blood on my pad",
+    "I have a very bad headache and blurred vision",
+    "I am shivering with a high fever",
+    "severe pain in my stomach that won't stop",
+    "my face is swollen",
+    "Damu inatoka nyingi sana",
+    "Mtoto hachezi tangu jana usiku",
+    "Maji yamevunjika",
+]
+
+SET_E_ROUTINE = [
+    "it is chilly in the evenings here",
+    "I am painting the baby's room",
+    "my sister painted a picture of my bump",
+    "we keep chickens for breeding",
+    "I like blending fruit for juice in the morning",
+    "I want to chill and rest this weekend",
+    "my vision is fine, I just need new glasses",
+    "the baby is kicking a lot today",
+    "I am leaving for the clinic now",
+    "Ninaenda kliniki sasa",
+    "my first pregnancy was easy",
+    "last year I had a healthy baby boy",
+]
+
+SET_E_QUESTION = [
+    "I bled in my last pregnancy, will it happen again?",
+    "my first pregnancy had high blood pressure, is this one at risk?",
+    "I had a fit last year, can it come back when pregnant?",
+    "the nurse said to check for swelling, what should I look for?",
+    "Mimba iliyopita nilitokwa damu, itatokea tena?",
+    "what does it mean if the baby is quiet for a day?",
+    "is a headache in pregnancy dangerous?",
+    "how do I know if I am bleeding too much?",
+]
