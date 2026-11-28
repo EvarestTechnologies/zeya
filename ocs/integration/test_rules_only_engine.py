@@ -37,6 +37,10 @@ SW_RULES_ONLY = (
     "Kwa maswali kuhusu ujauzito, wasiliana na mtoa huduma wako wa afya."
 )
 
+# Exact texts from ocs/nodes/knowledge_referral.py.
+EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+SW_REFERRAL = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+
 # No answer card covers these, so the normal build sends them to the model.
 UNCOVERED = {"en": "What is the weather today?", "sw": "Hali ya hewa leo ni nini?"}
 COVERED = {"en": "Why should I go to ANC?", "sw": "Kwa nini niende kliniki ya ujauzito?"}
@@ -145,6 +149,22 @@ def test_uncovered_question_gets_fixed_reply_with_no_model_call(run, run_normal,
     assert "route:rules_only" in _tags(output)
     assert llm.calls == []
     get_llm_service.assert_not_called()
+
+
+@pytest.mark.parametrize("lang", ["en", "sw"])
+def test_over_budget_question_gets_the_same_referral_in_both_versions(run, run_normal, fake_llm, lang):
+    """Review of #72: the budget check is kept, so a long message gets the referral in both."""
+    llm, _ = fake_llm
+    data = REGISTERED | {"language_preference": lang}
+    long_question = " ".join([UNCOVERED[lang]] * 120)  # well over BUDGET_BYTES once rendered
+
+    expected = run_normal(long_question, data)
+    output = run(long_question, data)
+
+    assert output["messages"][-1] == expected["messages"][-1] == (SW_REFERRAL if lang == "sw" else EN_REFERRAL)
+    assert "route:knowledge_referral" in _tags(output)
+    assert "route:rules_only" not in _tags(output)
+    assert llm.calls == []
 
 
 @pytest.mark.parametrize("lang", ["en", "sw"])

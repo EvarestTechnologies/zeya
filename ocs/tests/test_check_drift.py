@@ -247,7 +247,7 @@ def test_staging_flag_cli(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Rules-only build (#26): no LLM node, ASK_AI gets a fixed reply
+# Rules-only build (#26): no LLM node, a question for the model gets a fixed reply
 # ---------------------------------------------------------------------------
 
 
@@ -292,13 +292,13 @@ def test_rules_only_detects_llm_wired_back_in():
     llm = next(n for n in build_pipeline(7, 31)["data"]["nodes"] if n["id"] == "llm")
     data["nodes"].append(llm)
     for edge in data["edges"]:
-        if edge["source"] == "answer_router" and edge["sourceHandle"] == "output_1":
+        if edge["source"] == "budget_router" and edge["sourceHandle"] == "output_1":
             edge["target"] = "llm"
 
     assert find_drift(live, rules_only=True) == [
         "unexpected node: llm (LLMResponseWithPrompt)",
-        "missing edge: answer_router [output_1] -> rules_only_reply",
-        "unexpected edge: answer_router [output_1] -> llm",
+        "missing edge: budget_router [output_1] -> rules_only_reply",
+        "unexpected edge: budget_router [output_1] -> llm",
     ]
 
 

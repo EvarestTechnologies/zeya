@@ -42,10 +42,11 @@ Staging flag (--include-pending):
     is never changed to 'approved'.  Use only for synthetic test fixtures.
 
 Rules-only build (--rules-only):
-    llm_input, prompt_budget, budget_router and llm are removed, and ASK_AI goes to a
-    fixed reply instead:
-                    ASK_AI -> rules_only_reply -> end
-    Every other node and edge is the same as in the normal build.
+    The llm node is removed, and the budget check's VALID route goes to a fixed reply
+    instead:
+                        VALID       -> rules_only_reply -> end
+    Every other node and edge is the same as in the normal build, so an over-budget
+    message still gets the knowledge referral.
 """
 
 import argparse
@@ -71,8 +72,8 @@ POLICY_FILE = REPO_ROOT / "docs" / "output-policy.json"
 
 PIPELINE_NAME = "Zeya antenatal education"
 
-# The nodes that exist only to produce an AI answer. The rules-only build drops them.
-AI_BRANCH_NODES = frozenset({"llm_input", "prompt_budget", "budget_router", "llm"})
+# The only node that calls a model. The rules-only build drops it and nothing else.
+LLM_NODE = "llm"
 
 
 def _node(node_id: str, node_type: str, params: dict, x: int, y: int, flow_type: str = "pipelineNode") -> dict:
@@ -113,9 +114,9 @@ def build_pipeline(
     include_pending=True (synthetic staging ONLY): pending entries carry an
         explicit eligible=True runtime flag without changing their review_status.
         Never deployed to production; used only for integration test fixtures.
-    rules_only=True: the AI_BRANCH_NODES are removed and ASK_AI goes to the fixed
-        rules_only_reply node, so the pipeline has no LLM node (#26). The provider
-        ids are then unused.
+    rules_only=True: the LLM_NODE is removed and the budget check's VALID route goes
+        to the fixed rules_only_reply node, so the pipeline has no LLM node (#26). The
+        provider ids are then unused.
     """
     # Render knowledge-based nodes from their respective data sources.
     # check_drift compares the rendered code from these calls against the live
@@ -284,20 +285,20 @@ def build_pipeline(
         _edge("output_guard", "end"),
     ]
     if rules_only:
-        # Derived from the normal graph, so the two builds differ only in the AI branch.
-        nodes = [n for n in nodes if n["id"] not in AI_BRANCH_NODES]
+        # Derived from the normal graph, so the two builds differ only where the model was.
+        nodes = [n for n in nodes if n["id"] != LLM_NODE]
         nodes.append(
             _node(
                 "rules_only_reply",
                 "CodeNode",
                 {"name": "rules_only_reply", "code": _code("rules_only_reply")},
-                2700,
+                3000,
                 600,
             )
         )
-        edges = [e for e in edges if e["source"] not in AI_BRANCH_NODES and e["target"] not in AI_BRANCH_NODES]
+        edges = [e for e in edges if LLM_NODE not in (e["source"], e["target"])]
         edges += [
-            _edge("answer_router", "rules_only_reply", "output_1"),  # ASK_AI → fixed reply, no model
+            _edge("budget_router", "rules_only_reply", "output_1"),  # VALID → fixed reply, no model
             _edge("rules_only_reply", "end"),
         ]
     return {"name": PIPELINE_NAME, "data": {"nodes": nodes, "edges": edges}}
@@ -328,7 +329,7 @@ def main(argv: list[str] | None = None) -> int:
         "--rules-only",
         action="store_true",
         default=False,
-        help="build without the LLM node: ASK_AI gets a fixed reply (#26); provider ids are unused",
+        help="build without the LLM node: a question for the model gets a fixed reply (#26); provider ids are unused",
     )
     args = parser.parse_args(argv)
 

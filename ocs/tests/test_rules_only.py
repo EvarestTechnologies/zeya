@@ -3,8 +3,8 @@ Rules-only mode (#26): the pipeline version with no LLM node.
 
 Three layers:
 - the rules_only_reply node on its own (language selection, tags, no data changes);
-- the graph: no LLM node anywhere, ASK_AI goes to the fixed reply, and everything
-  else is the normal build unchanged;
+- the graph: no LLM node anywhere, the budget check's VALID route goes to the fixed
+  reply, and everything else is the normal build unchanged;
 - whole turns walked through both builds in the sandbox, routing the way OCS's
   StaticRouterNode does. A turn that does not need the AI must give the same reply
   and the same participant data in both builds; a turn that does must reach the fixed
@@ -16,7 +16,7 @@ import json
 
 import pytest
 
-from ocs.build_pipeline import AI_BRANCH_NODES, COMMITTED_RULES_ONLY_PIPELINE, build_pipeline
+from ocs.build_pipeline import COMMITTED_RULES_ONLY_PIPELINE, LLM_NODE, build_pipeline
 from ocs.tests.conftest import NODES, node_source
 from ocs.tests.danger_corpus import BILINGUAL_EXAMPLES
 from ocs.tests.sandbox import NodeHarness
@@ -119,22 +119,24 @@ def test_rules_only_build_has_no_llm_node(include_pending):
     assert not [n["id"] for n in flow["nodes"] if _is_llm(n)]
 
 
-def test_ask_ai_goes_to_the_fixed_reply_and_then_ends():
+def test_budget_valid_goes_to_the_fixed_reply_and_then_ends():
     flow = _flow(rules_only=True)
     edges = {(e["source"], e["sourceHandle"], e["target"]) for e in flow["edges"]}
-    router = _by_name(flow)["answer_router"]["data"]["params"]
+    router = _by_name(flow)["budget_router"]["data"]["params"]
 
-    assert router["keywords"][1] == "ASK_AI"
-    assert ("answer_router", "output_1", "rules_only_reply") in edges
+    assert router["keywords"] == ["OVER_BUDGET", "VALID"]
+    assert ("budget_router", "output_1", "rules_only_reply") in edges
+    # The budget check itself is kept: over budget still goes to the referral.
+    assert ("budget_router", "output_0", "knowledge_referral") in edges
     assert [e for e in edges if e[0] == "rules_only_reply"] == [("rules_only_reply", "output", "end")]
 
 
-def test_differs_from_normal_build_only_in_the_ai_branch():
+def test_differs_from_normal_build_only_where_the_model_was():
     normal, rules_only = _flow(), _flow(rules_only=True)
     normal_nodes = {n["id"]: n for n in normal["nodes"]}
     rules_nodes = {n["id"]: n for n in rules_only["nodes"]}
 
-    assert normal_nodes.keys() - rules_nodes.keys() == AI_BRANCH_NODES
+    assert normal_nodes.keys() - rules_nodes.keys() == {LLM_NODE}
     assert rules_nodes.keys() - normal_nodes.keys() == {"rules_only_reply"}
     for node_id in normal_nodes.keys() & rules_nodes.keys():
         assert rules_nodes[node_id] == normal_nodes[node_id], node_id
@@ -142,10 +144,12 @@ def test_differs_from_normal_build_only_in_the_ai_branch():
     def edge_set(flow):
         return {(e["source"], e["sourceHandle"], e["target"]) for e in flow["edges"]}
 
-    removed = edge_set(normal) - edge_set(rules_only)
-    assert all(AI_BRANCH_NODES & {source, target} for source, _, target in removed)
+    assert edge_set(normal) - edge_set(rules_only) == {
+        ("budget_router", "output_1", "llm"),
+        ("llm", "output", "output_guard"),
+    }
     assert edge_set(rules_only) - edge_set(normal) == {
-        ("answer_router", "output_1", "rules_only_reply"),
+        ("budget_router", "output_1", "rules_only_reply"),
         ("rules_only_reply", "output", "end"),
     }
 
@@ -259,6 +263,22 @@ def test_uncovered_question_gets_fixed_reply_instead_of_llm(normal, rules_only, 
     assert turn["visited"][-2:] == ["rules_only_reply", "end"]
     assert "route:rules_only" in turn["tags"]
     assert turn["data"] == data
+
+
+@pytest.mark.parametrize("lang", ["en", "sw"])
+def test_over_budget_question_gets_the_same_referral_in_both_builds(normal, rules_only, lang):
+    # Review of #72: rules-only once dropped the budget check, so a long message got
+    # "try again later" there but the knowledge referral in the normal build.
+    data = {**REGISTERED, "language_preference": lang}
+    long_question = " ".join([UNCOVERED[lang]] * 120)  # well over BUDGET_BYTES once rendered
+
+    expected = _walk(normal, long_question, data)
+    turn = _walk(rules_only, long_question, data)
+
+    assert expected["visited"][-4:] == ["prompt_budget", "budget_router", "knowledge_referral", "end"]
+    assert "route:knowledge_referral" in turn["tags"]
+    assert "route:rules_only" not in turn["tags"]
+    assert turn == expected
 
 
 @pytest.mark.parametrize("lang", ["en", "sw"])

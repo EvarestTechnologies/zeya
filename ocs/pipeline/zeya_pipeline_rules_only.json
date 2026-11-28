@@ -217,6 +217,64 @@
         }
       },
       {
+        "id": "llm_input",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2700,
+          "y": 600
+        },
+        "data": {
+          "id": "llm_input",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "llm_input",
+            "code": "\"\"\"\nOpen Chat Studio Python node: privacy-preserving LLM input.\n\nSanitizes the question before it reaches the language model by removing:\n  - The exact saved participant name (whole-word, case-insensitive)\n  - Phone numbers: any +CC international prefix, plus Kenya-local prefixes\n    254 / 07 / 01 without +, contiguous or with space/hyphen/parenthesis\n    separators, fullwidth digit encoding, or zero-width characters inserted\n    between groups\n  - Email addresses (RFC-5321 local-part @ domain pattern)\n\nOrdinary text, pregnancy-week numbers, dates, and all other content are\npreserved. Fullwidth ASCII digits (U+FF10–U+FF19) are normalised to ASCII\nbefore matching; zero-width characters (U+200B/C/D, U+FEFF, U+00AD) are\nstripped before matching and do not appear in the output.\n\nLIMITATIONS — this is best-effort sanitization, not a universal PII filter:\n  - Name: only the exact value stored in participant_data.name is matched.\n    Names shared verbally but not registered, names corrected by an operator\n    after registration, common words that happen to equal the saved name,\n    and very short names may cause under- or over-removal.\n  - Phone: the generic +CC branch covers any number starting with +.\n    Kenya-local bare prefixes (254, 07, 01) are also covered.\n    Numbers written without any country-code or local prefix are not matched.\n  - Email: basic pattern; unusual local-part quoting not covered.\n  - Historical turns already in LLM node context are not re-sanitized.\n    See docs/review/system-prompt.md for the history_type=none requirement\n    that eliminates that channel.\n\nNo temp-state keys are written. Participant data is read-only.\nAllowed imports: re (stdlib, in OCS allowed set).\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import re\n\n    text = input or \"\"\n    data = get_participant_data() or {}\n\n    # --- 1. Normalise fullwidth ASCII digits (U+FF10–U+FF19 → 0–9) ---\n    # Chain of .replace() calls avoids str.translate / str.maketrans.\n    text = (\n        text.replace(\"\\uff10\", \"0\")\n        .replace(\"\\uff11\", \"1\")\n        .replace(\"\\uff12\", \"2\")\n        .replace(\"\\uff13\", \"3\")\n        .replace(\"\\uff14\", \"4\")\n        .replace(\"\\uff15\", \"5\")\n        .replace(\"\\uff16\", \"6\")\n        .replace(\"\\uff17\", \"7\")\n        .replace(\"\\uff18\", \"8\")\n        .replace(\"\\uff19\", \"9\")\n    )\n\n    # --- 2. Strip zero-width characters ---\n    # U+200B zero-width space, U+200C ZWNJ, U+200D ZWJ,\n    # U+FEFF BOM/ZWNBSP, U+00AD soft hyphen\n    text = re.sub(r\"[\\u200b\\u200c\\u200d\\ufeff\\u00ad]\", \"\", text)\n\n    # --- 3. Name sanitisation ---\n    # Removes exact saved name only (whole-word, case-insensitive).\n    # Empty or missing name: skip entirely.\n    name = (data.get(\"name\") or \"\").strip()\n    if name:\n        text = re.sub(r\"(?i)\\b\" + re.escape(name) + r\"\\b\", \"[name]\", text)\n\n    # --- 4. Phone sanitisation ---\n    #\n    # Two branches in one compiled pattern:\n    #\n    # Branch A — generic +CC international:\n    #   (?<!\\w)                not preceded by a word character\n    #   \\+\\d{1,3}              + followed by 1-3 digit country code (greedy)\n    #   (?:[\\s\\-\\(\\)]*\\d){6,13} 6-13 more digit positions; zero-or-more\n    #                          space/hyphen/paren separators allowed before\n    #                          each digit to handle \"+1 (202) 555-0100\"\n    #   (?!\\d)                 not followed by a digit\n    #\n    # Branch B — Kenya local bare prefix (no +):\n    #   (?<!\\w)\n    #   (?:254|07|01)          Kenya prefix without +\n    #   (?:[\\s\\-]?\\d){7,11}   7-11 more digit positions, one optional sep\n    #   (?!\\d)\n    #\n    # +254 is covered by Branch A (the \\d{1,3} matches \"254\").\n    #\n    # Preservation guarantee (both branches):\n    #   \"+20 weeks\"   → '+20' prefix; ' w' fails [\\s\\-\\(\\)]*\\d → 0 reps < 6\n    #   \"+2024\"       → greedy takes '+202'; '4' = 1 rep < 6 → no match\n    #   \"07 weeks\"    → '07' prefix; ' w' fails [\\s\\-]?\\d → no match\n    #   \"07/08/2025\"  → '/' not in [\\s\\-]; no match\n    #   \"(Kisumu)\"    → no matching prefix → no match\n    #\n    # Callback strips separators/+ then requires ≥8 total digits so short\n    # sequences (PIN codes, etc.) are not affected.\n    phone_re = re.compile(\n        r\"(?<!\\w)\"\n        r\"(?:\"\n        r\"\\+\\d{1,3}(?:[\\s\\-\\(\\)]*\\d){6,13}\"\n        r\"|\"\n        r\"(?:254|07|01)(?:[\\s\\-]?\\d){7,11}\"\n        r\")\"\n        r\"(?!\\d)\"\n    )\n\n    def replace_phone(m):\n        clean = re.sub(r\"[\\s\\-+\\(\\)]\", \"\", m.group())\n        return \"[phone]\" if len(clean) >= 8 else m.group()\n\n    text = phone_re.sub(replace_phone, text)\n\n    # --- 5. Email sanitisation ---\n    text = re.sub(\n        r\"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}\",\n        \"[email]\",\n        text,\n    )\n\n    return text\n"
+          }
+        }
+      },
+      {
+        "id": "prompt_budget",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 750
+        },
+        "data": {
+          "id": "prompt_budget",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "prompt_budget",
+            "code": "def main(input, **kwargs):\n    import re\n\n    # System prompt template baked in at build time by ocs/prompt_budget.py.\n    # Changes to ocs/prompts/system_prompt.txt are picked up at next build.\n    SYSTEM_PROMPT = 'You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.\\n\\nAnswer using ONLY the knowledge entries supplied below. If a question is not covered, reply: \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\" Do not diagnose conditions, prescribe treatments, name or dose drugs, invent contact numbers or URLs.\\n\\nIf the participant describes any sign of physical distress or urgency, advise them to seek care promptly even if not a recognised danger sign.\\n\\n{temp_state.kb_section}\\n\\n{temp_state.llm_context}\\n\\nKeep replies under 120 words. Respond in the participant\\'s stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.\\n'\n    BUDGET_BYTES = 4000\n\n    if not isinstance(input, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"invalid_question\")\n        return input\n\n    question = input\n\n    # Fail-closed: blank sanitised question (whitespace or empty string).\n    if not question.strip():\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"blank_question\")\n        return input\n\n    # Read runtime values — no defaults, no silent coercion.\n    kb_section = get_temp_state_key(\"kb_section\")\n    llm_context = get_temp_state_key(\"llm_context\")\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\", \"\")\n\n    # Fail-closed: kb_section absent or not a string.\n    if not isinstance(kb_section, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_kb_section\")\n        return input\n\n    # Fail-closed: llm_context absent or not a string.\n    if not isinstance(llm_context, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_llm_context\")\n        return input\n\n    # Fail-closed: language preference absent, empty, unsupported locale, or\n    # wrong type (bool/int).  Only exactly \"en\" or \"sw\" is accepted; any other\n    # value — including \"fr\", whitespace strings, True, 42 — routes OVER_BUDGET\n    # without raising a TypeError.\n    if lang not in (\"en\", \"sw\"):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_language\")\n        return input\n\n    # One-pass substitution: replace each {source.key} placeholder exactly once.\n    # Using re.sub with a callback avoids sequential replace which could\n    # re-interpret placeholder-like text inserted from KB or context values.\n    ts_lookup = {\"kb_section\": kb_section, \"llm_context\": llm_context}\n    pd_lookup = {\"language_preference\": lang}\n\n    def do_sub(m):\n        source = m.group(1)\n        key = m.group(2)\n        if source == \"temp_state\":\n            val = ts_lookup.get(key)\n            return val if val is not None else m.group(0)\n        if source == \"participant_data\":\n            val = pd_lookup.get(key)\n            return val if val is not None else m.group(0)\n        return m.group(0)\n\n    rendered = re.sub(\n        r\"\\{(temp_state|participant_data)\\.([^}]+)\\}\",\n        do_sub,\n        SYSTEM_PROMPT,\n    )\n\n    total_bytes = len(rendered.encode(\"utf-8\")) + len(question.encode(\"utf-8\"))\n    set_temp_state_key(\"budget_bytes\", total_bytes)\n\n    if total_bytes > BUDGET_BYTES:\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_reason\", \"over_cap\")\n    else:\n        set_temp_state_key(\"budget_route\", \"VALID\")\n        set_temp_state_key(\"budget_reason\", \"\")\n\n    return input"
+          }
+        }
+      },
+      {
+        "id": "budget_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3300,
+          "y": 750
+        },
+        "data": {
+          "id": "budget_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "budget_router",
+            "data_source": "temp_state",
+            "route_key": "budget_route",
+            "keywords": [
+              "OVER_BUDGET",
+              "VALID"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
         "id": "output_guard",
         "type": "pipelineNode",
         "position": {
@@ -253,7 +311,7 @@
         "id": "rules_only_reply",
         "type": "pipelineNode",
         "position": {
-          "x": 2700,
+          "x": 3000,
           "y": 600
         },
         "data": {
@@ -262,7 +320,7 @@
           "label": "",
           "params": {
             "name": "rules_only_reply",
-            "code": "\"\"\"\nOpen Chat Studio Python node: fixed reply in place of the AI answer (rules-only mode, #26).\n\nPresent only in the rules-only build (python -m ocs.build_pipeline --rules-only), which\nhas no LLM node. It takes the answer_router ASK_AI branch, so a question that no\nreviewed answer card covers gets this fixed text instead of a model answer. The danger\ngate, emergency response, registration, answer cards and knowledge referral are the\nsame as in the normal build.\n\nAn operator turns the mode on by making the published rules-only version the default\nversion in OCS, and off by making the normal version the default again. No WhatsApp\nmessage can change it. See docs/ocs-migration.md, \"Rules-only mode\".\n\nNo model, network, file I/O or credentials.\nNo participant data mutation; reads saved language preference only.\nNon-sensitive route tag so operators can count rules-only turns.\n\nLanguage copies (suggested copy from #26):\n  English — draft wording from the issue.\n  Swahili — DRAFT, pending fluent-speaker review.\nA preference that is neither \"en\" nor \"sw\" gets both, English first, because the\nlanguage is unknown. Today such a participant never gets here: kb_context finds no\nentries for that language and sends the turn to knowledge_referral. Both copies are\nkept so the reply stays safe if that changes.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\")\n\n    english = (\n        \"Sorry, ZEYA couldn’t answer your question right now. Please try again later. \"\n        \"For pregnancy concerns, contact your healthcare provider.\"\n    )\n    # Draft Swahili — pending fluent-speaker review.\n    swahili = (\n        \"Samahani, ZEYA imeshindwa kujibu swali lako kwa sasa. Tafadhali jaribu tena baadaye. \"\n        \"Kwa maswali kuhusu ujauzito, wasiliana na mtoa huduma wako wa afya.\"\n    )\n\n    if lang == \"en\":\n        reply = english\n    elif lang == \"sw\":\n        reply = swahili\n    else:\n        reply = english + \"\\n\\n\" + swahili\n\n    set_temp_state_key(\"rules_only_route\", \"RULES_ONLY\")\n    add_message_tag(\"route:rules_only\")\n    return reply\n"
+            "code": "\"\"\"\nOpen Chat Studio Python node: fixed reply in place of the AI answer (rules-only mode, #26).\n\nPresent only in the rules-only build (python -m ocs.build_pipeline --rules-only), which\nhas no LLM node. It takes the budget check's VALID route, the one that leads to the\nmodel in the normal build, so a question that no answer card covers gets this fixed\ntext instead of a model answer. Everything before that point is the same as in the\nnormal build, including the budget check: an over-budget message still gets the\nknowledge referral.\n\nAn operator turns the mode on by making the published rules-only version the default\nversion in OCS, and off by making the normal version the default again. No WhatsApp\nmessage can change it. See docs/ocs-migration.md, \"Rules-only mode\".\n\nNo model, network, file I/O or credentials.\nNo participant data mutation; reads saved language preference only.\nNon-sensitive route tag so operators can count rules-only turns.\n\nLanguage copies (suggested copy from #26):\n  English — draft wording from the issue.\n  Swahili — DRAFT, pending fluent-speaker review.\nA preference that is neither \"en\" nor \"sw\" gets both, English first, because the\nlanguage is unknown. Today such a participant never gets here: kb_context finds no\nentries for that language and sends the turn to knowledge_referral. Both copies are\nkept so the reply stays safe if that changes.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\")\n\n    english = (\n        \"Sorry, ZEYA couldn’t answer your question right now. Please try again later. \"\n        \"For pregnancy concerns, contact your healthcare provider.\"\n    )\n    # Draft Swahili — pending fluent-speaker review.\n    swahili = (\n        \"Samahani, ZEYA imeshindwa kujibu swali lako kwa sasa. Tafadhali jaribu tena baadaye. \"\n        \"Kwa maswali kuhusu ujauzito, wasiliana na mtoa huduma wako wa afya.\"\n    )\n\n    if lang == \"en\":\n        reply = english\n    elif lang == \"sw\":\n        reply = swahili\n    else:\n        reply = english + \"\\n\\n\" + swahili\n\n    set_temp_state_key(\"rules_only_route\", \"RULES_ONLY\")\n    add_message_tag(\"route:rules_only\")\n    return reply\n"
           }
         }
       }
@@ -367,6 +425,34 @@
         "targetHandle": "input"
       },
       {
+        "id": "answer_router:output_1->llm_input",
+        "source": "answer_router",
+        "target": "llm_input",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "llm_input:output->prompt_budget",
+        "source": "llm_input",
+        "target": "prompt_budget",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "prompt_budget:output->budget_router",
+        "source": "prompt_budget",
+        "target": "budget_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "budget_router:output_0->knowledge_referral",
+        "source": "budget_router",
+        "target": "knowledge_referral",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
         "id": "output_guard:output->end",
         "source": "output_guard",
         "target": "end",
@@ -374,8 +460,8 @@
         "targetHandle": "input"
       },
       {
-        "id": "answer_router:output_1->rules_only_reply",
-        "source": "answer_router",
+        "id": "budget_router:output_1->rules_only_reply",
+        "source": "budget_router",
         "target": "rules_only_reply",
         "sourceHandle": "output_1",
         "targetHandle": "input"

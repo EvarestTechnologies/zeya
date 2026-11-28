@@ -2,10 +2,11 @@
 Open Chat Studio Python node: fixed reply in place of the AI answer (rules-only mode, #26).
 
 Present only in the rules-only build (python -m ocs.build_pipeline --rules-only), which
-has no LLM node. It takes the answer_router ASK_AI branch, so a question that no
-reviewed answer card covers gets this fixed text instead of a model answer. The danger
-gate, emergency response, registration, answer cards and knowledge referral are the
-same as in the normal build.
+has no LLM node. It takes the budget check's VALID route, the one that leads to the
+model in the normal build, so a question that no answer card covers gets this fixed
+text instead of a model answer. Everything before that point is the same as in the
+normal build, including the budget check: an over-budget message still gets the
+knowledge referral.
 
 An operator turns the mode on by making the published rules-only version the default
 version in OCS, and off by making the normal version the default again. No WhatsApp
