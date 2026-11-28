@@ -63,6 +63,34 @@ python -m ocs.eval.score_gate
 
 ---
 
+## 0b. Typo tolerance and near misses (28 November 2026, draft only)
+
+Drafted in `ocs/eval/proposed_danger_gate.py` and awaiting sign-off items A13 and A14. The live gate is unchanged.
+- **Set D** (61 messages) was written and committed before these changes, so it is the fair test.
+- **Set C** was used to choose the near-miss patterns, so its new score is not evidence.
+
+| Set | Live gate | Draft with A13 and A14 |
+|---|---|---|
+| **D, emergencies caught (39)** | **28 (72%)** | **33 (85%)** |
+| D, routine false alarms (12) | 0 | 0 |
+| D, question false alarms (10) | 3 | 3 |
+| C, emergencies caught (39), tuned | 14 (36%) | 37 (95%) |
+| B, emergencies caught (30) | 15 (50%) | 29 (97%) |
+| Corpus, emergencies caught (132) | 108 (82%) | 118 (89%) |
+| Corpus, routine false alarms (140) | 0 | 0 |
+
+New false alarms found by probing:
+- "I am so hot in this weather" (A14 row 10)
+- "what does it mean if I see spots?" (set C question; A14 row 6)
+
+Reproduce:
+
+```
+python -m ocs.eval.score_heldout --node ocs/eval/proposed_danger_gate.py --details
+```
+
+---
+
 ## 1. Summary
 
 When a mother's message matches a danger sign pattern, Zeya sends the emergency reply and the emergency numbers right away, with no AI step. Today the live gate has 39 patterns in 8 categories. It sends the walkthrough's emergency message, "nina homa na kichwa kinauma sana", down the safe route.

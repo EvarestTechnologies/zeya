@@ -146,6 +146,55 @@ HB p14 lists "Fever" with no qualifier. The draft triggers on "homa" and "fever"
 - [x] Approve broad matching, with the question checks in A8 stopping prevention questions
 - [ ] Change:
 
+**A13. Typo tolerance. NEW, 28 November 2026, for your decision. Not live.** A word one letter away from a danger word of six or more letters is read as that word. Examples: "bledding" as bleeding, "hedache" as headache, "swolen" as swollen, "terible" as terrible. Shorter danger words (blood, water, homa, maji, fever) are left out, because ordinary words sit one letter away from them ("flood", "later", "home"). There is no AI in this; it is a fixed rule.
+- [ ] Approve
+- [ ] Leave out
+
+**A14. Near-miss patterns. NEW, 28 November 2026, for your decision. Not live.** Each one is taken from a set C message the gate missed. Approve or reject each row.
+
+| # | Catches | Example from set C | Category | Approve |
+|---|---|---|---|---|
+| 1 | passing clots | "I keep passing clots" | bleeding | [ ] |
+| 2 | red or bloody discharge, bright red on the pad or toilet paper | "there's bright red on the toilet paper" | bleeding | [ ] |
+| 3 | "damu ina…toka" with an object prefix | "Damu inanitoka tangu jana" | bleeding | [ ] |
+| 4 | "worst headache" | "worst headache of my life" | headache_vision | [ ] |
+| 5 | "headache" with "mbaya" or "sana" | "Manze nina headache mbaya sana" | headache_vision | [ ] |
+| 6 | seeing spots or flashes; eyes flashing | "my eyes are seeing flashes" | headache_vision | [ ] |
+| 7 | "kichwa … kupita kiasi" | "Kichwa changu kinauma kupita kiasi" | headache_vision | [ ] |
+| 8 | "hayaoni vizuri", "haoni vizuri" | "Macho yangu hayaoni vizuri" | headache_vision | [ ] |
+| 9 | "white as paper / chalk / a sheet" | "I'm white as paper and so weak" | pallor_anaemia | [ ] |
+| 10 | "burning up"; "body / I am … very or so hot". **Known false alarm:** "I am so hot in this weather" | "I am burning up", "my body is very hot" | fever | [ ] |
+| 11 | haven't felt any movement or kicks | "I haven't felt any movement since morning" | fetal_movement | [ ] |
+| 12 | "no kicks" | "the baby is quiet today, no kicks" | fetal_movement | [ ] |
+| 13 | "bebi" or "mtoi" with hachezi, hajacheza, hajamove, hamove | "Bebi hachezi siku nzima" | fetal_movement | [ ] |
+| 14 | cramps that won't go away, or severe, sharp or bad cramps | "sharp cramps that won't go away" | abdominal_pain | [ ] |
+| 15 | soaked with water or fluid | "my pants are soaked with water" | water_breaking | [ ] |
+| 16 | "maji … imevunja / imevunjika / imepasuka" | "Maji imevunja" | water_breaking | [ ] |
+| 17 | convulsing, convulsed | "she is convulsing" | convulsions | [ ] |
+| 18 | "ako / yuko / ana / niko / nina na fits" | "Ako na fits" | convulsions | [ ] |
+| 19 | foaming at the mouth | "she fell down and is foaming at the mouth" | convulsions | [ ] |
+| 20 | Question check: "is … dangerous / serious" counts as a question | "is fever dangerous in pregnancy?" | question | [ ] |
+| 21 | Happening now: "she / he / my wife, sister, mother… is" counts as happening now, even inside a question | "my sister in law is shaking on the floor" | happening now | [ ] |
+
+**What A13 and A14 change, measured.** Detail is in `docs/review/danger-gate.md`, section 0b.
+
+| Set | Live gate | With A13 and A14 |
+|---|---|---|
+| **D, written before these changes and not tuned on (39 emergencies)** | **28 (72%)** | **33 (85%)** |
+| C, used to choose the near misses, so not a fair test (39) | 14 (36%) | 37 (95%) |
+| B (30) | 15 (50%) | 29 (97%) |
+| Corpus (132) | 108 (82%) | 118 (89%) |
+| Routine false alarms: corpus, B, C, D | 0, 1, 1, 0 | 0, 1, 1, 0 |
+| Question false alarms, D (10) | 3 | 3 |
+
+Set D still misses:
+- "my water just broke" and "Maji imetoka", which are wording gaps
+- "i hav a feva" and "my wter broke": short words outside typo tolerance
+- "Manze bebi hajakick siku mbili"
+- "light hurts my eyes"
+
+These were not added, so that set D stays a fair test.
+
 ---
 
 ## B. Which content Zeya answers from
