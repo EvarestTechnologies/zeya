@@ -423,4 +423,4 @@ I have reviewed the items ticked above for release 1 with synthetic test partici
 Name: Stella Oiro
 Clinical Officers Council registration number: B10307
 Date: 28 November 2026
-Signature: signed by Stella Oiro, 28 November 2026. The handwritten signature was provided in person and is held by Evarest Technologies. It is not stored in this public repository.
+Signature: signed by Stella Oiro, 28 November 2026. The handwritten signature was provided by Stella Oiro and is held by Evarest Technologies. It is not stored in this public repository.
