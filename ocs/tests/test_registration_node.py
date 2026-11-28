@@ -588,6 +588,21 @@ class TestFullRegistrationBothLanguages:
         assert harness.output.startswith("Umesajiliwa! Una wiki 23 za ujauzito.")
         assert harness.output.endswith(FALLBACK_COMPLETION_MSG_SW)
 
+    def test_swahili_due_date_uses_a_kiswahili_month(self):
+        # 23 weeks on 3 October 2026 gives 30 January 2027. Format approved by Stella
+        # Oiro, 28 November 2026: "5 Machi 2027".
+        harness = _after("Habari", "2", "ndiyo", "Achieng", "23")
+
+        assert "ni takriban 30 Januari 2027.\n\n" in harness.output
+        english_months = ("January", "February", "March", "April", "June", "July", "August")
+        assert not any(month in harness.output for month in english_months)
+
+    def test_swahili_due_date_for_march(self):
+        # 18 weeks on 3 October 2026 gives 6 March 2027.
+        harness = _after("Habari", "2", "ndiyo", "Achieng", "18")
+
+        assert "ni takriban 6 Machi 2027." in harness.output
+
     def test_full_study_registration_in_english(self):
         harness = _after("Hi", "1", "yes", "Akinyi", "20", data={"study_participant": True})
 

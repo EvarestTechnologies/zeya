@@ -40,7 +40,7 @@ python -m ocs.check_drift live.json --rules-only     # when the rules-only versi
 python -m ocs.seed_participants --zeya-users users.csv --out ocs_participants.csv
 
 python -m ocs.eval.score_gate                      # danger gate on the 310-message corpus
-python -m ocs.eval.score_heldout --details         # danger gate on held-out sets B to E
+python -m ocs.eval.score_heldout --details         # danger gate on held-out sets B to F
 ```
 
 The legacy backend still has `make up`, `make test` and the rest (see `make help`), but those are not the release path.
@@ -68,7 +68,7 @@ start -> danger_gate -> danger_router
 
 | Node | What it does |
 |---|---|
-| `danger_gate` | 152 signed-off patterns in 9 categories (bleeding, headache_vision, pallor_anaemia, fever, fetal_movement, abdominal_pain, water_breaking, convulsions, swelling). It also has a question and history check and typo tolerance. It sets `danger_route`, `danger_categories`, `danger_keywords` and `danger_question`. |
+| `danger_gate` | 159 signed-off patterns in 9 categories (bleeding, headache_vision, pallor_anaemia, fever, fetal_movement, abdominal_pain, water_breaking, convulsions, swelling). It also has a question and history check and typo tolerance. It sets `danger_route`, `danger_categories`, `danger_keywords` and `danger_question`. |
 | `emergency_response` | Fixed reply listing 922, 999 or 112, and the four Migori County ambulance numbers. |
 | `access_gate` | Only participants with `approved_tester: true` get through. Attachments get a fixed reply. |
 | `registration` | Language choice, consent, name and weeks. It sets `language_preference` and the NG24 p107 week context. |
@@ -96,7 +96,7 @@ The registration tests also read the welcome messages and week context from `bac
 
 - **Test sets:**
   - Corpus: `ocs/tests/danger_eval_corpus.csv`, 310 messages.
-  - Held-out sets: `ocs/eval/heldout.py`. Set B. Set C, which was used to choose the near-miss rules. Set D, untuned: the fair test overall. Set E, untuned, written for A15 and A16 (history versus now, typo misreads).
+  - Held-out sets: `ocs/eval/heldout.py`. Set B. Set C, which was used to choose the near-miss rules. Sets D and E were the fair tests until A17, which was written from their misses. Set F, untuned: the fair test now.
 - **Results:** `docs/scores.md` and section 0 of `docs/review/danger-gate.md`.
 - **Reporting:** always report held-out recall next to tuned recall.
 - **New patterns:** write a new held-out set before tuning them, then score them on it.

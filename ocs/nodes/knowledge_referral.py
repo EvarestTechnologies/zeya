@@ -12,8 +12,7 @@ Non-sensitive route tag emitted for completed-observation evaluation (#28).
 
 Language copies:
   English — suitable for review / production use.
-  Swahili  — DRAFT, pending fluent-speaker and clinical review.  Not approved
-              for public use; shown only while approved SW content is unavailable.
+  Swahili  — approved 28 November 2026 (docs/review/kiswahili-starter.md).
 """
 
 
@@ -24,7 +23,7 @@ def main(input, **kwargs):
     lang = data.get("language_preference", "en")
 
     if lang == "sw":
-        # Draft Swahili referral — pending fluent-speaker and clinical review.
+        # Swahili referral, approved 28 November 2026 (docs/review/kiswahili-starter.md).
         referral = (
             "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya.\n\n"
             "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. "

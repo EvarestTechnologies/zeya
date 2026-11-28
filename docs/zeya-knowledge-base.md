@@ -1,7 +1,7 @@
 # Zeya runtime knowledge entries
 
 Status: Ministry of Health entries for release 1. An entry goes live only when its box in `docs/review/clinical-signoff.md` (section B2) is ticked.
-Language: English (en) with Kiswahili (sw) counterparts. Every Kiswahili entry is a DRAFT, pending fluent-speaker and clinical review.
+Language: English (en) with Kiswahili (sw) counterparts. Every Kiswahili entry was approved by Stella Oiro on 28 November 2026 (docs/review/kiswahili-starter.md).
 Purpose: the only text the knowledge context, answer cards and AI prompt may use.
 
 Scope: general antenatal education only, in Mother and Child Health Handbook wording. No diagnoses, medicine doses, personalised visit schedules, symptom reassurance, new emergency contacts or facility recommendations. The deterministic danger-sign check runs before any knowledge selection and is not changed by this file. Unsupported-question reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
@@ -119,12 +119,12 @@ Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 Review-state: approved
 Language: sw
-Topics: kujitunza, maji, kupumzika, chandarua, mazoezi
+Topics: kujitunza, maji, kupumzika, neti, chandarua, mazoezi
 Min-week:
 Max-week:
 Source-refs: HB p13
 
-Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---

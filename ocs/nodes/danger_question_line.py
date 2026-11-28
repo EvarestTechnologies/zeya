@@ -13,7 +13,7 @@ keeps them in step. No model, network, file I/O or credentials.
 
 Language copies:
   English, approved.
-  Swahili, DRAFT, pending fluent-speaker and clinical review.
+  Swahili, approved 28 November 2026 (docs/review/kiswahili-starter.md).
 """
 
 

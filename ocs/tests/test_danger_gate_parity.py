@@ -73,7 +73,7 @@ def test_original_has_expected_shape():
         "convulsions",
         "swelling",
     ]
-    assert sum(len(p) for p in DANGER_SIGN_PATTERNS.values()) == 152
+    assert sum(len(p) for p in DANGER_SIGN_PATTERNS.values()) == 159
 
 
 def test_every_pattern_has_an_example():

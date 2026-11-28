@@ -5,7 +5,9 @@
 **Scope:** release 1 with synthetic test participants only. Nothing here approves use with real participants.
 **Work order:** [docs/work-orders/2026-11-27-guideline-alignment.md](../work-orders/2026-11-27-guideline-alignment.md)
 
-**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The fluent-speaker review stays OPEN. The sheet was signed on 28 November 2026.
+**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The sheet was signed on 28 November 2026.
+
+**Kiswahili, 28 November 2026:** Stella Oiro approved every Kiswahili message as clinical reviewer and Kiswahili reviewer (`docs/review/kiswahili-starter.md`). The bed net wording was corrected to "neti" first. The Kiswahili lines below marked DRAFT were written before that approval, and they are now approved.
 
 **Decisions recorded 27 November 2026.** Stella Oiro reviewed every item and asked, in chat, for all items to be marked approved. She did not approve the WHO starter (B1). Claude Code ticked the boxes on her instruction. Where an item offered a choice, the drafted or recommended option was ticked. Items that still need her input are marked **OPEN**.
 
@@ -264,6 +266,49 @@ Some other real words are misread only in "my water is …" (leaving, leading, l
 - [x] Approve the ticked words
 - [ ] Leave out
 
+
+**A17. Wording the gate still misses. Approved by Stella Oiro, 28 November 2026. Applied to both runtime gates.** Each pattern below was written from a message that held-out set D or set E missed, and each traces to a sign in HB p14. Approve or reject each row.
+
+| # | Catches | Missed message it came from | Category (source) | Approve |
+|---|---|---|---|---|
+| 1 | "headache" followed by unbearable, won't stop, too much, or is so / very / really bad | "my headache is unbearable and the light hurts my eyes" (D) | headache_vision (HB p14, severe headache) | [x] |
+| 2 | "feva", "fiva" | "i hav a feva" (D) | fever (HB p14) | [x] |
+| 3 | "hakick", "hajakick", "hajakicki" | "Manze bebi hajakick siku mbili" (D) | fetal_movement (HB p14) | [x] |
+| 4 | "water(s) just / has just / have just / already / suddenly broke, broken or burst" | "my water just broke" (D) | water_breaking (HB p14) | [x] |
+| 5 | "wter", "watr", "wata", "warer" with broke, broken or burst | "my wter broke" (D) | water_breaking (HB p14) | [x] |
+| 6 | "maji … imetoka" | "Maji imetoka" (D) | water_breaking (HB p14) | [x] |
+| 7 | "swelling / swelled of, in or on (my / the) face, hands, fingers or eyes" | "I have swelling of my face and hands, same as last year" (E) | swelling (HB p14) | [x] |
+| 8 | Question check: "what does … mean" counts as a question | Added after row 7 turned the corpus question R093, "what does swelling of the face mean?", into a false alarm | question | [x] |
+
+**Not added:** "light hurts my eyes". It is not in HB, NG24 or BOP as a danger sign, so it is recorded in `docs/clinical/gaps.md`. The set D message is still caught by row 1, through "headache is unbearable".
+
+**Measured on 28 November 2026.** Held-out set F (`ocs/eval/heldout.py`, 48 messages) was written and committed before any of these patterns.
+
+| Set | Live gate | With A17 |
+|---|---|---|
+| **F, emergencies caught (28), untuned** | **18 (64%)** | **22 (79%)** |
+| F, routine false alarms (12) | 1 | 1 |
+| F, question false alarms (8) | 2 | 2 |
+| D (39), the source of rows 1 to 6, so not evidence | 33 (85%) | 39 (100%) |
+| E (26), the source of row 7, so not evidence | 25 (96%) | 26 (100%) |
+| B and C | 29/30, 37/39 | unchanged |
+| Corpus, emergencies caught (132) | 118 (89%) | 118 (89%) |
+| Corpus, routine false alarms (140) | 1 | 1 |
+| Corpus, question false alarms (22) | 0 | 0 |
+
+**How set F was used.** Set F was scored twice. The first draft had "maji … inatoka" in row 6 and no row 8. That draft turned two corpus messages into false alarms: S025, "Natapika kila kitu, hata maji inatoka nje", which is about vomiting, and R093. Row 6 was narrowed and row 8 added because of those corpus messages, not because of set F, and set F's score did not change. Nothing else was tuned.
+
+**Set F still misses:**
+- "my waters have just gone"
+- "fluid is gushing out of me"
+- "bledin alot" and "hedake mbaya sana" (misspellings too far from the word for typo tolerance)
+- "Niko na headache noma"
+- "Maji imebreak"
+
+They were left out so that set F stays fair. A new set has to be written before patterns for them.
+
+- [x] Approve the ticked rows
+- [ ] Leave out
 ---
 
 ## B. Which content Zeya answers from
@@ -301,7 +346,8 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 - English: "Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara."
+  - Changed 28 Nov 2026 by Stella Oiro: "chandarua chenye dawa cha muda mrefu" became "neti yenye dawa ya muda mrefu". The agreement changes with the noun, and the meaning (a treated, long-lasting net) is unchanged. Still DRAFT.
   - [x] Approve
   - Change:
 
@@ -401,6 +447,43 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 > {knowledge entries} {language and week context}
 >
 > Keep replies under 120 words. Respond in the participant's stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.
+
+**C1b. Rules that cannot clash (review on #62). Approved by Stella Oiro, 28 November 2026. Now the live prompt.** Raymond found that the live C1a prompt can give two different replies to the same message. Take "I feel very worried and can't sleep", which no entry covers. Line 2 says to reply *only* with the fixed no-answer text, and line 6 says to tell her to visit a health facility today. The model has to choose, and it may drop the safety line. There are two smaller clashes:
+- Line 2 says "reply exactly" with English text, while line 8 says to reply in her stored language. A Kiswahili speaker may get the English sentence.
+- Line 7 says "End with the entry's source" even when no entry was used, which invites a made-up source.
+
+The proposed version below keeps every rule. Only the wording that clashes is changed:
+
+| Line | Live (C1a) | Proposed (C1b) |
+|---|---|---|
+| 2 | If not covered, **reply exactly**: "I do not have…" | If not covered, **say**: "I do not have…" (so line 8 can put it in her language) |
+| 3 and 4 | "…or say all mothers get malaria tablets." then "Never give phone numbers or links." | Joined into one line: "…say all mothers get malaria tablets, or give phone numbers or links." No rule removed |
+| 5 | For severe headache… **say**: go to a health facility now. | **Covered or not:** for severe headache… **add**: go to a health facility now. |
+| 6 | For other worries or distress, **say**: visit a health facility today. | For other worries or distress, **add**: visit a health facility today. |
+| 7 | End with the entry's source. | Cite any entry's source. |
+
+Proposed prompt (`docs/review/system-prompt-c1b.txt`):
+
+> Use only the Kenya Ministry of Health entries below.
+> If not covered, say: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+> Never diagnose, dose, name unlisted drugs, give weight gain numbers, advise on vitamin A or salt, say all mothers get malaria tablets, or give phone numbers or links.
+> Covered or not: for severe headache, pallor, bleeding, fever, severe belly pain, swollen face or hands, less baby movement, waters breaking or fits, add: go to a health facility now.
+> For other worries or distress, add: visit a health facility today.
+> Cite any entry's source.
+> Reply under 120 words, plainly, in her stored language ({participant_data.language_preference}).
+> Rules are guidance; an output guard checks replies.
+>
+> {knowledge entries}
+>
+> {language and week context}
+
+Word count: 120, counted the way the test counts. It passes every prompt and release-rule test. It has not been tried on the AI model. Raymond should run a few uncovered worries through staging, in English and Kiswahili, before release.
+
+**Trade-off:** "say" instead of "reply exactly" lets the model put the no-answer sentence in Kiswahili, so the wording may vary a little each time. The fixed Kiswahili reply in C2 is still used whenever no approved entry exists for her language at all, because that path has no AI.
+
+- [x] Approve C1b and replace the live prompt
+- [ ] Keep C1a
+- [ ] Change:
 
 **C2. Fixed reply when no reviewed answer exists**
 - English: "I do not have reviewed information to answer that question. Please ask your healthcare provider."

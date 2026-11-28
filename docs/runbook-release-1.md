@@ -109,11 +109,11 @@ If the AI provider is down, she gets the fixed reply in section 4 instead.
 
 | Test set | Emergencies caught | Notes |
 |---|---|---|
-| Held-out set D | 33 of 39 (85%) | written before the last changes, never tuned on |
+| Held-out set F | 22 of 28 (79%) | written before the last changes, never tuned on |
 | Corpus | 118 of 132 (89%) | partly seen while writing the rules |
-| Set C | 37 of 39 (95%) | was used to choose rules, so not a fair test |
+| Set D | 39 of 39 (100%) | the last rules were written from its misses, so not a fair test |
 
-Routine messages wrongly sent to the emergency reply: 0 of 140 on the corpus.
+Routine messages wrongly sent to the emergency reply: 1 of 140 on the corpus, and 1 of 12 on set F.
 
 ---
 
@@ -136,7 +136,7 @@ Routine messages wrongly sent to the emergency reply: 0 of 140 on the corpus.
 - **"Where does the content come from?"** It is based on the Ministry's Mother and Child Health Handbook and the national guidelines. A licensed clinical officer signs off every answer, and each answer names its source.
 - **"Where does the data go?"** In this walkthrough, messages pass through Meta (WhatsApp) and Groq in the United States, and neither keeps them for training. For the trial, the model will run on our own server in Kenya.
 - **"What if the AI is wrong?"** It never handles emergencies. Approved cards answer common questions. Its other answers are limited to Ministry content and checked by a rule before sending. Each change is scored before release, and the scores are published.
-- **"How good is the emergency detection?"** 85% on messages it was never tuned on, with no false alarms on normal messages. Then name what it still misses, such as some short misspellings and new Sheng wording.
+- **"How good is the emergency detection?"** 79% on messages it was never tuned on, and about 1 in 140 normal messages wrongly gets the emergency reply. Then name what it still misses, such as some short misspellings and new Sheng wording.
 
 ---
 

@@ -1,21 +1,21 @@
 # Kiswahili review, release 1
 
 **Reviewer:** Stella Oiro, licensed clinical officer
-**Status of every string below: DRAFT, pending fluent-speaker and clinical review.** This file holds every Kiswahili message Zeya can send: the five answer cards first, then the fixed replies (section "Fixed replies"). The cards are switched on because sign-off B2 approved them. Rule 7 of the work order still needs a fluent speaker's review recorded here.
+**Status of every string below: approved by Stella Oiro, 28 November 2026, as clinical reviewer and Kiswahili reviewer.** This file holds every Kiswahili message Zeya can send: the five answer cards first, then the fixed replies (section "Fixed replies"). Approved in chat on her instruction: "I already approved all of it". The bed net wording in `daily_care_sw` was corrected to "neti" first. Claude Code ticked the boxes on her instruction.
 
-The wording follows answer K1 (27 November 2026). It uses the handbook's own terms where the handbook has Kiswahili ("muhudumu wa afya", "kliniki", "Kitabu cha Afya ya Mama na Mtoto"). Every other term is a fluent-speaker judgement, still UNVERIFIED. Two Kiswahili walkthrough questions reach their cards:
+The wording follows answer K1 (27 November 2026). It uses the handbook's own terms where the handbook has Kiswahili ("muhudumu wa afya", "kliniki", "Kitabu cha Afya ya Mama na Mtoto"). The other terms were checked in her review. Two Kiswahili walkthrough questions reach their cards:
 - "Nikule nini nikiwa na mimba?" reaches `food_groups_sw`
 - "Dalili za hatari ni zipi?" reaches `danger_signs_sw`
 
 Fluent-speaker review:
-- [ ] Reviewed by: ____________  Date: ________
-- [ ] Wording to change:
+- [x] Reviewed by: Stella Oiro  Date: 28 November 2026
+- [x] Wording to change: `daily_care_sw`, "chandarua chenye dawa cha muda mrefu" became "neti yenye dawa ya muda mrefu" (done)
 
 ## Kiswahili cards
 
 ### `anc_visits_sw`
 
-- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
+- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili approved 28 November 2026, K1 wording
 - **Knowledge entry:** `anc_visits`, source HB p13, HB cover
 - **Words:** 43 (limit 79)
 - **Topic anchors:** kliniki, ziara, anc, mara, kitabu
@@ -37,7 +37,7 @@ Triggers:
 
 ### `danger_signs_sw`
 
-- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
+- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili approved 28 November 2026, K1 wording
 - **Knowledge entry:** `danger_signs`, source HB p14
 - **Words:** 65 (limit 79)
 - **Topic anchors:** dalili, hatari, hospitali
@@ -57,28 +57,31 @@ Triggers:
 
 ### `daily_care_sw`
 
-- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
+- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili approved 28 November 2026, K1 wording
 - **Knowledge entry:** `daily_care`, source HB p13
 - **Words:** 65 (limit 79)
-- **Topic anchors:** jitunze, maji, pumzika, chandarua, vidonge, mazoezi, mlo, nijitunze, nipumzike, upumzike
+- **Topic anchors:** jitunze, maji, pumzika, neti, chandarua, vidonge, mazoezi, mlo, nijitunze, nipumzike, upumzike
 
 Answer:
 
-> Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+> Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 > Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
+
+**Bed net wording, changed by Stella Oiro, 28 November 2026:** "neti" replaces "chandarua", so the sentence is now "Lala ndani ya neti yenye dawa ya muda mrefu." The agreement changes with the noun: "chenye … cha" becomes "yenye … ya". "chandarua" stays a matching word, so questions using either word reach this card. 
 
 Triggers:
 
 - Nijitunze vipi nikiwa mjamzito?
 - Ninywe maji kiasi gani nikiwa mjamzito?
 - Nipumzike zaidi nikiwa mjamzito?
+- Nilale ndani ya neti nikiwa mjamzito?
 - Nilale ndani ya chandarua nikiwa mjamzito?
 - Nimeze vidonge vya madini ya chuma kila siku?
 - Nifanye mazoezi nikiwa mjamzito?
 
 ### `food_groups_sw`
 
-- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
+- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili approved 28 November 2026, K1 wording
 - **Knowledge entry:** `food_groups`, source HB p18
 - **Words:** 70 (limit 79)
 - **Topic anchors:** kula, nile, nikule, chakula, vyakula, lishe, makundi
@@ -99,7 +102,7 @@ Triggers:
 
 ### `birth_plan_sw`
 
-- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
+- **Status:** approved (sign-off B2, 27 November 2026); Kiswahili approved 28 November 2026, K1 wording
 - **Knowledge entry:** `birth_plan`, source HB inside cover, HB p3
 - **Words:** 61 (limit 79)
 - **Topic anchors:** kujifungua, mpango, jiandae, nijiandae, mume, mwenzi
@@ -121,7 +124,7 @@ Triggers:
 
 ## Fixed replies
 
-These are copied word for word from the code. There is no AI in any of them. Each one's English wording is approved on `docs/review/clinical-signoff.md` (item in brackets), but the Kiswahili still needs a fluent speaker. Mark a line to change by writing the new wording under it.
+These are copied word for word from the code. There is no AI in any of them. Each one's English wording is approved on `docs/review/clinical-signoff.md` (item in brackets), and the Kiswahili was approved here on 28 November 2026. Mark a line to change by writing the new wording under it.
 
 ### Emergency reply (`ocs/nodes/emergency_response.py`, D)
 
@@ -140,7 +143,7 @@ Sent when the danger gate finds a danger sign.
 >
 > Hii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 ### "Go now" line (`ocs/nodes/danger_question_line.py`, C1a)
 
@@ -148,7 +151,7 @@ Put before the reply when she asks about a danger sign.
 
 > Kama hili linakutokea sasa, nenda kituo cha afya sasa hivi. Nambari za dharura: ambulensi 922 (bila malipo), 999 au 112, ambulensi ya Kaunti ya Migori 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 ### No reviewed answer (`ocs/nodes/knowledge_referral.py`, C2 and C2a)
 
@@ -158,7 +161,7 @@ Sent when Zeya has no approved content for her question.
 >
 > Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. Kwa dharura, piga 922 bila malipo.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 ### Access gate (`ocs/nodes/access_gate.py`, F1 and F2)
 
@@ -166,13 +169,13 @@ To someone who is not an approved tester:
 
 > Zeya inafanyiwa majaribio na bado haijafunguliwa kwa umma. Kwa maswali ya ujauzito, tafadhali muulize muhudumu wa afya. Kwa dharura, piga 922 bila malipo.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 To a tester who sends a photo, voice note or file:
 
 > Kwa sasa ninaweza kusoma ujumbe wa maandishi pekee. Tafadhali andika swali lako kwa maneno.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 ### Registration (`ocs/nodes/registration.py`)
 
@@ -196,7 +199,7 @@ Welcome, for the public route (used in release 1):
 >
 > Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 Welcome, for the study route (participants marked as study participants):
 
@@ -210,20 +213,20 @@ Welcome, for the study route (participants marked as study participants):
 >
 > Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya ujauzito? Tafadhali jibu NDIYO au HAPANA.
 
-- [ ] Wording correct
+- [x] Wording correct
 
 Consent, name and weeks:
 
 | When | Kiswahili | Correct |
 |---|---|---|
-| She says NDIYO (study route) | Asante kwa kukubali kushiriki katika utafiti! Jina lako ni nani? | [ ] |
-| She says NDIYO (public route) | Asante! Jina lako ni nani? | [ ] |
-| She says HAPANA | Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama! | [ ] |
-| Not NDIYO or HAPANA (study route) | Tafadhali jibu NDIYO au HAPANA kukubali kushiriki katika utafiti. | [ ] |
-| Not NDIYO or HAPANA (public route) | Tafadhali jibu NDIYO kuanza kutumia ZEYA, au HAPANA kama hutaki. | [ ] |
-| Name again | Jina lako ni nani? | [ ] |
-| After her name | Nimefurahi kukutana nawe, *[name]*! Una wiki ngapi za ujauzito? Tafadhali jibu kwa nambari (kwa mfano: 20). | [ ] |
-| Weeks not a number from 1 to 42 | Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20 | [ ] |
+| She says NDIYO (study route) | Asante kwa kukubali kushiriki katika utafiti! Jina lako ni nani? | [x] |
+| She says NDIYO (public route) | Asante! Jina lako ni nani? | [x] |
+| She says HAPANA | Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama! | [x] |
+| Not NDIYO or HAPANA (study route) | Tafadhali jibu NDIYO au HAPANA kukubali kushiriki katika utafiti. | [x] |
+| Not NDIYO or HAPANA (public route) | Tafadhali jibu NDIYO kuanza kutumia ZEYA, au HAPANA kama hutaki. | [x] |
+| Name again | Jina lako ni nani? | [x] |
+| After her name | Nimefurahi kukutana nawe, *[name]*! Una wiki ngapi za ujauzito? Tafadhali jibu kwa nambari (kwa mfano: 20). | [x] |
+| Weeks not a number from 1 to 42 | Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20 | [x] |
 
 Registered:
 
@@ -239,8 +242,8 @@ Registered:
 >
 > Andika swali lako tu nami nitafanya niwezalo kukusaidia, Mama!
 
-- [ ] Wording correct
-- **Known problem:** the date prints with an English month, for example "takriban March 05, 2027". Choose the format the reply should use (for example "5 Machi 2027"), and it will be fixed in code.
+- [x] Wording correct
+- **Date format, fixed 28 November 2026:** the date now reads day, Kiswahili month, year, for example "takriban 5 Machi 2027". Format chosen by Stella Oiro. It used to print an English month ("March 05, 2027").
 
 ## Not covered here
 

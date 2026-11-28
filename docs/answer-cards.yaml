@@ -132,7 +132,7 @@
       "mara",
       "kitabu"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry anc_visits.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry anc_visits.",
     "triggers": [
       "Niende ANC kwa sababu gani?",
       "Nianze kliniki ya ujauzito lini?",
@@ -154,7 +154,7 @@
       "hatari",
       "hospitali"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry danger_signs.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry danger_signs.",
     "triggers": [
       "Dalili za hatari ni zipi?",
       "Dalili za hatari wakati wa ujauzito ni zipi?",
@@ -173,6 +173,7 @@
       "jitunze",
       "maji",
       "pumzika",
+      "neti",
       "chandarua",
       "vidonge",
       "mazoezi",
@@ -181,16 +182,17 @@
       "nipumzike",
       "upumzike"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry daily_care.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry daily_care.",
     "triggers": [
       "Nijitunze vipi nikiwa mjamzito?",
       "Ninywe maji kiasi gani nikiwa mjamzito?",
       "Nipumzike zaidi nikiwa mjamzito?",
+      "Nilale ndani ya neti nikiwa mjamzito?",
       "Nilale ndani ya chandarua nikiwa mjamzito?",
       "Nimeze vidonge vya madini ya chuma kila siku?",
       "Nifanye mazoezi nikiwa mjamzito?"
     ],
-    "answer": "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
+    "answer": "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
   },
   {
     "id": "food_groups_sw",
@@ -206,7 +208,7 @@
       "lishe",
       "makundi"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry food_groups.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry food_groups.",
     "triggers": [
       "Nikule nini nikiwa na mimba?",
       "Nile nini nikiwa mjamzito?",
@@ -230,7 +232,7 @@
       "mume",
       "mwenzi"
     ],
-    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry birth_plan.",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. Approved 28 November 2026 (docs/review/kiswahili-starter.md). Entry birth_plan.",
     "triggers": [
       "Mpango wa kujifungua ni nini?",
       "Nijiandae vipi kwa kujifungua?",

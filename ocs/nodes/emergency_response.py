@@ -10,8 +10,8 @@ open to women anywhere in Kenya, so this lists national emergency numbers instea
 (methodological change 9). Each number must be confirmed by calling it before a
 release; see docs/ocs-migration.md. The numbers below were verified by calling
 (docs/review/clinical-signoff.md, section D, 27 and 28 November 2026). The four Migori
-County ambulance dispatch numbers were confirmed by Stella Oiro on 28 November 2026. The Kiswahili text is
-a DRAFT, pending fluent-speaker and clinical review (answers K1, 27 November 2026).
+County ambulance dispatch numbers were confirmed by Stella Oiro on 28 November 2026. The Kiswahili text was
+approved on 28 November 2026 (docs/review/kiswahili-starter.md; wording from answer K1).
 
 Language comes from participant data ``language_preference``; anything other than
 "sw" gets English, as in Zeya.

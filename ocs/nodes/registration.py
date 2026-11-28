@@ -26,8 +26,8 @@ advancing registration. A participant with an already-valid preference (explicit
 imported) bypasses the choice entirely, and a fully registered participant is never
 sent back through it.
 
-The Swahili wording below is a draft translation for fluent-speaker review. It is not
-clinically approved, and this change does not claim fluent-speaker or clinical sign-off.
+The Swahili wording below was approved by Stella Oiro on 28 November 2026
+(docs/review/kiswahili-starter.md).
 
 Outputs (temp state):
     registration_route: "REPLY" (return this node's text to the user) or
@@ -282,11 +282,32 @@ def main(input: str, **kwargs) -> str:
         set_participant_data_key("expected_delivery_date", expected_delivery_date.isoformat())
         set_participant_data_key("registration_complete", True)
         if language == "sw":
+            # Kiswahili date, for example "5 Machi 2027" (approved by Stella Oiro,
+            # 28 November 2026). strftime would print an English month name.
+            months_sw = [
+                "Januari",
+                "Februari",
+                "Machi",
+                "Aprili",
+                "Mei",
+                "Juni",
+                "Julai",
+                "Agosti",
+                "Septemba",
+                "Oktoba",
+                "Novemba",
+                "Desemba",
+            ]
+            date_sw = (
+                str(expected_delivery_date.day)
+                + " "
+                + months_sw[expected_delivery_date.month - 1]
+                + " "
+                + str(expected_delivery_date.year)
+            )
             return reply(
                 "Umesajiliwa! Una wiki " + str(weeks) + " za ujauzito. "
-                "Tarehe yako inayotarajiwa ya kujifungua ni takriban "
-                + expected_delivery_date.strftime("%B %d, %Y")
-                + ".\n\n"
+                "Tarehe yako inayotarajiwa ya kujifungua ni takriban " + date_sw + ".\n\n"
                 "Sasa unaweza kuniuliza swali lolote kuhusu ujauzito wako. Ninaweza kusaidia na:\n"
                 "- Lishe na mlo\n"
                 "- Dalili za hatari za kuangalia\n"

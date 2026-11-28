@@ -16,8 +16,8 @@ Routes (temp state ``access_route``, read by the access router):
 
 The reply never repeats her message. With no saved language, the fixed reply is
 given in English and Kiswahili. The replies were approved by Stella Oiro on
-28 November 2026 (docs/review/clinical-signoff.md, item F). The Kiswahili stays
-DRAFT until a fluent speaker reviews it.
+28 November 2026 (docs/review/clinical-signoff.md, item F). The Kiswahili was
+approved on 28 November 2026 (docs/review/kiswahili-starter.md).
 """
 
 
