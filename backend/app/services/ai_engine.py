@@ -22,7 +22,7 @@ client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 SYSTEM_PROMPT = """You are a maternal health education assistant serving pregnant women \
 in rural Kenya. Your role is to provide accurate, culturally appropriate antenatal \
-information based on WHO and Kenya Ministry of Health guidelines.
+information based on Kenya Ministry of Health guidelines.
 
 CRITICAL RULES:
 1. If you detect ANY danger sign (bleeding, severe headache, reduced fetal movement, \

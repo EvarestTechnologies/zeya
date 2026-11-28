@@ -40,6 +40,8 @@ def test_attaches_the_clip_with_the_danger_signs_card(card):
     harness, out = _run({"answer_route": "CARD", "matched_card": card, "guard_route": "PASS"}, http)
     assert out == "card text"
     assert [url for url, _ in http.calls] == [CLIP_URL]
+    # A short wait, so a slow download never holds up the card for long (review on #62).
+    assert http.calls[0][1].get("timeout") == 8
     assert harness.attachments == [("zeya_danger_signs.mp4", CLIP, "video/mp4")]
     assert "explainer_clip:danger_signs" in harness.message_tags
 
