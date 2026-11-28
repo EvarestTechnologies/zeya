@@ -465,25 +465,24 @@ Task 9 places this in `docs/intended-use.md`.
 - Changes:
 
 ---
-
-## F. Access gate replies (issue #21). NEW, 28 November 2026, for your decision
+## F. Access gate replies (issue #21). Approved by Stella Oiro, 28 November 2026
 
 Only approved testers get past the access gate. Everyone else gets this fixed reply, with no AI. The danger gate still runs first, so anyone who describes an emergency still gets the emergency reply. With no saved language, both versions are sent.
 
 **F1. Not an approved tester**
 - English: "Zeya is being tested and is not open to the public yet. For pregnancy questions, please ask your health worker. In an emergency, call 922, free from any phone."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 - Kiswahili DRAFT: "Zeya inafanyiwa majaribio na bado haijafunguliwa kwa umma. Kwa maswali ya ujauzito, tafadhali muulize muhudumu wa afya. Kwa dharura, piga 922 bila malipo."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 
 **F2. An approved tester sends an image, voice note or file**
 - English: "I can only read text messages for now. Please type your question in words."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 - Kiswahili DRAFT: "Kwa sasa ninaweza kusoma ujumbe wa maandishi pekee. Tafadhali andika swali lako kwa maneno."
-  - [ ] Approve
+  - [x] Approve
   - Change to:
 
 ---
