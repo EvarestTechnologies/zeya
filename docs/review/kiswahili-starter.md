@@ -1,7 +1,7 @@
-# Kiswahili cards review, release 1
+# Kiswahili review, release 1
 
 **Reviewer:** Stella Oiro, licensed clinical officer
-**Status of every string below: DRAFT, pending fluent-speaker and clinical review.** The cards are switched on because sign-off B2 approved them. Rule 7 of the work order still needs a fluent speaker's review recorded here.
+**Status of every string below: DRAFT, pending fluent-speaker and clinical review.** This file holds every Kiswahili message Zeya can send: the five answer cards first, then the fixed replies (section "Fixed replies"). The cards are switched on because sign-off B2 approved them. Rule 7 of the work order still needs a fluent speaker's review recorded here.
 
 The wording follows answer K1 (27 November 2026). It uses the handbook's own terms where the handbook has Kiswahili ("muhudumu wa afya", "kliniki", "Kitabu cha Afya ya Mama na Mtoto"). Every other term is a fluent-speaker judgement, still UNVERIFIED. Two Kiswahili walkthrough questions reach their cards:
 - "Nikule nini nikiwa na mimba?" reaches `food_groups_sw`
@@ -118,3 +118,132 @@ Triggers:
 - Nahitaji nini kabla ya kujifungua?
 - Nitapangaje kujifungua?
 - Nijiandaeje kwa kujifungua?
+
+## Fixed replies
+
+These are copied word for word from the code. There is no AI in any of them. Each one's English wording is approved on `docs/review/clinical-signoff.md` (item in brackets), but the Kiswahili still needs a fluent speaker. Mark a line to change by writing the new wording under it.
+
+### Emergency reply (`ocs/nodes/emergency_response.py`, D)
+
+Sent when the danger gate finds a danger sign.
+
+> DHARURA: Hii inaweza kuwa dalili ya hatari inayohitaji matibabu ya haraka. Fanya yafuatayo sasa hivi:
+>
+> 1. Nenda kituo cha afya kilicho karibu nawe mara moja, au piga simu ya dharura.
+> 2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kufika kituo cha afya.
+> 3. USISUBIRI kuona kama dalili zitapungua zenyewe.
+>
+> Nambari za dharura:
+> - Ambulensi: 922 (bila malipo)
+> - Huduma za dharura: 999 au 112
+> - Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296
+>
+> Hii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya.
+
+- [ ] Wording correct
+
+### "Go now" line (`ocs/nodes/danger_question_line.py`, C1a)
+
+Put before the reply when she asks about a danger sign.
+
+> Kama hili linakutokea sasa, nenda kituo cha afya sasa hivi. Nambari za dharura: ambulensi 922 (bila malipo), 999 au 112, ambulensi ya Kaunti ya Migori 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296.
+
+- [ ] Wording correct
+
+### No reviewed answer (`ocs/nodes/knowledge_referral.py`, C2 and C2a)
+
+Sent when Zeya has no approved content for her question.
+
+> Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya.
+>
+> Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. Kwa dharura, piga 922 bila malipo.
+
+- [ ] Wording correct
+
+### Access gate (`ocs/nodes/access_gate.py`, F1 and F2)
+
+To someone who is not an approved tester:
+
+> Zeya inafanyiwa majaribio na bado haijafunguliwa kwa umma. Kwa maswali ya ujauzito, tafadhali muulize muhudumu wa afya. Kwa dharura, piga 922 bila malipo.
+
+- [ ] Wording correct
+
+To a tester who sends a photo, voice note or file:
+
+> Kwa sasa ninaweza kusoma ujumbe wa maandishi pekee. Tafadhali andika swali lako kwa maneno.
+
+- [ ] Wording correct
+
+### Registration (`ocs/nodes/registration.py`)
+
+Language choice, sent in both languages:
+
+> Please choose your language / Tafadhali chagua lugha yako:
+> 1. English
+> 2. Kiswahili
+
+Welcome, for the public route (used in release 1):
+
+> Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.
+>
+> Ninatoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya Wizara ya Afya ya Kenya.
+>
+> Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.
+>
+> Ujumbe wako huhifadhiwa kwa usalama ili ZEYA iweze kukujibu. Sera ya faragha: https://evarestke.com/zeya/
+>
+> Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.
+>
+> Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA.
+
+- [ ] Wording correct
+
+Welcome, for the study route (participants marked as study participants):
+
+> Karibu kwenye Chatbot ya Elimu ya Ujauzito! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.
+>
+> Hii ni chatbot ya utafiti inayotoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya Wizara ya Afya ya Kenya.
+>
+> Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.
+>
+> Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.
+>
+> Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya ujauzito? Tafadhali jibu NDIYO au HAPANA.
+
+- [ ] Wording correct
+
+Consent, name and weeks:
+
+| When | Kiswahili | Correct |
+|---|---|---|
+| She says NDIYO (study route) | Asante kwa kukubali kushiriki katika utafiti! Jina lako ni nani? | [ ] |
+| She says NDIYO (public route) | Asante! Jina lako ni nani? | [ ] |
+| She says HAPANA | Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama! | [ ] |
+| Not NDIYO or HAPANA (study route) | Tafadhali jibu NDIYO au HAPANA kukubali kushiriki katika utafiti. | [ ] |
+| Not NDIYO or HAPANA (public route) | Tafadhali jibu NDIYO kuanza kutumia ZEYA, au HAPANA kama hutaki. | [ ] |
+| Name again | Jina lako ni nani? | [ ] |
+| After her name | Nimefurahi kukutana nawe, *[name]*! Una wiki ngapi za ujauzito? Tafadhali jibu kwa nambari (kwa mfano: 20). | [ ] |
+| Weeks not a number from 1 to 42 | Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20 | [ ] |
+
+Registered:
+
+> Umesajiliwa! Una wiki *[weeks]* za ujauzito. Tarehe yako inayotarajiwa ya kujifungua ni takriban *[date]*.
+>
+> Sasa unaweza kuniuliza swali lolote kuhusu ujauzito wako. Ninaweza kusaidia na:
+> - Lishe na mlo
+> - Dalili za hatari za kuangalia
+> - Maandalizi ya kujifungua
+> - Usumbufu wa kawaida
+> - Miadi ya ANC
+> - Huduma ya mtoto mchanga
+>
+> Andika swali lako tu nami nitafanya niwezalo kukusaidia, Mama!
+
+- [ ] Wording correct
+- **Known problem:** the date prints with an English month, for example "takriban March 05, 2027". Choose the format the reply should use (for example "5 Machi 2027"), and it will be fixed in code.
+
+## Not covered here
+
+- **AI answers in Kiswahili** are written by the model each time. They are limited to the approved Ministry entries and checked by the output guard, but their wording is not fixed, so a fluent speaker can only sample them during the rehearsal.
+- **Danger gate Kiswahili and Sheng patterns** (what Zeya recognises, not what it sends) are in `docs/review/danger-gate.md`.
+
