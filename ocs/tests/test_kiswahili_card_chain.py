@@ -110,3 +110,29 @@ def test_actual_default_builder_delivers_approved_content(language):
     assert len(answer) > 10, "Card answer must be non-empty substantive text"
     assert all(entry["review_status"] == "approved" for entry in entries)
     assert all(card["review_status"] == "approved" for card in cards)
+
+
+def test_daily_care_says_neti_not_chandarua():
+    # Wording changed by Stella Oiro on 28 November 2026.
+    entries, cards = corpus()
+    entry = next(e for e in entries if e["id"] == "daily_care" and e["language"] == "sw")
+    card = next(c for c in cards if c["id"] == "daily_care_sw")
+    assert "Lala ndani ya neti yenye dawa ya muda mrefu." in entry["text"]
+    assert "chandarua" not in entry["text"]
+    assert card["answer"] == entry["text"]
+
+
+@pytest.mark.parametrize(
+    "question", ["Nilale ndani ya neti nikiwa mjamzito?", "Nilale ndani ya chandarua nikiwa mjamzito?"]
+)
+def test_either_bed_net_word_reaches_the_daily_care_card(question):
+    flow = build_pipeline(0, 0)
+    nodes = {n["data"]["params"]["name"]: n["data"]["params"] for n in flow["data"]["nodes"]}
+    data = {"language_preference": "sw", "registration_complete": True}
+    kb = NodeHarness(nodes["kb_context"]["code"], participant_data=data)
+    kb.run(question)
+    matcher = NodeHarness(nodes["answer_match"]["code"], temp_state=kb.temp_state, participant_data=data)
+    reply = matcher.run(question)
+    assert matcher.temp_state["answer_route"] == "CARD"
+    assert matcher.temp_state["matched_card"] == "daily_care_sw"
+    assert "neti yenye dawa ya muda mrefu" in reply

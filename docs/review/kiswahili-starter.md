@@ -60,20 +60,21 @@ Triggers:
 - **Status:** approved (sign-off B2, 27 November 2026); Kiswahili DRAFT, K1 wording
 - **Knowledge entry:** `daily_care`, source HB p13
 - **Words:** 65 (limit 79)
-- **Topic anchors:** jitunze, maji, pumzika, chandarua, vidonge, mazoezi, mlo, nijitunze, nipumzike, upumzike
+- **Topic anchors:** jitunze, maji, pumzika, neti, chandarua, vidonge, mazoezi, mlo, nijitunze, nipumzike, upumzike
 
 Answer:
 
-> Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+> Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 > Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
-**Bed net wording, confirmed by Stella Oiro, 28 November 2026:** "Lala ndani ya chandarua chenye dawa cha muda mrefu.", not "lala ndani ya neti". The card already used this wording, so no text changed. The fluent-speaker review below still applies.
+**Bed net wording, changed by Stella Oiro, 28 November 2026:** "neti" replaces "chandarua", so the sentence is now "Lala ndani ya neti yenye dawa ya muda mrefu." The agreement changes with the noun: "chenye … cha" becomes "yenye … ya". "chandarua" stays a matching word, so questions using either word reach this card. The fluent-speaker review below still applies.
 
 Triggers:
 
 - Nijitunze vipi nikiwa mjamzito?
 - Ninywe maji kiasi gani nikiwa mjamzito?
 - Nipumzike zaidi nikiwa mjamzito?
+- Nilale ndani ya neti nikiwa mjamzito?
 - Nilale ndani ya chandarua nikiwa mjamzito?
 - Nimeze vidonge vya madini ya chuma kila siku?
 - Nifanye mazoezi nikiwa mjamzito?

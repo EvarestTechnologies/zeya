@@ -119,12 +119,12 @@ Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 Review-state: approved
 Language: sw
-Topics: kujitunza, maji, kupumzika, chandarua, mazoezi
+Topics: kujitunza, maji, kupumzika, neti, chandarua, mazoezi
 Min-week:
 Max-week:
 Source-refs: HB p13
 
-Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---

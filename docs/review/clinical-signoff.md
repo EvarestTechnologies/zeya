@@ -344,7 +344,8 @@ Detail: [docs/research/2026-11-27-content-source-and-policy.md](../research/2026
 - English: "Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise."
   - [x] Approve
   - Change:
-- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara."
+- Kiswahili DRAFT (K1 wording, applied 27 Nov 2026; still DRAFT): "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya neti yenye dawa ya muda mrefu. Fanya mazoezi mepesi mara kwa mara."
+  - Changed 28 Nov 2026 by Stella Oiro: "chandarua chenye dawa cha muda mrefu" became "neti yenye dawa ya muda mrefu". The agreement changes with the noun, and the meaning (a treated, long-lasting net) is unchanged. Still DRAFT.
   - [x] Approve
   - Change:
 
