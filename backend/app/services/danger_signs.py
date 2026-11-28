@@ -2,7 +2,7 @@
 Danger sign detection service for maternal health emergencies.
 
 Detects keywords and phrases that indicate obstetric danger signs requiring
-immediate medical attention, per WHO and Kenya MOH guidelines.
+immediate medical attention, per Kenya Ministry of Health guidelines.
 """
 
 import logging
