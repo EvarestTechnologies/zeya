@@ -402,6 +402,43 @@ Current live prompt (`ocs/prompts/system_prompt.txt`), for comparison:
 >
 > Keep replies under 120 words. Respond in the participant's stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.
 
+**C1b. Rules that cannot clash (review on #62). Pending. The live prompt is unchanged.** Raymond found that the live C1a prompt can give two different replies to the same message. Take "I feel very worried and can't sleep", which no entry covers. Line 2 says to reply *only* with the fixed no-answer text, and line 6 says to tell her to visit a health facility today. The model has to choose, and it may drop the safety line. There are two smaller clashes:
+- Line 2 says "reply exactly" with English text, while line 8 says to reply in her stored language. A Kiswahili speaker may get the English sentence.
+- Line 7 says "End with the entry's source" even when no entry was used, which invites a made-up source.
+
+The proposed version below keeps every rule. Only the wording that clashes is changed:
+
+| Line | Live (C1a) | Proposed (C1b) |
+|---|---|---|
+| 2 | If not covered, **reply exactly**: "I do not have…" | If not covered, **say**: "I do not have…" (so line 8 can put it in her language) |
+| 3 and 4 | "…or say all mothers get malaria tablets." then "Never give phone numbers or links." | Joined into one line: "…say all mothers get malaria tablets, or give phone numbers or links." No rule removed |
+| 5 | For severe headache… **say**: go to a health facility now. | **Covered or not:** for severe headache… **add**: go to a health facility now. |
+| 6 | For other worries or distress, **say**: visit a health facility today. | For other worries or distress, **add**: visit a health facility today. |
+| 7 | End with the entry's source. | Cite any entry's source. |
+
+Proposed prompt (`docs/review/system-prompt-c1b.txt`):
+
+> Use only the Kenya Ministry of Health entries below.
+> If not covered, say: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+> Never diagnose, dose, name unlisted drugs, give weight gain numbers, advise on vitamin A or salt, say all mothers get malaria tablets, or give phone numbers or links.
+> Covered or not: for severe headache, pallor, bleeding, fever, severe belly pain, swollen face or hands, less baby movement, waters breaking or fits, add: go to a health facility now.
+> For other worries or distress, add: visit a health facility today.
+> Cite any entry's source.
+> Reply under 120 words, plainly, in her stored language ({participant_data.language_preference}).
+> Rules are guidance; an output guard checks replies.
+>
+> {knowledge entries}
+>
+> {language and week context}
+
+Word count: 120, counted the way the test counts. It passes every prompt and release-rule test. It has not been tried on the AI model. Raymond should run a few uncovered worries through staging, in English and Kiswahili, before release.
+
+**Trade-off:** "say" instead of "reply exactly" lets the model put the no-answer sentence in Kiswahili, so the wording may vary a little each time. The fixed Kiswahili reply in C2 is still used whenever no approved entry exists for her language at all, because that path has no AI.
+
+- [ ] Approve C1b and replace the live prompt
+- [ ] Keep C1a
+- [ ] Change:
+
 **C2. Fixed reply when no reviewed answer exists**
 - English: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
   - [x] Approve
