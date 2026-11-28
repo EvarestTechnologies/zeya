@@ -245,6 +245,18 @@ key, and keep `gemini-3-flash-preview`. Do not switch to "Evarest OpenAI".**
     operations and recovery limits. Code change only: no production data migration,
     retrospective export rewrite or hosted publication is performed by the merge.
 
+15. **Rules-only mode (#26).** Operators can publish a second pipeline version that has
+    no LLM node. While it is the published version, a question that no answer card
+    covers gets a fixed reply instead of an AI answer. See
+    [Rules-only mode](#rules-only-mode-26). The danger gate, emergency message,
+    language choice, consent, registration, answer cards and knowledge referral are
+    unchanged, and no participant data changes. Record in the study log the start
+    and end time of every period the rules-only version is published.
+    Export continuity: the export has no route column. In those periods, such turns
+    appear as outgoing rows whose `message_text` is exactly the fixed reply. The OCS
+    transcript also tags them `route:rules_only`. Go-live date: not published by this
+    code change.
+
 ## Study data continuity
 
 - **Existing transcripts are not migrated.** The Zeya database and
@@ -306,6 +318,8 @@ both sandbox modes; 26 passed in the engine suite against a throwaway
 3. Build with the instance's ids:
    `python -m ocs.build_pipeline --llm-provider-id N --llm-provider-model-id M > deploy.json`.
    Load it into the pipeline (`POST /a/evarest/pipelines/data/<id>/`). Publish a version.
+   Also prepare the rules-only version, unpublished, as described in
+   [Rules-only mode](#rules-only-mode-26).
 4. Import `seed_participants.py` output **before step 5** (see WhatsApp identity
    above). Test on the web channel with the corpus in
    `ocs/tests/danger_corpus.py`. Run
@@ -328,3 +342,96 @@ both sandbox modes; 26 passed in the engine suite against a throwaway
 - First test: OCS generated all 9 replies, but 2 registration replies (the welcome and
   the name question) did not arrive on the phone. Not yet explained. Check Meta's
   delivery status before recruitment, because a lost welcome means no consent question.
+
+## Rules-only mode (#26)
+
+A second pipeline version with no LLM node, for when the model must not answer: the
+provider is down, the model is misbehaving, or a demo must run without AI. An operator
+switches it on and off in OCS. No WhatsApp message can change it.
+
+`python -m ocs.build_pipeline --rules-only` builds the normal pipeline without
+`llm_input`, `prompt_budget`, `budget_router` and `llm`. A question that no answer card
+covers (`ASK_AI`) goes to `ocs/nodes/rules_only_reply.py` instead, which sends a fixed
+reply in her saved language and tags the turn `route:rules_only`. Every other node and
+edge is identical to the normal build, and the tests check this. Saved participant
+data is not changed, so switching back needs no re-registration.
+
+| Saved `language_preference` | Reply |
+|---|---|
+| `en` | Sorry, ZEYA couldn’t answer your question right now. Please try again later. For pregnancy concerns, contact your healthcare provider. |
+| `sw` | Samahani, ZEYA imeshindwa kujibu swali lako kwa sasa. Tafadhali jaribu tena baadaye. Kwa maswali kuhusu ujauzito, wasiliana na mtoa huduma wako wa afya. |
+| anything else | Both, English first. Not reachable today, because `kb_context` sends an unknown language to `knowledge_referral` first. |
+
+The wording is the suggested copy from #26. The Kiswahili is a draft pending
+fluent-speaker review.
+
+### Prepare it (each release)
+
+1. Build both versions. The rules-only build takes no provider ids:
+   `python -m ocs.build_pipeline --llm-provider-id N --llm-provider-model-id M > deploy.json` and
+   `python -m ocs.build_pipeline --rules-only > deploy-rules-only.json`.
+2. Load `deploy-rules-only.json` into the pipeline. Create a version with
+   **Set as Published Version unchecked**, and start its description with `RULES-ONLY`.
+   OCS publishes a new version only when this box is ticked or when it is the chatbot's
+   first version (`apps/experiments/models.py:916-917`), so publish the normal version
+   first. Save the pipeline and check it with `python -m ocs.check_drift live.json --rules-only`.
+3. Load `deploy.json` again, so the working version ends up on the normal build. Run
+   the normal drift check. Then check that the published version is still the normal one.
+
+### Switch it on, and off
+
+- **On:** on the chatbot's Versions tab, make the `RULES-ONLY` version the published
+  version. OCS does this in one transaction (`set_default_experiment`,
+  `apps/experiments/views/experiment.py:936-955`).
+- **Off:** make the normal version the published version again.
+- **Check, both times:** from a test phone, send a question that no card covers, for
+  example "What is the weather today?". Rules-only gives the fixed reply above, and the
+  normal version gives an AI answer. Record the time in the study log.
+
+The WhatsApp handler looks up the published version again for every incoming message
+(`handle_meta_cloud_api_message`, `apps/channels/tasks.py:228-243`, via
+`resolve_published_or_working`). The switch therefore applies to her next message,
+including in existing conversations. A message already being processed finishes on
+the version it started with, because switching cancels nothing. These OCS references
+are to commit `2803f4f` (22 September 2026). The hosted instance's exact version is
+unknown (#46), so the check above is what confirms the switch on the server.
+
+### The channel switch stops everything, including the danger gate
+
+Each OCS channel has an **Enabled** checkbox and an optional **Disabled message**
+(`apps/channels/models.py:239-253`, added in OCS `4acfcca15a` on 14 August 2026; not
+yet confirmed on the hosted instance). A disabled channel stops before any pipeline
+runs (`ChannelDisabledStage`, `apps/channels/stages/core.py:397-438`). No session is
+created, no node runs and nothing is recorded. If the disabled message is blank she
+gets no reply; otherwise she gets that fixed text. Either way, **a message describing
+a danger sign gets no emergency reply.**
+
+So use rules-only mode first: it keeps the gate and the emergency message. Use the
+channel switch only when nothing at all may run, for example after a suspected data
+leak. Whether the disabled message should carry the emergency numbers is a decision
+for the clinical reviewer, and this change does not set it.
+
+### Not done: a fixed reply when the model call fails
+
+#26 also asks for a fixed English or Kiswahili reply, with no model call, whenever the
+model call itself fails. That cannot be built in this repository. The facts below are
+from OCS `2803f4f`. #26 records the same handler at `9f5c254` and on the hosted image
+(comments of 21 November 2026).
+
+- An error raised by a node is handled by the channel, outside the Zeya pipeline
+  (`apps/channels/pipeline.py:262-284`). A Zeya node after `llm` never runs, so it
+  cannot catch the error, and the pipeline engine has no error edge for a node.
+- Configuration and provider-account errors get a fixed English reply: "Sorry,
+  something went wrong while processing your message. Please try again later"
+  (`apps/channels/pipeline.py:177`). Other errors get a reply written by EventBot,
+  which is a second model call, and fall back to the same English text
+  (`apps/channels/pipeline.py:286-323`). Neither reply is in her language, and
+  EventBot is the second model call that #26 rules out.
+- OCS already retries rate-limit errors before any of this
+  (`apps/service_providers/llm_service/retry.py`).
+
+Delivering this needs an OCS feature, such as a fixed per-chatbot error message (like
+the channel's disabled message) or an error output on the LLM node. That means a
+change to `dimagi/open-chat-studio` and a new hosted image, which needs a decision on
+platform scope and rollout. Until then, when the provider is failing, publish the
+rules-only version.

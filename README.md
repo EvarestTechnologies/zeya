@@ -101,6 +101,9 @@ python -m ocs.build_pipeline --llm-provider-id N --llm-provider-model-id M > dep
 python -m ocs.check_drift live.json --llm-provider-id N --llm-provider-model-id M
 ```
 
+To turn the AI off while keeping the danger gate, publish the rules-only version
+(`--rules-only`). See "Rules-only mode" in [docs/ocs-migration.md](docs/ocs-migration.md).
+
 ### The original app
 
 `backend/` and `frontend/` are the FastAPI, PostgreSQL, Redis and React app that ran

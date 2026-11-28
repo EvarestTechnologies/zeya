@@ -244,3 +244,84 @@ def test_staging_flag_cli(tmp_path):
     path.write_text(json.dumps(staged_live))
     # Staging check: no drift expected
     assert main([str(path), "--llm-provider-id", "7", "--llm-provider-model-id", "31", "--include-pending"]) == 0
+
+
+# ---------------------------------------------------------------------------
+# Rules-only build (#26): no LLM node, ASK_AI gets a fixed reply
+# ---------------------------------------------------------------------------
+
+
+def _rules_only_live():
+    pipeline = build_pipeline(0, 0, rules_only=True)
+    return {"pipeline": {"id": 12, "name": pipeline["name"], "data": pipeline["data"], "errors": {}}}
+
+
+def test_rules_only_deployed_copy_matches():
+    assert find_drift(_rules_only_live(), rules_only=True) == []
+
+
+def test_rules_only_ignores_hosted_null_instance_ids():
+    assert find_drift(_add_generic_null_instance_ids(_rules_only_live()), rules_only=True) == []
+
+
+def test_rules_only_live_checked_as_normal_names_the_cause_first():
+    drift = find_drift(_rules_only_live(), llm_provider_id=7, llm_provider_model_id=31)
+
+    assert drift[0] == "the live pipeline is the rules-only build; check it with --rules-only"
+    assert "missing node: llm" in drift
+    assert "unexpected node: rules_only_reply (CodeNode)" in drift
+
+
+def test_normal_live_checked_as_rules_only_names_the_cause_first():
+    drift = find_drift(_live(), rules_only=True)
+
+    assert drift[0] == "the live pipeline is not the rules-only build; check it without --rules-only"
+    assert "unexpected node: llm (LLMResponseWithPrompt)" in drift
+
+
+def test_rules_only_detects_edited_reply_code():
+    live = _rules_only_live()
+    _node(live, "rules_only_reply")["data"]["params"]["code"] += "\n# edited"
+
+    assert find_drift(live, rules_only=True) == ["rules_only_reply: 'code' differs from the repository"]
+
+
+def test_rules_only_detects_llm_wired_back_in():
+    live = _rules_only_live()
+    data = live["pipeline"]["data"]
+    llm = next(n for n in build_pipeline(7, 31)["data"]["nodes"] if n["id"] == "llm")
+    data["nodes"].append(llm)
+    for edge in data["edges"]:
+        if edge["source"] == "answer_router" and edge["sourceHandle"] == "output_1":
+            edge["target"] = "llm"
+
+    assert find_drift(live, rules_only=True) == [
+        "unexpected node: llm (LLMResponseWithPrompt)",
+        "missing edge: answer_router [output_1] -> rules_only_reply",
+        "unexpected edge: answer_router [output_1] -> llm",
+    ]
+
+
+def test_rules_only_cli_takes_no_provider_ids(tmp_path):
+    path = tmp_path / "live.json"
+    path.write_text(json.dumps(_rules_only_live()))
+
+    assert main([str(path), "--rules-only"]) == 0
+    with pytest.raises(SystemExit):
+        main([str(path), "--rules-only", "--llm-provider-id", "7", "--llm-provider-model-id", "31"])
+
+
+def test_rules_only_cli_reports_normal_live_as_drift(tmp_path, capsys):
+    path = tmp_path / "live.json"
+    path.write_text(json.dumps(_live()))
+
+    assert main([str(path), "--rules-only"]) == 1
+    assert "check it without --rules-only" in capsys.readouterr().err
+
+
+def test_cli_requires_both_provider_ids_without_rules_only(tmp_path):
+    path = tmp_path / "live.json"
+    path.write_text(json.dumps(_live()))
+
+    with pytest.raises(SystemExit):
+        main([str(path), "--llm-provider-id", "7"])
