@@ -418,7 +418,19 @@ HAPPENING_NOW_PATTERNS: list[re.Pattern] = [
         re.IGNORECASE,
     ),
     re.compile(r"\bnime\w+|\bnili\w+", re.IGNORECASE),
+    re.compile(
+        r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+(just\s+)?(fainted|collapsed|had\s+a\s+fit)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\b(just|right)\s+now\b", re.IGNORECASE),
+    re.compile(r"\bthe\s+baby\s+(is|isn'?t)\b", re.IGNORECASE),
 ]
+
+# Present-tense words that override GENERAL_CONTEXT_PATTERNS (sign-off A15).
+PRESENT_NOW = re.compile(
+    r"\b(i'?m|i\s+am|i\s+have|i\s+feel|i\s+can'?t|now|nina|niko|natoka|naona|nahisi|sasa|nimeanza)\b",
+    re.IGNORECASE,
+)
 
 VAGINAL_WORDS = re.compile(
     r"\b(vagina\w*|ukeni|down\s+there|pad|chupi|toilet)\b", re.IGNORECASE
@@ -426,6 +438,22 @@ VAGINAL_WORDS = re.compile(
 
 # Typo tolerance (sign-off A13): danger words of six or more letters that a word one letter
 # away is read as, for pattern matching only.
+# Real words that typo tolerance never corrects (sign-off A16).
+TYPO_EXEMPT: list[str] = [
+    "chilly",
+    "chill",
+    "painted",
+    "painting",
+    "sainted",
+    "fainter",
+    "blending",
+    "breeding",
+    "flurry",
+    "slurry",
+    "burry",
+    "burred",
+]
+
 TYPO_VOCABULARY: list[str] = [
     "bleeding",
     "headache",
@@ -554,7 +582,7 @@ def _typo_corrected(message: str) -> str:
     words = []
     for word in re.findall(r"[a-z']+|[^a-z']+", message.lower()):
         replacement = word
-        if len(word) >= 5 and word not in TYPO_VOCABULARY:
+        if len(word) >= 5 and word not in TYPO_VOCABULARY and word not in TYPO_EXEMPT:
             for target in TYPO_VOCABULARY:
                 if _one_edit(word, target):
                     replacement = target
@@ -597,7 +625,7 @@ def detect_danger_signs(message: str) -> DangerSignResult:
         asks = any(p.search(message) for p in INFO_QUESTION_PATTERNS)
         now = any(p.search(message) for p in HAPPENING_NOW_PATTERNS)
         general = any(p.search(message) for p in GENERAL_CONTEXT_PATTERNS)
-        question = general or (asks and not now)
+        question = (general and not PRESENT_NOW.search(message)) or (asks and not now)
 
     detected = bool(categories_found) and not question
 

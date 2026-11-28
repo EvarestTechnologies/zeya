@@ -376,7 +376,18 @@ def main(input: str, **kwargs) -> str:
         re.compile(r"\bmy\s+baby\s+(has|is|hasn'?t|isn'?t|stopped|won'?t|doesn'?t)\b", re.IGNORECASE),
         re.compile(r"\b(nina|niko|natoka|naona|naumwa|nahisi|sihisi|simhisi|nimeona|nimeanza)\b", re.IGNORECASE),
         re.compile(r"\bnime\w+|\bnili\w+", re.IGNORECASE),
+        re.compile(
+            r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+(just\s+)?(fainted|collapsed|had\s+a\s+fit)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(r"\b(just|right)\s+now\b", re.IGNORECASE),
+        re.compile(r"\bthe\s+baby\s+(is|isn'?t)\b", re.IGNORECASE),
     ]
+    # Present-tense words that override general_context (sign-off A15).
+    present_now = re.compile(
+        r"\b(i'?m|i\s+am|i\s+have|i\s+feel|i\s+can'?t|now|nina|niko|natoka|naona|nahisi|sasa|nimeanza)\b",
+        re.IGNORECASE,
+    )
 
     # Typo tolerance (sign-off A13). A word one letter away from a danger word of six or
     # more letters is read as that word, for pattern matching only.
@@ -423,6 +434,22 @@ def main(input: str, **kwargs) -> str:
         "kutokwa",
     ]
 
+    # Real words that typo tolerance never corrects (sign-off A16).
+    typo_exempt = [
+        "chilly",
+        "chill",
+        "painted",
+        "painting",
+        "sainted",
+        "fainter",
+        "blending",
+        "breeding",
+        "flurry",
+        "slurry",
+        "burry",
+        "burred",
+    ]
+
     def one_edit(word, target):
         if word == target or abs(len(word) - len(target)) > 1:
             return False
@@ -446,7 +473,7 @@ def main(input: str, **kwargs) -> str:
     corrected_words = []
     for word in re.findall(r"[a-z']+|[^a-z']+", input.lower()):
         replacement = word
-        if len(word) >= 5 and word not in typo_vocabulary:
+        if len(word) >= 5 and word not in typo_vocabulary and word not in typo_exempt:
             for target in typo_vocabulary:
                 if one_edit(word, target):
                     replacement = target
@@ -496,7 +523,7 @@ def main(input: str, **kwargs) -> str:
             if pattern.search(input):
                 general = True
                 break
-        question = general or (asks and not now)
+        question = (general and not present_now.search(input)) or (asks and not now)
 
     set_temp_state_key("danger_route", "EMERGENCY" if categories_found and not question else "SAFE")
     set_temp_state_key("danger_categories", categories_found)

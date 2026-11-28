@@ -2,7 +2,13 @@
 
 import pytest
 
-from ocs.tests.danger_corpus import BILINGUAL_EXAMPLES, NEGATIVE_MESSAGES
+from ocs.tests.danger_corpus import (
+    A15_EMERGENCY_MESSAGES,
+    A15_HISTORY_QUESTIONS,
+    A16_ORDINARY_MESSAGES,
+    BILINGUAL_EXAMPLES,
+    NEGATIVE_MESSAGES,
+)
 from ocs.tests.sandbox import NodeHarness
 
 BILINGUAL_CASES = [
@@ -58,3 +64,32 @@ def test_keyword_tags_fit_ocs_tag_length(danger_gate_source):
     harness.run("heavy" + " " * 200 + "bleeding " + "water" + "\t" * 200 + "broke")
 
     assert all(len(tag) <= 100 for tag in harness.message_tags)
+
+
+@pytest.mark.parametrize("message", A15_EMERGENCY_MESSAGES)
+def test_happening_now_beats_history_a15(danger_gate_source, message):
+    harness = NodeHarness(danger_gate_source)
+    harness.run(message)
+    assert harness.temp_state["danger_route"] == "EMERGENCY"
+
+
+@pytest.mark.parametrize("message", A15_HISTORY_QUESTIONS)
+def test_history_questions_stay_questions_a15(danger_gate_source, message):
+    harness = NodeHarness(danger_gate_source)
+    harness.run(message)
+    assert harness.temp_state["danger_route"] == "SAFE"
+    assert harness.temp_state["danger_question"] is True
+
+
+@pytest.mark.parametrize("message", A16_ORDINARY_MESSAGES)
+def test_ordinary_words_are_not_misread_a16(danger_gate_source, message):
+    harness = NodeHarness(danger_gate_source)
+    harness.run(message)
+    assert harness.temp_state["danger_route"] == "SAFE"
+    assert harness.temp_state["danger_categories"] == []
+
+
+def test_chill_with_fever_is_still_an_emergency_a16(danger_gate_source):
+    harness = NodeHarness(danger_gate_source)
+    harness.run("I have chill and fever")
+    assert harness.temp_state["danger_route"] == "EMERGENCY"
