@@ -67,6 +67,8 @@ Answer:
 > Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
 > Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
+**Bed net wording, confirmed by Stella Oiro, 28 November 2026:** "Lala ndani ya chandarua chenye dawa cha muda mrefu.", not "lala ndani ya neti". The card already used this wording, so no text changed. The fluent-speaker review below still applies.
+
 Triggers:
 
 - Nijitunze vipi nikiwa mjamzito?
