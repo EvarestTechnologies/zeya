@@ -353,3 +353,73 @@ SET_E_QUESTION = [
     "is a headache in pregnancy dangerous?",
     "how do I know if I am bleeding too much?",
 ]
+
+
+# ---------------------------------------------------------------------------
+# SET_F, written 28 November 2026, before any pattern for the remaining set D and
+# set E misses (sign-off A17) was drafted. Nothing is tuned on it. Labels are
+# drafts for clinical review.
+# ---------------------------------------------------------------------------
+
+SET_F_EMERGENCY = [
+    # Waters breaking, said other ways
+    "my waters have just gone",
+    "water broke this morning and I am 36 weeks",
+    "I think my water has burst",
+    "Maji yametoka asubuhi",
+    "Maji ya mtoto yanatoka",
+    "fluid is gushing out of me",
+    # Short misspellings
+    "i hav feva and shivering",
+    "bledin alot",
+    "hedake mbaya sana",
+    "my watr has broken",
+    "baby not muving",
+    "fevr and chils",
+    # Vision and light
+    "bright light hurts my eyes and my head is pounding",
+    "I can't stand the light, my head hurts badly",
+    "my eyes are blurry and my head is aching",
+    # Swelling, said other ways
+    "swelling in my face and legs",
+    "there is swelling on my hands and face since yesterday",
+    "my feet and hands have swollen a lot",
+    "Uso wangu umefura",
+    # Sheng and mixed
+    "Bebi hajakick tangu jana",
+    "mtoi hajamove siku nzima",
+    "Niko na headache noma",
+    "Damu inanitoka mob sana",
+    "Maji imebreak",
+    # Ordinary emergencies, to check nothing is lost
+    "I am bleeding heavily",
+    "she is having a seizure",
+    "Nina homa kali na natetemeka",
+    "the baby has stopped moving",
+]
+
+SET_F_ROUTINE = [
+    "the water pipe broke in the kitchen",
+    "the light in the clinic is very bright",
+    "my phone screen broke",
+    "Maji ya kunywa yametoka wapi?",
+    "I love the morning light",
+    "my glasses are broken",
+    "my feet feel tired after walking",
+    "my face feels oily these days",
+    "the baby is growing well, the nurse said",
+    "Nimekunywa maji leo",
+    "I broke my diet and ate cake",
+    "hi, how are you today",
+]
+
+SET_F_QUESTION = [
+    "how do I know if my water has broken?",
+    "is swelling of the feet normal in pregnancy?",
+    "what does it mean if light hurts my eyes?",
+    "Maji yakitoka nifanye nini?",
+    "what should I do if the baby doesn't kick?",
+    "is fever dangerous when pregnant?",
+    "Dalili za maji kuvunjika ni zipi?",
+    "can bright light cause a headache in pregnancy?",
+]
