@@ -72,14 +72,16 @@ def find_drift(
     llm_provider_id: int | None = None,
     llm_provider_model_id: int | None = None,
     include_pending: bool = False,
+    rules_only: bool = False,
 ) -> list[str]:
     """Return human-readable differences between the live pipeline and the repository.
 
     include_pending=False (default): compare against the approved-only production build.
     include_pending=True: compare against a staging build that includes pending content.
     The staging flag must match what was used when the pipeline was deployed.
+    rules_only=True: compare against the rules-only build (#26), which has no AI node.
     """
-    expected_flow = build_pipeline(0, 0, include_pending=include_pending)["data"]
+    expected_flow = build_pipeline(0, 0, include_pending=include_pending, rules_only=rules_only)["data"]
     expected_nodes, expected_edges = _describe(expected_flow)
     required_instance_params = _instance_param_requirements(expected_flow)
     live_nodes, live_edges = _describe(_flow(live_document))
@@ -126,11 +128,21 @@ def main(argv: list[str] | None = None) -> int:
         default=False,
         help="compare against the staging build (pending content eligible); must match deployment flag",
     )
+    parser.add_argument(
+        "--rules-only",
+        action="store_true",
+        default=False,
+        help="compare against the rules-only build (#26) when that version is published",
+    )
     args = parser.parse_args(argv)
 
     with sys.stdin if args.live == "-" else open(args.live, encoding="utf-8") as f:
         problems = find_drift(
-            json.load(f), args.llm_provider_id, args.llm_provider_model_id, include_pending=args.include_pending
+            json.load(f),
+            args.llm_provider_id,
+            args.llm_provider_model_id,
+            include_pending=args.include_pending,
+            rules_only=args.rules_only,
         )
 
     if problems:
