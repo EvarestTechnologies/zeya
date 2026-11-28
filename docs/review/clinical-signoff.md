@@ -5,7 +5,7 @@
 **Scope:** release 1 with synthetic test participants only. Nothing here approves use with real participants.
 **Work order:** [docs/work-orders/2026-11-27-guideline-alignment.md](../work-orders/2026-11-27-guideline-alignment.md)
 
-**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The signature, the Clinical Officers Council number and the fluent-speaker review stay OPEN.
+**Second round, 27 November 2026:** the remaining boxes for A7a, B3 row 10a, C1a, C2a, D and D1 were ticked (ticked on Stella Oiro's instruction "tick the rest", 27 Nov 2026). The fluent-speaker review stays OPEN. The sheet was signed on 28 November 2026.
 
 **Decisions recorded 27 November 2026.** Stella Oiro reviewed every item and asked, in chat, for all items to be marked approved. She did not approve the WHO starter (B1). Claude Code ticked the boxes on her instruction. Where an item offered a choice, the drafted or recommended option was ticked. Items that still need her input are marked **OPEN**.
 
@@ -421,6 +421,6 @@ Task 9 places this in `docs/intended-use.md`.
 I have reviewed the items ticked above for release 1 with synthetic test participants only.
 
 Name: Stella Oiro
-Clinical Officers Council registration number: **OPEN**
-Date: 27 November 2026
-Signature: **OPEN, to be signed by Stella Oiro**
+Clinical Officers Council registration number: B10307
+Date: 28 November 2026
+Signature: signed by Stella Oiro, 28 November 2026. The handwritten signature was provided in person and is held by Evarest Technologies. It is not stored in this public repository.
