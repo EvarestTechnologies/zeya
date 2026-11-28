@@ -95,8 +95,16 @@ GUARD_BLOCKED_SW = "Sina maelezo zaidi ya kushiriki kwa usalama. Zungumza na mhu
 # Knowledge-referral texts -- single source of truth is ocs/nodes/knowledge_referral.py
 # ---------------------------------------------------------------------------
 
-EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
-SW_REFERRAL = "Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya."
+EN_REFERRAL = (
+    "I do not have reviewed information to answer that question. Please ask your healthcare provider.\n\n"
+    "To talk to a person, visit your nearest health facility or ask your community health promoter. "
+    "In an emergency, call 922, free from any phone."
+)
+SW_REFERRAL = (
+    "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya.\n\n"
+    "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. "
+    "Kwa dharura, piga 922 bila malipo."
+)
 
 # ---------------------------------------------------------------------------
 # Synthetic fixture content (test-only authored text, not clinical guidance)
@@ -385,10 +393,20 @@ def _load_pipeline(pipeline_data: dict, label: str):
 
 
 @pytest.fixture()
-def pipeline_default(db):
-    """Default approved-only pipeline -- all KB/cards pending -> referral always."""
+def pipeline_default(db, all_pending_content):
+    """Default approved-only build of the shipped content with every entry marked pending.
+
+    No approved KB entry or card is eligible, so every safe question -> referral.
+    """
     pl = build_pipeline(0, 0, include_pending=False)
     return _load_pipeline(pl, "default")
+
+
+@pytest.fixture()
+def pipeline_approved(db):
+    """Default approved-only build of the shipped content as it is deployed."""
+    pl = build_pipeline(0, 0, include_pending=False)
+    return _load_pipeline(pl, "approved")
 
 
 @pytest.fixture()
@@ -556,7 +574,7 @@ def test_g201_emergency_registered_no_model(pipeline_default, fake_llm_safe, cat
     reply = output["messages"][-1]
     prefix = "DHARURA:" if language == "sw" else "URGENT:"
     assert reply.startswith(prefix), f"G201: expected {prefix!r}, got: {reply[:50]!r}"
-    assert "999" in reply and "922" in reply and "1199" in reply
+    assert "999" in reply and "922" in reply and "0740 587 479" in reply
     assert f"danger_sign:{category}" in _tags(output)
     assert "danger_router:EMERGENCY" in _tags(output)
     assert fake_llm_safe.calls == []
@@ -673,6 +691,27 @@ def test_g203_default_registered_sw_referral(pipeline_default, fake_llm_safe):
     assert output["messages"][-1] == SW_REFERRAL
     assert "route:knowledge_referral" in _tags(output)
     assert fake_llm_safe.calls == []
+
+
+@pytest.mark.parametrize(
+    ("participant", "question"),
+    [("en", "What should I eat?"), ("sw", "Ninapaswa kula nini?")],
+)
+def test_g203_approved_build_routes_unmatched_question_to_ai(
+    pipeline_approved, fake_llm_safe_mock, participant, question
+):
+    """G203: with the shipped approved content, a question no card matches -> ASK_AI -> one model call."""
+    llm, get_llm_service = fake_llm_safe_mock
+    pipeline_obj, _ = pipeline_approved
+    run, _ = _make_runner(pipeline_obj)
+    output = run(question, REGISTERED_SW if participant == "sw" else REGISTERED_EN)
+
+    tags = _tags(output)
+    assert "route:knowledge_referral" not in tags, f"G203: approved KB must not fall to referral; {tags}"
+    assert "answer_route:ASK_AI" in tags, f"G203: ASK_AI tag missing; {tags}"
+    assert len(llm.calls) == 1, f"G203: expected 1 LLM call, got {len(llm.calls)}"
+    get_llm_service.assert_called_once()
+    assert output["messages"][-1] == _LLM_REPLY_SAFE
 
 
 # ---------------------------------------------------------------------------

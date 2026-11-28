@@ -9,11 +9,11 @@ KB_PATH = ROOT / "docs" / "zeya-knowledge-base.md"
 CARDS_PATH = ROOT / "docs" / "answer-cards.yaml"
 
 FIVE_TOPIC_IDS = {
-    "anc_purpose",
-    "pregnancy_records",
-    "food_variety",
-    "food_safety",
-    "birth_preparation",
+    "anc_visits",
+    "danger_signs",
+    "food_groups",
+    "daily_care",
+    "birth_plan",
 }
 EN_CARD_IDS = {f"{t}_en" for t in FIVE_TOPIC_IDS}
 SW_CARD_IDS = {f"{t}_sw" for t in FIVE_TOPIC_IDS}
@@ -183,11 +183,11 @@ class TestProductionPipelinePath:
         question = "Why should I go to ANC?"
         kb.run(question)
         assert kb.temp_state["kb_available"] is True
-        assert "anc_purpose" in kb.temp_state["kb_ids"]
+        assert "anc_visits" in kb.temp_state["kb_ids"]
         matcher = NodeHarness(nodes["answer_match"]["code"], temp_state=kb.temp_state, participant_data=data)
         matcher.run(question)
         assert matcher.temp_state["answer_route"] == "CARD"
-        assert matcher.temp_state["matched_card"] == "anc_purpose_en"
+        assert matcher.temp_state["matched_card"] == "anc_visits_en"
 
     def test_production_kiswahili_question_routes_card(self):
         _require()
@@ -198,11 +198,11 @@ class TestProductionPipelinePath:
         question = "Kwa nini niende kliniki ya ujauzito?"
         kb.run(question)
         assert kb.temp_state["kb_available"] is True
-        assert "anc_purpose" in kb.temp_state["kb_ids"]
+        assert "anc_visits" in kb.temp_state["kb_ids"]
         matcher = NodeHarness(nodes["answer_match"]["code"], temp_state=kb.temp_state, participant_data=data)
         matcher.run(question)
         assert matcher.temp_state["answer_route"] == "CARD"
-        assert matcher.temp_state["matched_card"] == "anc_purpose_sw"
+        assert matcher.temp_state["matched_card"] == "anc_visits_sw"
 
     def _assert_delivered_topic(self, language, topic_id):
         from ocs.answer_cards import load_answer_cards as load_cards

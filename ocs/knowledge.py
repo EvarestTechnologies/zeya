@@ -35,7 +35,7 @@ Exposes functions used by the build pipeline and node tests:
 
 Entry dict schema
 -----------------
-  id            str         Stable slug, e.g. ``'anc_purpose'``
+  id            str         Stable slug, e.g. ``'anc_visits'``
   review_status str         ``'approved'`` | ``'pending'``
   language      str         Language code as parsed (supported: ``'en'``, ``'sw'``)
   text          str         Educational body text

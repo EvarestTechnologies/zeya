@@ -23,16 +23,16 @@ FOOTERS = {"en": EMERGENCY_RESPONSE_FOOTER_EN, "sw": EMERGENCY_RESPONSE_FOOTER_S
 # Every number here must be confirmed by calling it before a release (docs/ocs-migration.md).
 NUMBERS = {
     "en": (
-        "Emergency numbers (anywhere in Kenya):\n"
+        "Emergency numbers:\n"
+        "- Ambulance: 922 (free)\n"
         "- Emergency services: 999 or 112\n"
-        "- National ambulance: 922\n"
-        "- Kenya Red Cross: 1199"
+        "- Migori County ambulance: 0740 587 479, 0740 588 519, 0740 588 853 or +254 724 024 296"
     ),
     "sw": (
-        "Nambari za dharura (popote nchini Kenya):\n"
+        "Nambari za dharura:\n"
+        "- Ambulensi: 922 (bila malipo)\n"
         "- Huduma za dharura: 999 au 112\n"
-        "- Ambulensi ya kitaifa: 922\n"
-        "- Shirika la Msalaba Mwekundu Kenya: 1199"
+        "- Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296"
     ),
 }
 
@@ -56,14 +56,20 @@ def test_defaults_to_english(participant_data):
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-@pytest.mark.parametrize("number", ["999", "112", "922", "1199"])
+@pytest.mark.parametrize(
+    "number", ["999", "112", "922", "0740 587 479", "0740 588 519", "0740 588 853", "+254 724 024 296"]
+)
 def test_every_national_number_is_listed(language, number):
     assert number in _run({"language_preference": language})
 
 
 @pytest.mark.parametrize("language", ["en", "sw"])
-def test_no_county_specific_facilities(language):
-    assert "Migori" not in _run({"language_preference": language})
+def test_only_county_line_is_the_ticked_migori_ambulance(language):
+    # Sign-off D (28 November 2026): the four Migori County ambulance dispatch numbers,
+    # confirmed by Stella Oiro, are shown to every participant on one line.
+    reply = _run({"language_preference": language})
+    county_lines = [line for line in reply.splitlines() if "Migori" in line]
+    assert county_lines == [NUMBERS[language].splitlines()[-1]]
 
 
 @pytest.mark.parametrize("message", ["", "mtoto hatembei", "x" * 5000], ids=["empty", "swahili", "long"])

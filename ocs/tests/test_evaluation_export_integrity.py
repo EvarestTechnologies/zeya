@@ -105,7 +105,7 @@ def test_shared_evaluator_rejects_malformed_record_types(row, change):
     "tags",
     [
         ["answer_route:UNKNOWN"],
-        ["answer_route:ASK_AI", "answer_card:anc_purpose_en"],
+        ["answer_route:ASK_AI", "answer_card:anc_visits_en"],
         ["answer_route:CARD"],
         ["answer_route:CARD", "answer_card:first", "answer_card:second"],
     ],
@@ -124,14 +124,14 @@ def test_invalid_card_evidence_is_not_a_correct_match_or_nonmatch(row, tags):
 
 def test_actual_guard_blocked_tag_is_reported_separately(row):
     obs = row.observation.to_dict()
-    obs["output_tags"] = ["answer_route:CARD", "answer_card:anc_purpose_en", "route:guard_blocked"]
+    obs["output_tags"] = ["answer_route:CARD", "answer_card:anc_visits_en", "route:guard_blocked"]
     result = EvaluatorHarness(CARD_ACCURACY_CODE).run(
         input={"content": obs["input_text"]},
         output={"content": obs["output_text"]},
         context={
             "observation": obs,
             "expected_source": row.expected_source_config,
-            "expected_card_id": "anc_purpose_en",
+            "expected_card_id": "anc_visits_en",
         },
         generated_response="",
     )

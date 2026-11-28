@@ -142,8 +142,13 @@ class NodeHarness:
         temp_state: dict | None = None,
         participant_data: dict | None = None,
         now: datetime.datetime | None = None,
+        http: Any = None,
     ):
         self.executor = make_executor(code)
+        # Test double for the OCS RestrictedHttpClient (``http`` global), when a node needs it.
+        self.http = http
+        # Files passed to add_file_attachment, as (filename, content, content_type).
+        self.attachments: list[tuple[str, bytes, str | None]] = []
         self.now = now
         self.temp_state: dict[str, Any] = dict(temp_state or {})
         self.participant_data: dict[str, Any] = dict(participant_data or {})
@@ -165,7 +170,13 @@ class NodeHarness:
         def set_participant_data_key(key_name, value):
             self.participant_data[key_name] = value
 
+        def add_file_attachment(filename, content, content_type=None):
+            if not isinstance(content, bytes):
+                raise ValueError("'content' must be bytes")
+            self.attachments.append((filename, content, content_type))
+
         helpers = {
+            "add_file_attachment": add_file_attachment,
             "get_temp_state_key": get_temp_state_key,
             "set_temp_state_key": set_temp_state_key,
             "get_participant_data": get_participant_data,
@@ -173,6 +184,8 @@ class NodeHarness:
             "add_message_tag": self.message_tags.append,
             "add_session_tag": self.session_tags.append,
         }
+        if self.http is not None:
+            helpers["http"] = self.http
         if self.now is not None:
             # OCS exposes the datetime module as a global; replacing it freezes the clock.
             helpers["datetime"] = frozen_datetime_module(self.now)

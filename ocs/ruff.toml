@@ -8,6 +8,8 @@ select = ["E", "F", "W", "I", "B", "UP"]
 # Node sources run inside the OCS sandbox, which injects helpers such as
 # set_temp_state_key and add_message_tag as globals.
 "nodes/*.py" = ["F821"]
+# The draft gate is a node source kept for review and scoring.
+"eval/proposed_danger_gate.py" = ["F821"]
 
 [lint.isort]
 known-first-party = ["app", "ocs"]

@@ -1,0 +1,311 @@
+id,language,message,expected_label,expected_categories,expected_card,kb_section,note,batch
+E001,en,I'm bleeding,EMERGENCY,bleeding,,7,,v1
+E002,en,I am bleeding a lot from down there,EMERGENCY,bleeding,,7,,v1
+E003,en,there is blood on my pad this morning,EMERGENCY,bleeding,,7,,v1
+E004,en,I have been spotting blood since last night,EMERGENCY,bleeding,,7,,v1
+E005,en,"I'm 30 weeks and I saw some blood, no pain",EMERGENCY,bleeding,,7,"painless bleeding after 24 weeks, BOP p26",v1
+E006,sw,Natoka damu,EMERGENCY,bleeding,,7,,v1
+E007,sw,Ninatoka damu nyingi,EMERGENCY,bleeding,,7,,v1
+E008,sw,Nimeona damu kwenye chupi,EMERGENCY,bleeding,,7,,v1
+E009,sw,Damu inatoka ukeni,EMERGENCY,bleeding,,7,,v1
+E010,sw,Nimeanza kutokwa na damu leo asubuhi,EMERGENCY,bleeding,,7,,v1
+E011,en,I have a very bad headache,EMERGENCY,headache_vision,,7,,v1
+E012,en,my head is pounding and it won't stop,EMERGENCY,headache_vision,,7,,v1
+E013,en,terrible headache since morning,EMERGENCY,headache_vision,,7,,v1
+E014,sw,Kichwa kinauma sana,EMERGENCY,headache_vision,,7,,v1
+E015,sw,Naumwa na kichwa sana,EMERGENCY,headache_vision,,7,,v1
+E016,sw,Nina maumivu makali ya kichwa,EMERGENCY,headache_vision,,7,,v1
+E017,en,my vision is blurry,EMERGENCY,headache_vision,,7,,v1
+E018,en,I see flashing lights,EMERGENCY,headache_vision,,7,,v1
+E019,sw,Macho yanaona ukungu,EMERGENCY,headache_vision,,7,,v1
+E020,sw,Naona giza machoni,EMERGENCY,headache_vision,,7,,v1
+E021,en,I look very pale,EMERGENCY,pallor_anaemia,,7,,v1
+E022,en,my palms and lips are white,EMERGENCY,pallor_anaemia,,7,,v1
+E023,en,people say I have become pale,EMERGENCY,pallor_anaemia,,7,,v1
+E024,sw,Nimepauka sana,EMERGENCY,pallor_anaemia,,7,,v1
+E025,sw,Viganja vyangu vimekuwa vyeupe,EMERGENCY,pallor_anaemia,,7,,v1
+E026,sw,Watu wanasema nimekuwa mweupe,EMERGENCY,pallor_anaemia,,7,,v1
+E027,en,I get breathless just walking to the kitchen,EMERGENCY,pallor_anaemia,,7,,v1
+E028,en,I feel dizzy and my heart is racing,EMERGENCY,pallor_anaemia,,7,,v1
+E029,en,I'm extremely tired all the time and dizzy,EMERGENCY,pallor_anaemia,,7,,v1
+E030,sw,Napumua kwa shida hata nikitembea kidogo,EMERGENCY,pallor_anaemia,,7,,v1
+E031,sw,Nina kizunguzungu na moyo unadunda kwa kasi,EMERGENCY,pallor_anaemia,,7,,v1
+E032,en,I have a fever,EMERGENCY,fever,,7,,v1
+E033,en,I feel very hot and shivering,EMERGENCY,fever,,7,,v1
+E034,en,feverish since yesterday,EMERGENCY,fever,,7,,v1
+E035,sw,Nina homa,EMERGENCY,fever,,7,,v1
+E036,sw,Mwili una joto jingi,EMERGENCY,fever,,7,,v1
+E037,sw,Ninahisi joto na kutetemeka,EMERGENCY,fever,,7,,v1
+E038,en,I have chills,EMERGENCY,fever,,7,,v1
+E039,en,there is a smelly discharge from my vagina,EMERGENCY,fever,,7,,v1
+E040,en,constant pain low in my pelvis that won't go away,EMERGENCY,fever,,7,,v1
+E041,sw,Natetemeka kwa baridi,EMERGENCY,fever,,7,,v1
+E042,sw,Uchafu unaonuka unatoka ukeni,EMERGENCY,fever,,7,,v1
+E043,en,severe pain in my stomach,EMERGENCY,abdominal_pain,,7,,v1
+E044,en,my tummy is hurting so much I can't stand,EMERGENCY,abdominal_pain,,7,,v1
+E045,en,very bad abdominal pain,EMERGENCY,abdominal_pain,,7,,v1
+E046,sw,Tumbo linauma sana,EMERGENCY,abdominal_pain,,7,,v1
+E047,sw,Nina maumivu makali ya tumbo,EMERGENCY,abdominal_pain,,7,,v1
+E048,sw,Tumbo linaniuma mno siwezi kusimama,EMERGENCY,abdominal_pain,,7,,v1
+E049,en,pain under my ribs on the right side,EMERGENCY,abdominal_pain,,7,,v1
+E050,sw,Maumivu makali chini ya mbavu,EMERGENCY,abdominal_pain,,7,,v1
+E051,en,I feel confused and not myself,EMERGENCY,headache_vision,,7,"confusion, BOP p15; category mapping is a proposal",v1
+E052,sw,"Nimechanganyikiwa, sielewi kinachoendelea",EMERGENCY,headache_vision,,7,"confusion, BOP p15; category mapping is a proposal",v1
+E053,en,my face is swollen,EMERGENCY,swelling,,7,,v1
+E054,en,my hands and face are puffy,EMERGENCY,swelling,,7,,v1
+E055,en,my face swelled up overnight,EMERGENCY,swelling,,7,,v1
+E056,sw,Uso umevimba,EMERGENCY,swelling,,7,,v1
+E057,sw,Mikono na uso vimevimba,EMERGENCY,swelling,,7,,v1
+E058,sw,Uso wangu umefura,EMERGENCY,swelling,,7,,v1
+E059,en,my baby has not moved today,EMERGENCY,fetal_movement,,7,,v1
+E060,en,I haven't felt the baby kick since morning,EMERGENCY,fetal_movement,,7,,v1
+E061,en,the baby's movements have reduced,EMERGENCY,fetal_movement,,7,,v1
+E062,en,baby is moving less than usual,EMERGENCY,fetal_movement,,7,,v1
+E063,sw,Mtoto hajacheza leo,EMERGENCY,fetal_movement,,7,,v1
+E064,sw,Simhisi mtoto akicheza tangu jana,EMERGENCY,fetal_movement,,7,,v1
+E065,sw,Mtoto amepunguza kucheza,EMERGENCY,fetal_movement,,7,,v1
+E066,sw,Mtoto hachezi tangu asubuhi,EMERGENCY,fetal_movement,,7,,v1
+E067,en,my waters broke,EMERGENCY,water_breaking,,7,,v1
+E068,en,water is leaking from my vagina,EMERGENCY,water_breaking,,7,,v1
+E069,en,I'm leaking clear fluid down my legs,EMERGENCY,water_breaking,,7,,v1
+E070,sw,Maji yametoka,EMERGENCY,water_breaking,,7,,v1
+E071,sw,Chupa imepasuka,EMERGENCY,water_breaking,,7,,v1
+E072,sw,Maji yanavuja ukeni,EMERGENCY,water_breaking,,7,,v1
+E073,en,I had convulsions,EMERGENCY,convulsions,,7,,v1
+E074,en,I had a fit this morning,EMERGENCY,convulsions,,7,,v1
+E075,en,I had seizures last night,EMERGENCY,convulsions,,7,,v1
+E076,en,I fainted at the market,EMERGENCY,convulsions,,7,,v1
+E077,sw,Nilipata degedege,EMERGENCY,convulsions,,7,,v1
+E078,sw,Nilianguka na kutetemeka mwili mzima,EMERGENCY,convulsions,,7,,v1
+E079,sw,Nilizirai leo,EMERGENCY,convulsions,,7,,v1
+E080,en,I gave birth last week and I'm bleeding heavily,EMERGENCY,bleeding,,11,,v1
+E081,sw,Nimejifungua wiki iliyopita na natoka damu nyingi,EMERGENCY,bleeding,,11,,v1
+E082,en,since I delivered I have had a fever,EMERGENCY,fever,,11,,v1
+E083,sw,Tangu nijifungue nina homa,EMERGENCY,fever,,11,,v1
+E084,en,after giving birth the discharge smells bad,EMERGENCY,fever,,11,,v1
+E085,en,three weeks after delivery I have a severe headache,EMERGENCY,headache_vision,,11,,v1
+E086,sw,Wiki mbili baada ya kujifungua nilipata degedege,EMERGENCY,convulsions,,11,,v1
+E087,en,my blood pressure was 160/110 at clinic,EMERGENCY,headache_vision,,3,"severe BP; no reading category exists, mapped with pre-eclampsia signs",v1
+E088,en,my HB came back as 6,EMERGENCY,pallor_anaemia,,3,"severe anaemia, needs admission",v1
+E089,sw,Presha yangu ilikuwa 165/112,EMERGENCY,headache_vision,,3,severe BP; no reading category exists,v1
+E090,en,my newborn is not feeding,EMERGENCY,newborn,,12,,v1
+E091,en,the baby is breathing very fast,EMERGENCY,newborn,,12,,v1
+E092,en,baby's eyes and palms are yellow,EMERGENCY,newborn,,12,,v1
+E093,en,the baby feels very cold,EMERGENCY,newborn,,12,,v1
+E094,sw,Mtoto hanyonyi,EMERGENCY,newborn,,12,,v1
+E095,sw,Mtoto anapumua kwa shida,EMERGENCY,newborn,,12,,v1
+E096,sw,Mtoto ana manjano machoni,EMERGENCY,newborn,,12,,v1
+E097,sw,Mtoto alipata degedege,EMERGENCY,newborn,,12,,v1
+E098,mixed,Niko na fever since jana,EMERGENCY,fever,,7,,v1
+E099,mixed,"Natoka blood kidogo, is it okay?",EMERGENCY,bleeding,,7,"a question, but bleeding is happening now",v1
+E100,mixed,Mtoto hamove tangu asubuhi,EMERGENCY,fetal_movement,,7,,v1
+E101,en,im bleding alot,EMERGENCY,bleeding,,7,typo,v2
+E102,en,theres blod coming out down there,EMERGENCY,bleeding,,7,typo,v2
+E103,en,sever hedache n i cant see well,EMERGENCY,headache_vision,,7,typo,v2
+E104,en,my head hurts sooo bad,EMERGENCY,headache_vision,,7,typo,v2
+E105,en,i look very pail and tired,EMERGENCY,pallor_anaemia,,7,typo: pail for pale,v2
+E106,en,i have a fevr and chils,EMERGENCY,fever,,7,typo,v2
+E107,en,stomack pain very bad cant stand,EMERGENCY,abdominal_pain,,7,typo,v2
+E108,en,my face n hands r swolen,EMERGENCY,swelling,,7,typo,v2
+E109,en,baby not moveing since morning,EMERGENCY,fetal_movement,,7,typo,v2
+E110,en,my watter broke,EMERGENCY,water_breaking,,7,typo,v2
+E111,en,she is havin fits,EMERGENCY,convulsions,,7,typo,v2
+E112,en,everything is blury,EMERGENCY,headache_vision,,7,typo,v2
+E113,sw,natokwa damuu nyingi,EMERGENCY,bleeding,,7,typo,v2
+E114,sw,kichw kinauma sana,EMERGENCY,headache_vision,,7,typo,v2
+E115,sw,nina homma kali,EMERGENCY,fever,,7,typo,v2
+E116,sw,mtoto hachez tangu jana,EMERGENCY,fetal_movement,,7,typo,v2
+E117,sw,maji yamevunjka,EMERGENCY,water_breaking,,7,typo,v2
+E118,sw,uso umevimbaa,EMERGENCY,swelling,,7,typo,v2
+E119,sw,tumbo linauma saana,EMERGENCY,abdominal_pain,,7,typo,v2
+E120,sw,Nimepauka sana na nimechoka,EMERGENCY,pallor_anaemia,,7,,v2
+E121,sw,alipata degedge,EMERGENCY,convulsions,,7,typo,v2
+E122,sheng,Manze natoka damu mingi sana,EMERGENCY,bleeding,,7,"Sheng draft, needs a native speaker",v2
+E123,sheng,Nimeanza ku-bleed hii morning,EMERGENCY,bleeding,,7,"Sheng draft, needs a native speaker",v2
+E124,sheng,"Kichwa inaniuma mbaya, siwezi ona poa",EMERGENCY,headache_vision,,7,"Sheng draft, needs a native speaker",v2
+E125,sheng,Naona blur blur,EMERGENCY,headache_vision,,7,"Sheng draft, needs a native speaker",v2
+E126,sheng,Niko na homa kali na baridi inanishika,EMERGENCY,fever,,7,"Sheng draft, needs a native speaker",v2
+E127,sheng,Tumbo inaniuma ki-serious,EMERGENCY,abdominal_pain,,7,"Sheng draft, needs a native speaker",v2
+E128,sheng,Uso na mikono imefura,EMERGENCY,swelling,,7,"Sheng draft, needs a native speaker",v2
+E129,sheng,Bebi hajamove tangu jana,EMERGENCY,fetal_movement,,7,"Sheng draft, needs a native speaker",v2
+E130,sheng,Mtoi hachezi kabisa leo,EMERGENCY,fetal_movement,,7,"Sheng draft, needs a native speaker",v2
+E131,sheng,Maji imeburst,EMERGENCY,water_breaking,,7,"Sheng draft, needs a native speaker",v2
+E132,sheng,Nimekuwa mweupe mbaya na nachoka tu,EMERGENCY,pallor_anaemia,,7,"Sheng draft, needs a native speaker",v2
+E133,sheng,Wife yangu ameanguka anatetemeka,EMERGENCY,convulsions,,7,"Sheng draft, needs a native speaker",v2
+E134,sheng,Nashindwa kupumua poa na heart inadunda fast,EMERGENCY,pallor_anaemia,,7,"Sheng draft, needs a native speaker; breathless and racing heart, BOP p39",v2
+E135,sheng,Siwezi feel bebi akikick,EMERGENCY,fetal_movement,,7,"Sheng draft, needs a native speaker",v2
+E136,sw,Nina homa na kichwa kinauma sana,EMERGENCY,fever|headache_vision,,7,release 1 walkthrough step 5,v2
+E137,en,bleeding and very bad stomach pain,EMERGENCY,bleeding|abdominal_pain,,7,,v2
+E138,mixed,Natoka blood na tumbo inauma sana,EMERGENCY,bleeding|abdominal_pain,,7,,v2
+E139,en,my bp is 170/115 and my head hurts,EMERGENCY,headache_vision,,3,"severe BP, BOP p15",v2
+E140,sheng,"Nimezaa wiki mbili, natoka damu mingi",EMERGENCY,bleeding,,11,"Sheng draft, needs a native speaker; after birth, HB p19",v2
+E141,sw,Mtoto mchanga anapumua haraka sana,EMERGENCY,newborn,,12,,v2
+E142,sheng,Bebi ana joto mob na hanyonyi,EMERGENCY,newborn,,12,"Sheng draft, needs a native speaker",v2
+S001,en,"I can't keep any water down, I vomit everything",SAME_DAY,,,6,,v1
+S002,en,I've been vomiting so much I'm losing weight,SAME_DAY,,,6,,v1
+S003,sw,Natapika kila kitu hata maji,SAME_DAY,,,6,,v1
+S004,sw,Ninapungua uzito kwa sababu ya kutapika,SAME_DAY,,,6,,v1
+S005,en,I'm 32 weeks and I've just started vomiting a lot,SAME_DAY,,,6,nausea first starting late,v1
+S006,sw,Nina wiki 30 na nimeanza kutapika sana,SAME_DAY,,,6,nausea first starting late,v1
+S007,mixed,"Niko na kutapika sana, siwezi kunywa hata maji",SAME_DAY,,,6,,v1
+S008,en,I've felt sad and cried every day for three weeks since the birth,SAME_DAY,,,11,,v1
+S009,en,"my low mood is getting worse, it's been a month",SAME_DAY,,,11,,v1
+S010,sw,Nimekuwa na huzuni kila siku kwa wiki tatu tangu nijifungue,SAME_DAY,,,11,,v1
+S011,sw,"Huzuni yangu inazidi, ni zaidi ya wiki mbili",SAME_DAY,,,11,,v1
+S012,en,I'm 41 weeks and labour hasn't started,SAME_DAY,,,1,,v1
+S013,sw,Nina wiki 41 na uchungu haujaanza,SAME_DAY,,,1,,v1
+S014,en,"I'm 41 weeks, should I go to the hospital?",SAME_DAY,,,1,,v1
+S015,sw,Nimepita tarehe ya kujifungua kwa wiki moja,SAME_DAY,,,1,,v1
+S016,en,"my BP was 145/95 today, I'm 28 weeks",SAME_DAY,,,3,,v1
+S017,sw,Presha yangu ilikuwa 140/90 na nina wiki 32,SAME_DAY,,,3,,v1
+S018,en,the nurse said my blood pressure is 142 over 92,SAME_DAY,,,3,,v1
+S019,en,my BP is 150/100,SAME_DAY,,,3,,v1
+S020,en,my haemoglobin was 9,SAME_DAY,,,3,,v1
+S021,sw,HB yangu ni 8.5,SAME_DAY,,,3,,v1
+S022,en,"they said my hb is 9.5, what does it mean?",SAME_DAY,,,3,,v1
+S023,en,my urine test showed protein,SAME_DAY,,,3,,v1
+S024,sw,Mkojo wangu ulikuwa na protini,SAME_DAY,,,3,,v1
+S025,sheng,"Natapika kila kitu, hata maji inatoka nje",SAME_DAY,,,6,"Sheng draft, needs a native speaker; trap: maji inatoka is vomiting, not waters breaking",v2
+S026,sheng,Niko 41 weeks na bado sijaanza uchungu,SAME_DAY,,,1,"Sheng draft, needs a native speaker",v2
+S027,en,"my bp was 150/100, im 30 weeks",SAME_DAY,,,3,typo,v2
+S028,sw,"Huzuni haiishi tangu nijifungue, wiki tatu sasa",SAME_DAY,,,11,,v2
+R001,en,is stomach pain normal in pregnancy?,ROUTINE,,danger_signs,7,,v1
+R002,en,what are the signs of bleeding I should watch for?,ROUTINE,,danger_signs,7,,v1
+R003,en,what are the danger signs in pregnancy?,ROUTINE,,danger_signs,7,,v1
+R004,sw,Dalili za hatari wakati wa ujauzito ni zipi?,ROUTINE,,danger_signs,7,,v1
+R005,en,what should I do if my water breaks?,ROUTINE,,danger_signs,7,,v1
+R006,sw,Nifanye nini maji yakitoka?,ROUTINE,,danger_signs,7,,v1
+R007,en,how many times should the baby kick in a day?,ROUTINE,,baby_movement,7,,v1
+R008,en,is it normal for the baby to move a lot at night?,ROUTINE,,baby_movement,7,,v1
+R009,sw,"Mtoto anacheza sana usiku, ni kawaida?",ROUTINE,,baby_movement,7,,v1
+R010,en,"my friend had convulsions in her pregnancy, how can I avoid that?",ROUTINE,,danger_signs,7,,v1
+R011,en,can a fever harm my baby?,ROUTINE,,danger_signs,7,,v1
+R012,sw,Homa inaweza kumdhuru mtoto?,ROUTINE,,danger_signs,7,,v1
+R013,en,why does the clinic check my blood pressure every visit?,ROUTINE,,clinic_checks,2,,v1
+R014,en,what does pale mean in the booklet?,ROUTINE,,clinic_checks,2,,v1
+R015,en,"the nurse checked my eyes for pallor, why?",ROUTINE,,clinic_checks,2,,v1
+R016,en,will I bleed after giving birth?,ROUTINE,,,11,KB gap: normal bleeding after birth is not described,v1
+R017,sw,"Je, ni kawaida kutokwa na damu baada ya kujifungua?",ROUTINE,,,11,KB gap: normal bleeding after birth is not described,v1
+R018,en,"my last scan said the baby is head down, is that good?",ROUTINE,,,2,KB gap: baby's position is not explained,v1
+R019,en,is it okay to take tea with meals?,ROUTINE,,tea_with_meals,5,,v1
+R020,en,"my HB is 12, is that okay?",ROUTINE,,hb_reading,3,,v1
+R021,sw,HB yangu ni 11.5,ROUTINE,,hb_reading,3,,v1
+R022,en,my BP was 110/70 today,ROUTINE,,bp_reading,3,,v1
+R023,sw,Presha yangu ni 120/80,ROUTINE,,bp_reading,3,,v1
+R024,en,the baby's heart rate was 140,ROUTINE,,baby_heart_rate,3,,v1
+R025,en,my baby weighed 3.2 kg at birth,ROUTINE,,birth_weight,3,,v1
+R026,sw,"Nina kichefuchefu asubuhi, nifanye nini?",ROUTINE,,nausea,6,,v1
+R027,en,"I feel sick in the mornings, what can I eat?",ROUTINE,,nausea,6,,v1
+R028,sw,Kuna dawa ya kiungulia?,ROUTINE,,heartburn,6,must not get a drug name,v1
+R029,en,I have heartburn after meals,ROUTINE,,heartburn,6,,v1
+R030,en,"I'm constipated, what can I eat?",ROUTINE,,constipation,6,,v1
+R031,en,What should I eat this month?,ROUTINE,,food_general,5,,v1
+R032,sw,Nile nini mwezi huu?,ROUTINE,,food_general,5,,v1
+R033,en,how many glasses of water should I drink?,ROUTINE,,water_intake,5,,v1
+R034,sw,Ni vyakula gani vina madini ya chuma?,ROUTINE,,iron_rich_foods,5,,v1
+R035,en,can I eat omena?,ROUTINE,,calcium_foods,5,,v1
+R036,en,how many ANC visits do I need?,ROUTINE,,anc_schedule,1,,v1
+R037,sw,Ni lini kliniki inayofuata? Nina wiki 20,ROUTINE,,anc_schedule,1,,v1
+R038,en,when should I start clinic?,ROUTINE,,anc_first_visit,1,,v1
+R039,en,why do I take iron tablets?,ROUTINE,,iron_folic,4,,v1
+R040,sw,Nimesahau kumeza tembe za madini ya chuma jana,ROUTINE,,iron_folic,4,,v1
+R041,en,when do I get the tetanus vaccine?,ROUTINE,,tetanus_vaccine,4,,v1
+R042,sw,Chanjo ya pepopunda ni ngapi?,ROUTINE,,tetanus_vaccine,4,,v1
+R043,en,should I sleep under a net?,ROUTINE,,bed_net,4,,v1
+R044,en,is it safe to go to the dentist while pregnant?,ROUTINE,,dental,5,,v1
+R045,en,can I exercise?,ROUTINE,,exercise,5,,v1
+R046,sw,Naweza kufanya kazi nzito?,ROUTINE,,rest_heavy_work,5,,v1
+R047,en,what tests are done at the first visit?,ROUTINE,,first_visit_tests,2,,v1
+R048,sw,Wanapima nini kliniki?,ROUTINE,,clinic_checks,2,,v1
+R049,en,when is the ultrasound done?,ROUTINE,,ultrasound,2,,v1
+R050,en,will they test me for HIV?,ROUTINE,,hiv_testing,13,,v1
+R051,sw,"Nina VVU, mtoto wangu atakuwa salama?",ROUTINE,,hiv_baby,13,,v1
+R052,en,can I breastfeed if I'm HIV positive?,ROUTINE,,hiv_breastfeeding,13,,v1
+R053,en,what should be in my birth plan?,ROUTINE,,birth_plan,9,,v1
+R054,sw,Mume wangu anaweza kusaidia vipi?,ROUTINE,,father_role,9,,v1
+R055,en,how do I know labour has started?,ROUTINE,,labour_signs,10,,v1
+R056,en,how long does labour take?,ROUTINE,,labour_length,10,,v1
+R057,sw,Naweza kuwa na mwenzangu wakati wa kujifungua?,ROUTINE,,birth_companion,10,,v1
+R058,en,can I choose my birth position?,ROUTINE,,birth_position,10,,v1
+R059,en,how long will I stay in hospital after birth?,ROUTINE,,hospital_stay,10,,v1
+R060,en,when should I bring the baby for the first check?,ROUTINE,,postnatal_checks,11,,v1
+R061,en,"I feel weepy on day four after birth, is that normal?",ROUTINE,,baby_blues,11,"baby blues, NG24 p286",v1
+R062,sw,Ni lini naweza kuanza mpango wa uzazi?,ROUTINE,,family_planning,11,,v1
+R063,en,how should I care for the cord?,ROUTINE,,cord_care,12,,v1
+R064,sw,Kitovu cha mtoto kitunzwe vipi?,ROUTINE,,cord_care,12,,v1
+R065,en,when should the baby start breastfeeding?,ROUTINE,,newborn_first_hour,12,,v1
+R066,en,can I give the baby water?,ROUTINE,,exclusive_breastfeeding,12,,v1
+R067,sw,Mtoto aogeshwe lini?,ROUTINE,,newborn_bath,12,,v1
+R068,en,how do I hold the baby to breastfeed?,ROUTINE,,breastfeeding_position,12,,v1
+R069,en,"my baby is small, what is kangaroo care?",ROUTINE,,kangaroo_care,12,,v1
+R070,en,Hi,ROUTINE,,,registration,,v1
+R071,sw,Habari,ROUTINE,,,registration,,v1
+R072,en,YES,ROUTINE,,,registration,,v1
+R073,en,My name is Akinyi,ROUTINE,,,registration,,v1
+R074,sw,Nina wiki 24,ROUTINE,,,registration,,v1
+R075,sw,Asante sana,ROUTINE,,,registration,,v1
+R076,en,"Thank you, that helped",ROUTINE,,,registration,,v1
+R077,en,when is the blood test done?,ROUTINE,,first_visit_tests,2,,v2
+R078,en,what is my blood group checked for?,ROUTINE,,first_visit_tests,2,,v2
+R079,en,who can be my blood donor for the birth plan?,ROUTINE,,birth_plan,9,,v2
+R080,en,the baby kicks a lot after I eat,ROUTINE,,baby_movement,7,,v2
+R081,sw,Mtoto anapiga mateke sana,ROUTINE,,baby_movement,7,,v2
+R082,en,how do I know if the baby is moving enough?,ROUTINE,,baby_movement,7,,v2
+R083,en,will the nurse check if I am pale?,ROUTINE,,clinic_checks,2,,v2
+R084,sw,Wanaangalia kama nimepauka kliniki?,ROUTINE,,clinic_checks,2,,v2
+R085,en,what are the danger signs after birth?,ROUTINE,,postnatal_danger_signs,11,,v2
+R086,sw,Dalili za hatari kwa mtoto mchanga ni zipi?,ROUTINE,,newborn_danger_signs,12,,v2
+R087,en,what are the danger signs in labour?,ROUTINE,,labour_danger_signs,10,,v2
+R088,en,how do I stop malaria fever in pregnancy?,ROUTINE,,malaria_prevention,4,,v2
+R089,sw,Nawezaje kuzuia homa ya malaria?,ROUTINE,,malaria_prevention,4,,v2
+R090,en,"my friend's waters broke at 8 months, what should I know?",ROUTINE,,danger_signs,7,third person,v2
+R091,en,"in my first pregnancy I bled a lot after birth, does that matter now?",ROUTINE,,high_risk,8,"history, not happening now",v2
+R092,sw,Mimba ya kwanza nilitokwa na damu nyingi baada ya kujifungua,ROUTINE,,high_risk,8,"history, not happening now",v2
+R093,en,what does swelling of the face mean?,ROUTINE,,danger_signs,7,,v2
+R094,en,is swelling of the feet normal?,ROUTINE,,,6,KB gap: swollen feet not covered,v2
+R095,sw,Miguu kuvimba ni kawaida?,ROUTINE,,,6,KB gap: swollen feet not covered,v2
+R096,en,what pain relief is there in labour?,ROUTINE,,labour_pain_relief,10,must not name a medicine,v2
+R097,en,do labour pains come and go?,ROUTINE,,labour_signs,10,,v2
+R098,sw,Uchungu wa kujifungua unakuwaje?,ROUTINE,,labour_signs,10,,v2
+R099,en,what does high blood pressure mean?,ROUTINE,,bp_reading,3,,v2
+R100,sw,Presha ya juu ni ngapi?,ROUTINE,,bp_reading,3,,v2
+R101,en,"my gums bleed when I brush, is the dentist safe?",ROUTINE,,dental,5,"trap: gums, not vaginal bleeding; KB does not cover bleeding gums",v2
+R102,sw,"Mtoto wangu ana mwezi mmoja, anaweza kunywa maji?",ROUTINE,,exclusive_breastfeeding,12,,v2
+R103,en,should I give the baby boiled water?,ROUTINE,,exclusive_breastfeeding,12,,v2
+R104,en,how can I prevent convulsions in pregnancy?,ROUTINE,,danger_signs,7,,v2
+R105,sw,"Je, degedege linaweza kuzuiwa?",ROUTINE,,danger_signs,7,,v2
+R106,en,which foods add blood?,ROUTINE,,iron_rich_foods,5,,v2
+R107,sw,Vyakula gani vinaongeza damu?,ROUTINE,,iron_rich_foods,5,,v2
+R108,sw,Nikule nini niongeze damu?,ROUTINE,,iron_rich_foods,5,,v2
+R109,en,will they check the baby's heartbeat at clinic?,ROUTINE,,clinic_checks,2,,v2
+R110,en,do I need vitamin A in pregnancy?,ROUTINE,,vitamin_a,4,,v2
+R111,sw,Tembe za calcium ni za nini?,ROUTINE,,calcium,4,,v2
+R112,en,when do I take deworming tablets?,ROUTINE,,deworming,4,must not give a dose,v2
+R113,en,what is anti-D?,ROUTINE,,rhesus,4,,v2
+R114,sw,Nani anapaswa kujifungulia hospitali kubwa?,ROUTINE,,high_risk,8,,v2
+R115,en,if I give birth at home what should I do with the baby?,ROUTINE,,home_birth,12,,v2
+R116,en,how do I keep the baby warm?,ROUTINE,,newborn_warmth,12,,v2
+R117,sw,Mtoto alale vipi?,ROUTINE,,newborn_sleep,12,,v2
+R118,en,when does the baby get the polio vaccine?,ROUTINE,,newborn_vaccines,12,,v2
+R119,en,can I eat during labour?,ROUTINE,,labour_eating,10,,v2
+R120,en,what should I eat while breastfeeding?,ROUTINE,,breastfeeding_food,11,,v2
+R121,sw,Nina hamu ya kula udongo,ROUTINE,,soil_craving,6,,v2
+R122,en,I don't feel like eating anything,ROUTINE,,poor_appetite,6,,v2
+R123,en,how much weight should I gain?,ROUTINE,,weight_gain,3,must not give a single target,v2
+R124,en,"my urine test was negative, what was it for?",ROUTINE,,urine_test,3,,v2
+R125,en,what are the 10 food groups?,ROUTINE,,food_groups,5,,v2
+R126,sheng,Clinic ni mara ngapi?,ROUTINE,,anc_schedule,1,"Sheng draft, needs a native speaker",v2
+R127,sheng,"Niko na heartburn mbaya, nifanye aje?",ROUTINE,,heartburn,6,"Sheng draft, needs a native speaker; must not name a medicine",v2
+R128,sheng,Bebi akizaliwa nimfanyie aje kitovu?,ROUTINE,,cord_care,12,"Sheng draft, needs a native speaker",v2
+R129,sheng,Ni poa nikifanya mazoezi?,ROUTINE,,exercise,5,"Sheng draft, needs a native speaker",v2
+R130,sheng,Nimesahau kumeza iron jana,ROUTINE,,iron_folic,4,"Sheng draft, needs a native speaker; must not give a dose",v2
+R131,sheng,Maji ngapi kwa siku?,ROUTINE,,water_intake,5,"Sheng draft, needs a native speaker",v2
+R132,sheng,"Bebi anakick sana usiku, ni poa?",ROUTINE,,baby_movement,7,"Sheng draft, needs a native speaker",v2
+R133,sheng,Niaje,ROUTINE,,,registration,"Sheng draft, needs a native speaker",v2
+R134,sheng,"Poa sana, asante",ROUTINE,,,registration,"Sheng draft, needs a native speaker",v2
+R135,sheng,Ma-danger signs ni gani?,ROUTINE,,danger_signs,7,"Sheng draft, needs a native speaker",v2
+R136,en,wat shud i eat this month,ROUTINE,,food_general,5,typo,v2
+R137,sw,nikunywe maji ngapi kwa siku,ROUTINE,,water_intake,5,,v2
+R138,en,hw many clinic visits,ROUTINE,,anc_schedule,1,typo,v2
+R139,en,can my husband come to clinic,ROUTINE,,father_role,9,,v2
+R140,en,"the booklet says check for danger signs, which ones?",ROUTINE,,danger_signs,7,,v2

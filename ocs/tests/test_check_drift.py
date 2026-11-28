@@ -198,7 +198,7 @@ def test_staging_build_has_same_non_empty_kb_and_distinct_card_sources():
     )
     # KB must be non-empty in both builds (10 approved entries).
     assert "KB_JSON" in default_kb_code, "Production KB node must contain injected KB_JSON"
-    assert "anc_purpose" in default_kb_code, "Production KB node must contain at least one approved entry"
+    assert "anc_visits" in default_kb_code, "Production KB node must contain at least one approved entry"
 
     default_am_code = _params(default, "answer_match")["code"]
     staging_am_code = _params(staging, "answer_match")["code"]

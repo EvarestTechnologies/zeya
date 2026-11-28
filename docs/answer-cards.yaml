@@ -1,221 +1,245 @@
 [
   {
-    "id": "anc_purpose_en",
+    "id": "anc_visits_en",
     "review_status": "approved",
     "language": "en",
-    "kb_ref": "anc_purpose",
+    "kb_ref": "anc_visits",
     "topic_anchors": [
       "anc",
       "antenatal",
       "clinic",
-      "prenatal"
+      "visit",
+      "visits",
+      "prenatal",
+      "handbook"
     ],
-    "source_note": "Sourced from WHO starter KB v0.1 entry anc_purpose.",
+    "source_note": "Source: MOH Mother and Child Health Handbook. Entry anc_visits.",
     "triggers": [
       "Why should I go to ANC?",
-      "What are pregnancy clinic visits for?",
-      "Why should I attend antenatal care?",
-      "What are antenatal visits for?",
-      "What is the purpose of antenatal clinic visits when pregnant?",
-      "Why should I attend antenatal care visits?",
-      "Why do I need to attend antenatal visits?"
+      "When should I start antenatal clinic?",
+      "How many antenatal visits do I need?",
+      "How many times should I go to clinic when pregnant?",
+      "When is my first antenatal visit?",
+      "Why should I attend antenatal clinic?",
+      "What should I carry to the antenatal clinic?"
     ],
-    "answer": "Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend."
+    "answer": "Go for your first antenatal visit as soon as possible, and attend 8 times during your pregnancy. Carry your Mother and Child Health Handbook to every visit and show it to the health worker.\nSource: MOH Mother and Child Health Handbook."
   },
   {
-    "id": "pregnancy_records_en",
+    "id": "danger_signs_en",
     "review_status": "approved",
     "language": "en",
-    "kb_ref": "pregnancy_records",
+    "kb_ref": "danger_signs",
     "topic_anchors": [
-      "record",
-      "documentation"
+      "danger",
+      "signs",
+      "warning",
+      "hospital"
     ],
-    "source_note": "Sourced from WHO starter KB v0.1 entry pregnancy_records.",
+    "source_note": "Source: MOH Mother and Child Health Handbook. Entry danger_signs.",
     "triggers": [
-      "Should I keep my pregnancy health records?",
-      "Why keep a record of pregnancy care?",
-      "Should I keep records of my pregnancy care?",
-      "Why is it important to keep my pregnancy health records?",
-      "Why should I keep records of my pregnancy health care?",
-      "How should I manage my maternity health records?"
+      "What are the danger signs in pregnancy?",
+      "Which signs mean I should go to hospital?",
+      "What danger signs should I watch for?",
+      "What are the warning signs during pregnancy?",
+      "When should I go to hospital when pregnant?"
     ],
-    "answer": "Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand."
+    "answer": "Danger signs in pregnancy: severe headache, looking pale, vaginal bleeding, fever, severe abdominal pain, swelling of the face and hands, reduced or no movement of the baby, breaking water, and convulsions or fits. If you have any of these signs, go to a health facility now.\nSource: MOH Mother and Child Health Handbook."
   },
   {
-    "id": "food_variety_en",
+    "id": "daily_care_en",
     "review_status": "approved",
     "language": "en",
-    "kb_ref": "food_variety",
+    "kb_ref": "daily_care",
+    "topic_anchors": [
+      "care",
+      "water",
+      "rest",
+      "net",
+      "exercise",
+      "iron",
+      "daily",
+      "meal"
+    ],
+    "source_note": "Source: MOH Mother and Child Health Handbook. Entry daily_care.",
+    "triggers": [
+      "How should I take care of myself during pregnancy?",
+      "What daily care do I need when pregnant?",
+      "How much water should I drink in pregnancy?",
+      "Should I rest more when pregnant?",
+      "Should I sleep under a mosquito net when pregnant?",
+      "Should I take iron and folic acid every day?"
+    ],
+    "answer": "Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise.\nSource: MOH Mother and Child Health Handbook."
+  },
+  {
+    "id": "food_groups_en",
+    "review_status": "approved",
+    "language": "en",
+    "kb_ref": "food_groups",
     "topic_anchors": [
       "food",
-      "eat",
+      "foods",
       "diet",
-      "vegetable",
-      "fruit",
-      "nutrition"
+      "nutrition",
+      "groups"
     ],
-    "source_note": "Sourced from WHO starter KB v0.1 entry food_variety.",
+    "source_note": "Source: MOH Mother and Child Health Handbook. Entry food_groups.",
     "triggers": [
-      "What kinds of food should I eat?",
-      "What does a varied pregnancy diet include?",
-      "What food should I eat during pregnancy?",
-      "What kinds of food can I eat when pregnant?",
-      "What varieties of food should I eat during pregnancy?",
-      "What is a healthy varied diet for a pregnant woman?"
+      "What foods should I eat during pregnancy?",
+      "Which foods are good in pregnancy?",
+      "What are the food groups?",
+      "What food should I eat when pregnant?",
+      "How many food groups should I eat?",
+      "What is a good diet in pregnancy?"
     ],
-    "answer": "Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs."
+    "answer": "Eat at least 5 of the 10 food groups every day: grains and starchy foods, legumes and pulses, nuts and seeds, dairy, eggs, meat, fish and poultry, orange and yellow fruits and vegetables, dark green leafy vegetables, other vegetables, and other fruits. Eat a variety of foods within each group.\nSource: MOH Mother and Child Health Handbook."
   },
   {
-    "id": "food_safety_en",
+    "id": "birth_plan_en",
     "review_status": "approved",
     "language": "en",
-    "kb_ref": "food_safety",
-    "topic_anchors": [
-      "food",
-      "eat",
-      "diet"
-    ],
-    "source_note": "Sourced from WHO starter KB v0.1 entry food_safety.",
-    "triggers": [
-      "Does food cleanliness matter in pregnancy?",
-      "Should I make sure food is safe and clean during pregnancy?",
-      "Is food safety important when pregnant?",
-      "Should food be safe and clean during pregnancy?",
-      "Why is clean and safe food important in pregnancy?",
-      "How do I keep food safe during pregnancy?"
-    ],
-    "answer": "Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy."
-  },
-  {
-    "id": "birth_preparation_en",
-    "review_status": "approved",
-    "language": "en",
-    "kb_ref": "birth_preparation",
+    "kb_ref": "birth_plan",
     "topic_anchors": [
       "birth",
       "delivery",
       "deliver",
-      "childbirth"
+      "prepare",
+      "childbirth",
+      "husband",
+      "partner"
     ],
-    "source_note": "Sourced from WHO starter KB v0.1 entry birth_preparation.",
+    "source_note": "Source: MOH Mother and Child Health Handbook. Entry birth_plan.",
     "triggers": [
-      "What should I discuss when planning for birth?",
-      "Should I plan where I will give birth?",
-      "How should I prepare for childbirth?",
-      "Should I plan and prepare for where I will give birth?",
-      "What is a birth preparedness plan?",
-      "How do I plan for birth and complications?"
+      "What should be in my birth plan?",
+      "How do I prepare for birth?",
+      "How do I make a birth plan?",
+      "How can my husband help me prepare for birth?",
+      "What do I need to prepare before delivery?",
+      "How do I plan for delivery?"
     ],
-    "answer": "Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance."
+    "answer": "Make a birth plan with your health worker: expected date of birth, the health facility where you will give birth, who will attend you, the facility's phone number, your birth companion, transport and a blood donor. Your partner can help by arranging transport, money, a birth companion and an emergency kit.\nSource: MOH Mother and Child Health Handbook."
   },
   {
-    "id": "anc_purpose_sw",
+    "id": "anc_visits_sw",
     "review_status": "approved",
     "language": "sw",
-    "kb_ref": "anc_purpose",
+    "kb_ref": "anc_visits",
     "topic_anchors": [
-      "anc",
-      "ujauzito",
       "kliniki",
-      "ziara"
+      "ziara",
+      "anc",
+      "mara",
+      "kitabu"
     ],
-    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (anc_purpose).",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry anc_visits.",
     "triggers": [
-      "Niende kliniki ya ujauzito kwa nini?",
-      "Ziara za ujauzito ni kwa nini?",
       "Niende ANC kwa sababu gani?",
-      "Huduma ya kabla ya kujifungua ni kwa nini?",
-      "Nini lengo la ziara za ANC?",
-      "Kwa nini ninahitaji kuhudhuria ziara za kabla ya kujifungua?"
+      "Nianze kliniki ya ujauzito lini?",
+      "Ni mara ngapi niende kliniki nikiwa mjamzito?",
+      "Ziara za kliniki ya ujauzito ni ngapi?",
+      "Nibebe nini nikienda kliniki?",
+      "Kliniki ya kwanza ya ujauzito ni lini?",
+      "Kwa nini niende kliniki?"
     ],
-    "answer": "Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza."
+    "answer": "Nenda kliniki ya wajawazito mapema iwezekanavyo, na uhudhurie mara 8 katika kipindi cha ujauzito wako. Beba Kitabu cha Afya ya Mama na Mtoto kila mara uendapo kliniki na uonyeshe muhudumu wa afya.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
   },
   {
-    "id": "pregnancy_records_sw",
+    "id": "danger_signs_sw",
     "review_status": "approved",
     "language": "sw",
-    "kb_ref": "pregnancy_records",
+    "kb_ref": "danger_signs",
     "topic_anchors": [
-      "rekodi",
-      "kumbukumbu",
-      "hifadhi"
+      "dalili",
+      "hatari",
+      "hospitali"
     ],
-    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (pregnancy_records).",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry danger_signs.",
     "triggers": [
-      "Je, nihifadhi rekodi zangu za ujauzito?",
-      "Kwa nini nishike kumbukumbu za huduma ya ujauzito?",
-      "Vipi niandike rekodi za afya ya ujauzito wangu?",
-      "Ni muhimu kushika rekodi za ujauzito?",
-      "Kwa nini kuweka rekodi ya afya ya ujauzito ni muhimu?",
-      "Ninahifadhije rekodi zangu za afya ya uzazi?"
+      "Dalili za hatari ni zipi?",
+      "Dalili za hatari wakati wa ujauzito ni zipi?",
+      "Ni dalili gani zinanifanya niende hospitali?",
+      "Dalili za hatari kwa mjamzito ni zipi?",
+      "Nitajuaje kuna hatari kwenye ujauzito?"
     ],
-    "answer": "Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi."
+    "answer": "Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto tumboni kucheza kidogo au kutocheza kabisa, maji kutoka ukeni (chupa kupasuka), na degedege au kifafa. Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
   },
   {
-    "id": "food_variety_sw",
+    "id": "daily_care_sw",
     "review_status": "approved",
     "language": "sw",
-    "kb_ref": "food_variety",
+    "kb_ref": "daily_care",
     "topic_anchors": [
-      "chakula",
+      "jitunze",
+      "maji",
+      "pumzika",
+      "chandarua",
+      "vidonge",
+      "mazoezi",
+      "mlo",
+      "nijitunze",
+      "nipumzike",
+      "upumzike"
+    ],
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry daily_care.",
+    "triggers": [
+      "Nijitunze vipi nikiwa mjamzito?",
+      "Ninywe maji kiasi gani nikiwa mjamzito?",
+      "Nipumzike zaidi nikiwa mjamzito?",
+      "Nilale ndani ya chandarua nikiwa mjamzito?",
+      "Nimeze vidonge vya madini ya chuma kila siku?",
+      "Nifanye mazoezi nikiwa mjamzito?"
+    ],
+    "answer": "Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
+  },
+  {
+    "id": "food_groups_sw",
+    "review_status": "approved",
+    "language": "sw",
+    "kb_ref": "food_groups",
+    "topic_anchors": [
       "kula",
+      "nile",
+      "nikule",
+      "chakula",
+      "vyakula",
       "lishe",
-      "mboga",
-      "matunda"
+      "makundi"
     ],
-    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_variety).",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry food_groups.",
     "triggers": [
-      "Ninapaswa kula chakula gani wakati wa ujauzito?",
-      "Nini lishe nzuri kwa mjamzito?",
-      "Nini chakula cha aina mbalimbali kwa mjamzito?",
-      "Ninaweza kula nini wakati wa ujauzito?",
-      "Nini inajumuishwa katika lishe ya aina mbalimbali ya ujauzito?",
-      "Ni lishe gani nzuri ya mjamzito?"
+      "Nikule nini nikiwa na mimba?",
+      "Nile nini nikiwa mjamzito?",
+      "Vyakula gani ni vizuri wakati wa ujauzito?",
+      "Makundi ya vyakula ni yapi?",
+      "Nile makundi mangapi ya vyakula?",
+      "Lishe bora kwa mjamzito ni ipi?"
     ],
-    "answer": "Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi."
+    "answer": "Kula angalau makundi 5 kati ya makundi 10 ya vyakula kila siku: nafaka na vyakula vya wanga, jamii ya kunde, karanga na mbegu, maziwa na bidhaa zake, mayai, nyama, samaki na kuku, matunda na mboga za rangi ya machungwa na njano, mboga za majani ya kijani kibichi, mboga nyingine, na matunda mengine. Kula vyakula mbalimbali ndani ya kila kundi.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
   },
   {
-    "id": "food_safety_sw",
+    "id": "birth_plan_sw",
     "review_status": "approved",
     "language": "sw",
-    "kb_ref": "food_safety",
-    "topic_anchors": [
-      "chakula",
-      "kula",
-      "lishe"
-    ],
-    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_safety).",
-    "triggers": [
-      "Je, usafi wa chakula ni muhimu wakati wa ujauzito?",
-      "Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?",
-      "Usalama wa chakula ni muhimu kwa mjamzito?",
-      "Chakula kiwe salama na safi wakati wa ujauzito?",
-      "Kwa nini chakula salama na safi ni muhimu katika ujauzito?",
-      "Ninahifadhije usalama wa chakula wakati wa ujauzito?"
-    ],
-    "answer": "Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito."
-  },
-  {
-    "id": "birth_preparation_sw",
-    "review_status": "approved",
-    "language": "sw",
-    "kb_ref": "birth_preparation",
+    "kb_ref": "birth_plan",
     "topic_anchors": [
       "kujifungua",
       "mpango",
-      "maandalizi",
-      "uzazi"
+      "jiandae",
+      "nijiandae",
+      "mume",
+      "mwenzi"
     ],
-    "source_note": "Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (birth_preparation).",
+    "source_note": "Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya. DRAFT, pending fluent-speaker and clinical review. Entry birth_plan.",
     "triggers": [
-      "Ninapaswa kujadili nini kuhusu mipango ya kujifungua?",
-      "Je, nipange mahali pa kujifungua?",
-      "Nijiandaeje kwa kujifungua?",
-      "Nini mpango wa kujiandaa kwa kujifungua?",
-      "Nijiandaeje kwa kujifungua na matatizo yanayoweza kutokea?",
-      "Nini maandalizi ya kujifungua?"
+      "Mpango wa kujifungua ni nini?",
+      "Nijiandae vipi kwa kujifungua?",
+      "Nipange vipi mpango wa kujifungua?",
+      "Mume wangu anaweza kunisaidia vipi kujiandaa kujifungua?",
+      "Nahitaji nini kabla ya kujifungua?",
+      "Nitapangaje kujifungua?",
+      "Nijiandaeje kwa kujifungua?"
     ],
-    "answer": "Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao."
+    "answer": "Andaa mpango wa kujifungua pamoja na muhudumu wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mtu wa kukusindikiza wakati wa kujifungua, usafiri, na mtu wa kuchangia damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mtu wa kukusindikiza na vifaa vya dharura.\nChanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya."
   }
 ]

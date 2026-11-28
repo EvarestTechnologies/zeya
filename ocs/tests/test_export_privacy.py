@@ -733,7 +733,9 @@ def test_determinism_via_subprocesses():
         "from ocs.export_privacy import scrub; "
         "print(scrub('Alpha Beta Gamma', frozenset({'Alpha Beta', 'Beta Gamma'})))"
     )
-    root = "/home/rayzy/github/zeya-wt/55-56-export-privacy"
+    from pathlib import Path
+
+    root = str(Path(__file__).resolve().parents[2])  # repository root
     results = set()
     for seed in range(1, 9):
         env = {**os.environ, "PYTHONHASHSEED": str(seed), "PYTHONPATH": root}

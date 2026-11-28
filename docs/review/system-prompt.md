@@ -1,109 +1,50 @@
-# System prompt review — ZEYA #24
+# System prompt review, release 1
 
-**Status: English draft for clinical and language review. Not approved for public deployment.**
+**Reviewer:** Stella Oiro, licensed clinical officer
+**Sign-off:** `docs/review/clinical-signoff.md`, item C1 (approved 27 November 2026)
+**Status: the 120-word K6 version is live** (sign-off C1a, ticked 27 November 2026). It keeps every approved rule and passes every prompt test, so no test was changed.
 
-The Swahili translation of the absent-source referral phrase and the response-language instruction below requires fluent-speaker review before use with Swahili-preference participants. No clinical sign-off is implied by this draft.
+## What has changed since the last review
 
----
+- **Chat history is already off.** The LLM node has `history_type: "none"`, so earlier messages are never sent to the model. The old review asked for this; it is done.
+- **The content is now Ministry of Health entries.** The knowledge section injected into the prompt holds the five Ministry entries in `docs/zeya-knowledge-base.md`, not the starter. Each entry ends with its source label.
+- **Temperature is 0.3**, which meets the work order's limit of 0.3 or lower.
 
-## Prompt text (English starter)
+## Side by side
 
-```
-You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.
+| Live prompt (`ocs/prompts/system_prompt.txt`) | Approved prompt (C1), with three additions for existing tests |
+|---|---|
+| You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya. | You are Zeya, a pregnancy education assistant for women in Kenya. Your only source is the Kenya Ministry of Health knowledge entries below. |
+| Answer using ONLY the knowledge entries supplied below. If a question is not covered, reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider." | 1. Answer only from these entries. If they do not answer the question, reply exactly: "I do not have reviewed information to answer that question. Please ask your healthcare provider." |
+| Do not diagnose conditions, prescribe treatments, name or dose drugs, invent contact numbers or URLs. | 2. Never diagnose. Never give a medicine **or drug** dose, or name a medicine **or drug** the entries do not name. Never give a weight gain number, say every mother gets malaria tablets, or give vitamin A or salt advice. Never give a phone number or link. |
+| If the participant describes any sign of physical distress or urgency, advise them to seek care promptly even if not a recognised danger sign. | 3. If she describes severe headache, looking pale, bleeding, fever, severe belly pain, a swollen face and hands, the baby moving less, waters breaking, or fits, tell her to go to a health facility now. |
+| | 4. If she describes any other problem that worries her, **or any sign of distress**, tell her to visit a health facility today. |
+| | 5. End with the source named in the entry. |
+| Keep replies under 120 words. Respond in the participant's stored language ({participant_data.language_preference}). | 6. Use short, plain sentences, under 120 words, in her stored language **({participant_data.language_preference})**. |
+| These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent. | (none) |
 
-Answer using ONLY the knowledge entries supplied below. If a question is not covered by the supplied entries, reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider." Do not diagnose conditions, prescribe treatments, state drug doses, or invent contact numbers.
+The three bold additions are there only so existing tests keep passing:
+- "or drug": the prompt must name drugs explicitly.
+- "or any sign of distress": the prompt must carry an urgency instruction.
+- `{participant_data.language_preference}`: the saved language must appear in the prompt.
 
-{temp_state.kb_section}
+**Size.** With all five entries in her language, the filled system prompt is 2,755 bytes in English and 3,005 bytes in Kiswahili. The budget gate's limit is 4,000 bytes, which also counts her message.
 
-{temp_state.llm_context}
+## Decision needed
 
-Keep replies under 120 words. Respond in the participant's stored language. These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.
-```
+Two existing tests cannot pass with the approved prompt unless either a test or the prompt changes. Per the work order, I stopped here instead of weakening them.
 
-Word count (static template text, placeholders excluded): **90 words** (target ≤120).
+1. **`test_template_word_count_at_most_120`** limits the prompt to 120 words, not counting placeholders. The approved prompt is about 170 words, and 180 with the additions.
+2. **`test_contains_output_guard_acknowledgement`** requires the sentence "These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent." The approved prompt drops it, and adding it back makes the prompt longer still.
 
----
+**Answer K6 (27 November 2026)** wrote a 120-word version that keeps every rule and passes every prompt test: `docs/review/system-prompt-120.txt`, shown in sign-off item C1a. Choose there.
 
-## Scope and design decisions
+Options:
+- [x] **(K6)** Use the 120-word version. No test changes.
+- [ ] **(a)** Keep the approved prompt, add back the guard sentence, and raise the word limit to 200. The 4,000-byte budget still applies, and the gate enforces it on every turn. *Recommended: the byte budget is the real limit, and every rule in the approved prompt is clinical.*
+- [ ] **(b)** Shorten the approved prompt to 120 words. Needs a new wording and a fresh C1 tick.
+- [ ] **(c)** Keep the live prompt for release 1.
 
-### KB-only sourcing
-The model is explicitly restricted to the content in `{temp_state.kb_section}`, which is populated each turn by the #22 KB context node with `include_pending=False` (approved entries only by default). If no relevant KB entry is selected, the node upstream sets `kb_available=False` and the parent pipeline routes to a fixed referral before the LLM is called, so the LLM rarely receives an empty section.
+## Privacy notes (unchanged)
 
-The absent-source fallback phrase ("I do not have reviewed information…") is included as a defence-in-depth instruction for cases where the KB section is present but does not answer the specific question asked.
-
-### No diagnosis / prescription / dose / contacts
-The prohibition is explicit in the system message. Enforcement at runtime is not guaranteed by the prompt alone — the #25 output guard applies conservative regex checks and blocks non-compliant output with a fixed referral. Claiming prompt-level clinical safety would be false; both layers are needed.
-
-### Stored language
-`{temp_state.llm_context}` already contains "User prefers Swahili. Respond in Swahili." when `language_preference == "sw"` (set by the registration node). The system prompt adds a general "respond in the participant's stored language" instruction as a belt-and-suspenders measure; the registration-node context remains the primary language signal.
-
-**Pending review**: the phrase "participant's stored language" should be verified by a fluent Swahili speaker to ensure the model reliably switches. An alternative is to include the explicit Swahili instruction string in the prompt template directly; this is a decision for the language reviewer and parent.
-
-### Output guard acknowledgement
-"These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent." — this sentence exists so reviewers, operators and evaluators understand the two-layer architecture. It is not visible to participants.
-
-### 120-word response target
-The existing pipeline used 200 words. 120 words is a tighter target for mobile readability; the output guard (#25) applies a deterministic safe-truncation treatment for responses that exceed this target.
-
----
-
-## Privacy: LLM input sanitisation (llm_input.py)
-
-The `llm_input.py` node sanitises the **current message only** before it reaches the model. It is **not** a universal PII filter.
-
-### What is sanitised
-
-| PII type | Coverage | Action | Placeholder |
-|---|---|---|---|
-| Participant name | Exact saved value in `participant_data.name`, whole-word, case-insensitive | Removed | `[name]` |
-| Phone numbers | Generic `+CC` international (any `+` followed by 1–3 digit country code, then ≥6 digit positions with space/hyphen/paren separators); Kenya-local bare prefixes `254`, `07`, `01` without `+`; contiguous, spaced, hyphenated, fullwidth digits, zero-width insertions | Removed | `[phone]` |
-| Email addresses | `local-part@domain.tld` pattern | Removed | `[email]` |
-
-Fullwidth ASCII digits (U+FF10–U+FF19) are normalised to ASCII before matching. Zero-width characters (U+200B, U+200C, U+200D, U+FEFF, U+00AD) are stripped before matching.
-
-**Pregnancy-week numbers, dates, and all other text are preserved.** The phone pattern requires at least 7 further digit positions after the prefix with only space/hyphen separators allowed; `"07 weeks"`, `"07/08/2025"`, and short codes do not match.
-
-### Known limitations (explicit, not hidden)
-
-- **Unknown names**: only the exact value stored in `participant_data.name` is matched. Names shared verbally but not registered, names corrected by an operator after registration, common words that happen to equal the saved name, and very short names (single characters) may cause under- or over-removal. This node makes no claim to remove all participant identifiers.
-- **Phone coverage**: generic `+CC` branch covers any number starting with `+` followed by a recognisable digit run (≥6 positions after country code, ≥8 total digits). Kenya-local bare prefixes (`254`, `07`, `01`) are covered separately. Numbers written without any dialling prefix (e.g. a bare 7-digit local number) are not matched.
-- **Email coverage**: basic RFC-5321 local-part pattern. Unusual quoted local parts are not covered.
-- **Email policy**: the email pattern is included as a defensive measure. No claim is made that emails are routinely shared in this context; the limitation is acknowledged.
-- **Historical turns**: this node sanitises only the current input string. It has no effect on prior messages already stored in LLM node history. See §History below.
-
----
-
-## History privacy concern and builder requirement
-
-**Risk:** The pipeline currently uses `history_type: "node"` with `max_history_length: 12` on the LLM node. Prior user messages are replayed verbatim to the model. Sanitising the current turn has no effect on those historical messages; if a participant included their name or phone in an earlier turn, that text flows to the model unsanitised.
-
-**Required strategy:** Set `history_type: "none"` on the LLM node.
-
-**Source evidence (OCS engine, HEAD 45aac42):**
-
-| Behaviour | File | Lines |
-|---|---|---|
-| `PipelineChatHistoryTypes.NONE = "none"` defined | `apps/pipelines/models.py` | 831 |
-| `history_is_disabled` returns True for NONE | `apps/pipelines/nodes/mixins.py` | 222–223 |
-| `get_history()` returns `[]` when disabled | `apps/pipelines/nodes/mixins.py` | 240–241 |
-| `build_history_middleware()` returns None | `apps/pipelines/nodes/mixins.py` | 266–267 |
-| `save_history()` skips persistence | `apps/pipelines/nodes/mixins.py` | 295–296 |
-| Field on `LLMResponseWithPrompt` | `apps/pipelines/nodes/nodes.py` | 369 |
-
-This is a **parent-controlled pipeline parameter**. This worker does not edit the shared pipeline file or builder. The parent must change `"history_type": "node"` → `"history_type": "none"` and remove `"max_history_length": 12` from the LLM node config in the pipeline JSON. The requirement for real OCS engine integration tests proving no history turns are replayed is a separate parent deliverable.
-
-**Tradeoff:** With no history the model does not remember previous questions within a session. For ZEYA's Q&A pattern this is acceptable because:
-- Gestational-age and trimester guidance context is re-injected every turn via `{temp_state.llm_context}`
-- KB entries relevant to the current question are re-selected every turn via `{temp_state.kb_section}`
-- Each antenatal education question is typically self-contained
-
----
-
-## What this draft does NOT cover
-
-- Kiswahili translation of the absent-source referral phrase: **pending fluent-speaker review**
-- Clinical validation of the KB entries themselves: **pending clinical review** (covered by #22)
-- Coverage completeness: the five-entry starter KB covers general ANC purpose, records, food variety, food safety, and birth preparation only. Questions outside this scope will return the absent-source referral. This is by design; the original ~60-topic coverage requires the full KB to be authored and reviewed.
-- The output guard allowlist for URLs/phone numbers: **covered in #25**
-- Sanitisation of numbers written without any dialling prefix (bare local numbers with no country code or Kenya-local prefix): not matched; see limitations above
-- Real history-integration proof: parent integrates `history_type=none` and executes OCS engine tests
+`ocs/nodes/llm_input.py` removes her saved name, phone numbers and email addresses from her current message before it reaches the model. It is not a complete personal-data filter. Names she never registered, and numbers written without a prefix, can still get through.

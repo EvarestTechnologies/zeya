@@ -1,197 +1,127 @@
-# Answer cards — review record
+# Answer cards review, release 1
 
-**Status: Starter runtime content eligible. This record is not publication evidence.**
+**Reviewer:** Stella Oiro, licensed clinical officer
+**Source:** `docs/answer-cards.yaml`, built from `docs/zeya-knowledge-base.md`
+**Sign-off:** `docs/review/clinical-signoff.md`, item B2
 
-This document lists the starter answer cards in `docs/answer-cards.yaml`.
-The five English and five Kiswahili cards have `"review_status": "approved"`.
-Content records, runtime eligibility and publication are tracked separately.
+The five Ministry of Health cards replace the starter cards slot for slot (work order task 3). Each answer is the knowledge entry text exactly, in Mother and Child Health Handbook wording, and ends with its source label. The archived starter cards are in `docs/archive/who-starter/` with `review_status: pending`, and they are not loaded.
 
----
+| Old slot | New card | Source |
+|---|---|---|
+| anc_purpose | anc_visits | HB p13, HB cover |
+| pregnancy_records | danger_signs | HB p14 |
+| food_variety | food_groups | HB p18 |
+| food_safety | daily_care | HB p13 |
+| birth_preparation | birth_plan | HB inside cover, HB p3 |
 
-## Scope and limitations
+**Matching notes**
+- **Trigger checks:** every trigger routes to its own card. Checked with the shipped matcher in the pinned sandbox.
+- **Removed anchor words:** "eat" (food groups) and "plan" (birth plan) are not anchor words. As anchors they made "Something to eat please" and "How should I plan?" match a card. So "What should I eat during pregnancy?" reaches the AI, which answers from the food groups entry. "What foods should I eat during pregnancy?" reaches the card.
+- **Old false-positive tests:** the matcher tests that described the old food safety topic now use daily care questions about water, rest and nets.
 
-These five cards cover general antenatal education only, ported verbatim from the
-five-entry WHO-linked starter KB (`knowledge-base-draft.md`, v0.1). They do not
-provide diagnoses, prescriptions, drug doses, symptom assessments, emergency guidance
-or facility-specific information.
+## English cards
 
-**Swahili / Sheng translations:** Five Kiswahili counterpart cards are included
-(see `docs/review/kiswahili-starter.md`) and have approved runtime eligibility.
-Sheng and regional dialect matching phrases remain a follow-up work item.
+### `anc_visits_en`
 
-**Original ~60-card ambition:** Issue #23 originally described approximately sixty
-cards covering ANC contacts, discomforts, danger signs and newborn care. These five
-cards are the agreed limited v0 starter scope (see execution-contract.md). The full
-coverage remains a visible follow-up requirement.
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `anc_visits`, source HB p13, HB cover
+- **Words:** 41 (limit 79)
+- **Topic anchors:** anc, antenatal, clinic, visit, visits, prenatal, handbook
 
-**Matching accuracy:** The matcher uses word-overlap (Jaccard similarity) with light
-suffix stemming and English stopword removal. It does not use AI or external tools.
-Limitations: near-synonyms without shared word stems may miss; short questions
-(<2 content tokens) fall below the token guard; typos reduce but do not eliminate
-overlap. Kiswahili authored regression examples are covered, but the inherited
-English-oriented token processing and generic-food ambiguity limit generalisation.
+Answer:
 
----
+> Go for your first antenatal visit as soon as possible, and attend 8 times during your pregnancy. Carry your Mother and Child Health Handbook to every visit and show it to the health worker.
+> Source: MOH Mother and Child Health Handbook.
 
-## Cards pending review
+Triggers:
 
-### 1 · `anc_purpose_en`
+- Why should I go to ANC?
+- When should I start antenatal clinic?
+- How many antenatal visits do I need?
+- How many times should I go to clinic when pregnant?
+- When is my first antenatal visit?
+- Why should I attend antenatal clinic?
+- What should I carry to the antenatal clinic?
 
-| Field | Value |
-|-------|-------|
-| ID | `anc_purpose_en` |
-| KB ref | `anc_purpose` |
-| Language | English |
-| Review status | **pending** |
-| Source | WHO starter KB v0.1 — anc_purpose entry |
+### `danger_signs_en`
 
-**Triggers (English):**
-- "Why should I go to ANC?"
-- "What are pregnancy clinic visits for?"
-- "Why should I attend antenatal care?"
-- "What are antenatal visits for?"
-- "What is the purpose of antenatal clinic visits when pregnant?"
-- "Why should I attend antenatal care visits?"
-- "Why do I need to attend antenatal visits?"
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `danger_signs`, source HB p14
+- **Words:** 53 (limit 79)
+- **Topic anchors:** danger, signs, warning, hospital
 
-**Answer (English):**
-> Antenatal visits provide health care, information, advice and emotional support
-> during pregnancy. Contact a health worker after confirming your pregnancy, and
-> attend the visits they recommend.
+Answer:
 
-Reviewer action needed:
-- [ ] Verify wording is accurate and appropriate for the Kenyan context.
-- [ ] Confirm the answer does not imply a specific visit schedule.
-- [ ] Approve or revise; set `review_status: approved` only after explicit sign-off.
+> Danger signs in pregnancy: severe headache, looking pale, vaginal bleeding, fever, severe abdominal pain, swelling of the face and hands, reduced or no movement of the baby, breaking water, and convulsions or fits. If you have any of these signs, go to a health facility now.
+> Source: MOH Mother and Child Health Handbook.
 
----
+Triggers:
 
-### 2 · `pregnancy_records_en`
+- What are the danger signs in pregnancy?
+- Which signs mean I should go to hospital?
+- What danger signs should I watch for?
+- What are the warning signs during pregnancy?
+- When should I go to hospital when pregnant?
 
-| Field | Value |
-|-------|-------|
-| ID | `pregnancy_records_en` |
-| KB ref | `pregnancy_records` |
-| Language | English |
-| Review status | **pending** |
-| Source | WHO starter KB v0.1 — pregnancy_records entry |
+### `daily_care_en`
 
-**Triggers (English):**
-- "Should I keep my pregnancy health records?"
-- "Why keep a record of pregnancy care?"
-- "Should I keep records of my pregnancy care?"
-- "Why is it important to keep my pregnancy health records?"
-- "Why should I keep records of my pregnancy health care?"
-- "How should I manage my maternity health records?"
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `daily_care`, source HB p13
+- **Words:** 49 (limit 79)
+- **Topic anchors:** care, water, rest, net, exercise, iron, daily, meal
 
-**Answer (English):**
-> Keep a record of your pregnancy health care and vaccines at home. Ask your health
-> worker to explain information in your records that you do not understand.
+Answer:
 
-Reviewer action needed:
-- [ ] Confirm the guidance is consistent with Kenya MoH mother and child health (MCH)
-  booklet practice.
-- [ ] Approve or revise.
+> Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise.
+> Source: MOH Mother and Child Health Handbook.
 
----
+Triggers:
 
-### 3 · `food_variety_en`
+- How should I take care of myself during pregnancy?
+- What daily care do I need when pregnant?
+- How much water should I drink in pregnancy?
+- Should I rest more when pregnant?
+- Should I sleep under a mosquito net when pregnant?
+- Should I take iron and folic acid every day?
 
-| Field | Value |
-|-------|-------|
-| ID | `food_variety_en` |
-| KB ref | `food_variety` |
-| Language | English |
-| Review status | **pending** |
-| Source | WHO starter KB v0.1 — food_variety entry |
+### `food_groups_en`
 
-**Triggers (English):**
-- "What kinds of food should I eat?"
-- "What does a varied pregnancy diet include?"
-- "What food should I eat during pregnancy?"
-- "What kinds of food can I eat when pregnant?"
-- "What varieties of food should I eat during pregnancy?"
-- "What is a healthy varied diet for a pregnant woman?"
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `food_groups`, source HB p18
+- **Words:** 57 (limit 79)
+- **Topic anchors:** food, foods, diet, nutrition, groups
 
-**Answer (English):**
-> Aim for a variety of foods, including vegetables, fruit, whole grains, beans and
-> other protein foods. Ask your health worker for advice about any individual dietary
-> needs.
+Answer:
 
-Reviewer action needed:
-- [ ] Confirm the food groups listed are appropriate for the local dietary context.
-- [ ] Confirm the answer does not inadvertently exclude locally important foods or
-  imply supplements/doses.
-- [ ] Approve or revise.
+> Eat at least 5 of the 10 food groups every day: grains and starchy foods, legumes and pulses, nuts and seeds, dairy, eggs, meat, fish and poultry, orange and yellow fruits and vegetables, dark green leafy vegetables, other vegetables, and other fruits. Eat a variety of foods within each group.
+> Source: MOH Mother and Child Health Handbook.
 
----
+Triggers:
 
-### 4 · `food_safety_en`
+- What foods should I eat during pregnancy?
+- Which foods are good in pregnancy?
+- What are the food groups?
+- What food should I eat when pregnant?
+- How many food groups should I eat?
+- What is a good diet in pregnancy?
 
-| Field | Value |
-|-------|-------|
-| ID | `food_safety_en` |
-| KB ref | `food_safety` |
-| Language | English |
-| Review status | **pending** |
-| Source | WHO starter KB v0.1 — food_safety entry |
+### `birth_plan_en`
 
-**Triggers (English):**
-- "Does food cleanliness matter in pregnancy?"
-- "Should I make sure food is safe and clean during pregnancy?"
-- "Is food safety important when pregnant?"
-- "Should food be safe and clean during pregnancy?"
-- "Why is clean and safe food important in pregnancy?"
-- "How do I keep food safe during pregnancy?"
+- **Status:** approved (sign-off B2, 27 November 2026)
+- **Knowledge entry:** `birth_plan`, source HB inside cover, HB p3
+- **Words:** 58 (limit 79)
+- **Topic anchors:** birth, delivery, deliver, prepare, childbirth, husband, partner
 
-**Answer (English):**
-> Make sure the food you eat is safe and clean. Ask your health worker if you need
-> more information about food safety during pregnancy.
+Answer:
 
-Reviewer action needed:
-- [ ] Verify this general guidance is accurate without specific cooking/storage
-  instructions that could be misapplied.
-- [ ] Approve or revise.
+> Make a birth plan with your health worker: expected date of birth, the health facility where you will give birth, who will attend you, the facility's phone number, your birth companion, transport and a blood donor. Your partner can help by arranging transport, money, a birth companion and an emergency kit.
+> Source: MOH Mother and Child Health Handbook.
 
----
+Triggers:
 
-### 5 · `birth_preparation_en`
-
-| Field | Value |
-|-------|-------|
-| ID | `birth_preparation_en` |
-| KB ref | `birth_preparation` |
-| Language | English |
-| Review status | **pending** |
-| Source | WHO starter KB v0.1 — birth_preparation entry |
-
-**Triggers (English):**
-- "What should I discuss when planning for birth?"
-- "Should I plan where I will give birth?"
-- "How should I prepare for childbirth?"
-- "Should I plan and prepare for where I will give birth?"
-- "What is a birth preparedness plan?"
-- "How do I plan for birth and complications?"
-
-**Answer (English):**
-> Discuss where you will receive care for childbirth with your health worker. Make a
-> birth-preparedness and complication-readiness plan with their guidance.
-
-Reviewer action needed:
-- [ ] Confirm the answer does not imply a recommendation for a specific facility type.
-- [ ] Confirm the answer is consistent with the Kenya MoH birth-preparedness guidance.
-- [ ] Approve or revise.
-
----
-
-## Follow-up work (not completed in v0)
-
-- **Kiswahili review:** Five sw draft cards added in `feat/kiswahili-starter-cards`;
-  submit for fluent-speaker and clinical review; approve only after explicit sign-off
-  (see `docs/review/kiswahili-starter.md`).
-- **Sheng matching phrases:** Add to trigger lists after community review.
-- **Full ~60-card library:** Extend to cover ANC contacts, discomforts, danger signs
-  awareness, newborn care, breastfeeding — each requiring its own clinical source and
-  review cycle.
-- **Kenya MoH alignment:** Compare every entry against the appropriate Kenya Ministry
-  of Health maternal-care material before describing this as Kenya-handbook-based content.
+- What should be in my birth plan?
+- How do I prepare for birth?
+- How do I make a birth plan?
+- How can my husband help me prepare for birth?
+- What do I need to prepare before delivery?
+- How do I plan for delivery?

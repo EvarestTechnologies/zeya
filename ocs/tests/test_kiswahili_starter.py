@@ -55,29 +55,29 @@ def _require_import():
 
 # Five topic IDs that must each have both en and sw KB entries.
 FIVE_TOPIC_IDS = {
-    "anc_purpose",
-    "pregnancy_records",
-    "food_variety",
-    "food_safety",
-    "birth_preparation",
+    "anc_visits",
+    "danger_signs",
+    "food_groups",
+    "daily_care",
+    "birth_plan",
 }
 
 ALL_KB_IDS = list(FIVE_TOPIC_IDS)
 
 # Card ID expectations: English IDs exist; sw IDs follow the _sw suffix convention.
 EN_CARD_IDS = {
-    "anc_purpose_en",
-    "pregnancy_records_en",
-    "food_variety_en",
-    "food_safety_en",
-    "birth_preparation_en",
+    "anc_visits_en",
+    "danger_signs_en",
+    "food_groups_en",
+    "daily_care_en",
+    "birth_plan_en",
 }
 SW_CARD_IDS = {
-    "anc_purpose_sw",
-    "pregnancy_records_sw",
-    "food_variety_sw",
-    "food_safety_sw",
-    "birth_preparation_sw",
+    "anc_visits_sw",
+    "danger_signs_sw",
+    "food_groups_sw",
+    "daily_care_sw",
+    "birth_plan_sw",
 }
 
 
@@ -392,7 +392,7 @@ class TestLanguageEligibilityWithSwCards:
         h = _make_staging_harness(ALL_KB_IDS, language="en")
         h.run("Why should I go to ANC?")
         assert h.temp_state["answer_route"] == "CARD"
-        assert h.temp_state["matched_card"] == "anc_purpose_en"
+        assert h.temp_state["matched_card"] == "anc_visits_en"
 
     def test_en_participant_cannot_match_sw_card(self):
         """English participant must NOT receive a sw card — language guard."""
@@ -461,11 +461,11 @@ class TestLanguageEligibilityWithSwCards:
 # None = must NOT force any wrong card.
 SWAHILI_AUTHORED_CHECK_CORPUS = [
     # In-scope: natural Swahili paraphrases of the five topics
-    ("Kwa nini niende kliniki ya ujauzito?", "anc_purpose_sw", "anc topic paraphrase"),
-    ("Nihifadhi rekodi zangu za ujauzito?", "pregnancy_records_sw", "records topic paraphrase"),
-    ("Nile chakula gani wakati wa ujauzito?", "food_variety_sw", "food variety paraphrase"),
-    ("Chakula salama na safi kwa mjamzito ni muhimu?", "food_safety_sw", "food safety paraphrase"),
-    ("Nijiandae vipi kwa kujifungua?", "birth_preparation_sw", "birth prep paraphrase"),
+    ("Kwa nini niende kliniki ya ujauzito?", "anc_visits_sw", "anc topic paraphrase"),
+    ("Ni dalili zipi za hatari ninazopaswa kuangalia?", "danger_signs_sw", "danger signs paraphrase"),
+    ("Nile chakula gani wakati wa ujauzito?", "food_groups_sw", "food groups paraphrase"),
+    ("Ninywe maji kiasi gani kila siku nikiwa mjamzito?", "daily_care_sw", "daily care paraphrase"),
+    ("Nitajiandaa vipi kwa ajili ya kujifungua?", "birth_plan_sw", "birth plan paraphrase"),
     # Out-of-scope: must NOT force any card
     ("Nina maumivu makali", None, "symptoms — no matching sw card"),
     ("Dawa gani ninywee?", None, "medicine — out of scope"),

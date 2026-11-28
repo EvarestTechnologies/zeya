@@ -1,141 +1,156 @@
-# Zeya knowledge base v0.1
+# Zeya runtime knowledge entries
 
-Status: Production-eligible starter content.
-Language: English (en) with Kiswahili (sw) counterparts. No clinical validation is claimed.
-Purpose: source-linked starting point for knowledge selection, answer-card matching, prompt grounding and evaluation tooling.
+Status: Ministry of Health entries for release 1. An entry goes live only when its box in `docs/review/clinical-signoff.md` (section B2) is ticked.
+Language: English (en) with Kiswahili (sw) counterparts. Every Kiswahili entry is a DRAFT, pending fluent-speaker and clinical review.
+Purpose: the only text the knowledge context, answer cards and AI prompt may use.
 
-Scope: general antenatal education only. No diagnoses, drug doses, personalised visit schedules, symptom reassurance, new emergency contacts or facility recommendations. The existing deterministic danger-sign check runs before any knowledge selection and is not changed by this file. Unsupported-question reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+Scope: general antenatal education only, in Mother and Child Health Handbook wording. No diagnoses, medicine doses, personalised visit schedules, symptom reassurance, new emergency contacts or facility recommendations. The deterministic danger-sign check runs before any knowledge selection and is not changed by this file. Unsupported-question reply: "I do not have reviewed information to answer that question. Please ask your healthcare provider."
+
+Clinical source of truth: `docs/clinical/moh-knowledge-base.md`. The archived starter entries are in `docs/archive/who-starter/` and are not loaded.
 
 Sources:
-[1] https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
-[2] https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy
+[HB] Ministry of Health Kenya, Mother and Child Health Handbook (MOH 216), 2020
+[NG24] Ministry of Health Kenya, National Guidelines on Quality Obstetrics and Perinatal Care, August 2024
+[BOP] Ministry of Health Kenya, Basic Obstetric Protocols, 1st edition, January 2026
+
+Each entry ends with its source label, which cards show and the AI repeats.
 
 ---
 
-## anc_purpose
+## anc_visits
 
 Review-state: approved
 Language: en
-Topics: anc, pregnancy, education
+Topics: anc, clinic, visits, handbook
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB p13, HB cover
 
-Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend.
+Go for your first antenatal visit as soon as possible, and attend 8 times during your pregnancy. Carry your Mother and Child Health Handbook to every visit and show it to the health worker.
+Source: MOH Mother and Child Health Handbook.
 
 ---
 
-## pregnancy_records
+## danger_signs
 
 Review-state: approved
 Language: en
-Topics: records, pregnancy, education
+Topics: danger signs, emergency, facility
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB p14
 
-Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand.
+Danger signs in pregnancy: severe headache, looking pale, vaginal bleeding, fever, severe abdominal pain, swelling of the face and hands, reduced or no movement of the baby, breaking water, and convulsions or fits. If you have any of these signs, go to a health facility now.
+Source: MOH Mother and Child Health Handbook.
 
 ---
 
-## food_variety
+## daily_care
 
 Review-state: approved
 Language: en
-Topics: nutrition, food, pregnancy, education
+Topics: daily care, water, rest, net, exercise
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy
+Source-refs: HB p13
 
-Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs.
+Eat one extra meal every day. Drink plenty of water, at least 8 glasses a day. Take iron and folic acid supplements every day throughout pregnancy. Avoid heavy work and rest more. Sleep under a long-lasting insecticidal net. Do regular gentle exercise.
+Source: MOH Mother and Child Health Handbook.
 
 ---
 
-## food_safety
+## food_groups
 
 Review-state: approved
 Language: en
-Topics: nutrition, food, safety, education
+Topics: food, nutrition, diet
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy
+Source-refs: HB p18
 
-Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy.
+Eat at least 5 of the 10 food groups every day: grains and starchy foods, legumes and pulses, nuts and seeds, dairy, eggs, meat, fish and poultry, orange and yellow fruits and vegetables, dark green leafy vegetables, other vegetables, and other fruits. Eat a variety of foods within each group.
+Source: MOH Mother and Child Health Handbook.
 
 ---
 
-## birth_preparation
+## birth_plan
 
 Review-state: approved
 Language: en
-Topics: birth, preparation, planning, education
+Topics: birth plan, delivery, preparation, partner
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB inside cover, HB p3
 
-Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance.
+Make a birth plan with your health worker: expected date of birth, the health facility where you will give birth, who will attend you, the facility's phone number, your birth companion, transport and a blood donor. Your partner can help by arranging transport, money, a birth companion and an emergency kit.
+Source: MOH Mother and Child Health Handbook.
 
 ---
 
-## anc_purpose
+## anc_visits
 
 Review-state: approved
 Language: sw
-Topics: anc, ujauzito, elimu
+Topics: kliniki, ujauzito, ziara, kitabu
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB p13, HB cover
 
-Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza.
+Nenda kliniki ya wajawazito mapema iwezekanavyo, na uhudhurie mara 8 katika kipindi cha ujauzito wako. Beba Kitabu cha Afya ya Mama na Mtoto kila mara uendapo kliniki na uonyeshe muhudumu wa afya.
+Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
 
-## pregnancy_records
+## danger_signs
 
 Review-state: approved
 Language: sw
-Topics: rekodi, ujauzito, elimu
+Topics: dalili za hatari, dharura, kituo cha afya
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB p14
 
-Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi.
+Dalili za hatari wakati wa ujauzito: maumivu makali ya kichwa, kuonekana kupauka, kutokwa na damu ukeni, homa, maumivu makali ya tumbo, kuvimba uso na mikono, mtoto tumboni kucheza kidogo au kutocheza kabisa, maji kutoka ukeni (chupa kupasuka), na degedege au kifafa. Ukiwa na dalili yoyote kati ya hizi, nenda kituo cha afya sasa hivi.
+Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
 
-## food_variety
+## daily_care
 
 Review-state: approved
 Language: sw
-Topics: lishe, chakula, ujauzito, elimu
+Topics: kujitunza, maji, kupumzika, chandarua, mazoezi
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy
+Source-refs: HB p13
 
-Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi.
+Kula mlo mmoja wa ziada kila siku. Kunywa maji mengi, angalau glasi 8 kwa siku. Meza vidonge vya madini ya chuma na asidi ya foliki (IFAS) kila siku katika kipindi chote cha ujauzito. Epuka kazi nzito na upumzike zaidi. Lala ndani ya chandarua chenye dawa cha muda mrefu. Fanya mazoezi mepesi mara kwa mara.
+Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
 
-## food_safety
+## food_groups
 
 Review-state: approved
 Language: sw
-Topics: lishe, chakula, usalama, elimu
+Topics: chakula, lishe, vyakula
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy
+Source-refs: HB p18
 
-Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito.
+Kula angalau makundi 5 kati ya makundi 10 ya vyakula kila siku: nafaka na vyakula vya wanga, jamii ya kunde, karanga na mbegu, maziwa na bidhaa zake, mayai, nyama, samaki na kuku, matunda na mboga za rangi ya machungwa na njano, mboga za majani ya kijani kibichi, mboga nyingine, na matunda mengine. Kula vyakula mbalimbali ndani ya kila kundi.
+Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.
 
 ---
 
-## birth_preparation
+## birth_plan
 
 Review-state: approved
 Language: sw
-Topics: kujifungua, maandalizi, mipango, elimu
+Topics: mpango wa kujifungua, maandalizi, mwenzi
 Min-week:
 Max-week:
-Source-refs: https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy
+Source-refs: HB inside cover, HB p3
 
-Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao.
+Andaa mpango wa kujifungua pamoja na muhudumu wa afya: tarehe inayotarajiwa ya kujifungua, kituo cha afya utakapojifungulia, atakayekuhudumia, nambari ya simu ya kituo, mtu wa kukusindikiza wakati wa kujifungua, usafiri, na mtu wa kuchangia damu. Mwenzi wako anaweza kusaidia kwa kupanga usafiri, pesa, mtu wa kukusindikiza na vifaa vya dharura.
+Chanzo: Kitabu cha Afya ya Mama na Mtoto, Wizara ya Afya.

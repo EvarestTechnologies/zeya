@@ -45,7 +45,7 @@ def main(input: str, **kwargs) -> str:
         "Welcome to the Antenatal Education Chatbot! I am here to help you with "
         "information about your pregnancy journey.\n\n"
         "This is a research study chatbot that provides educational information about "
-        "maternal health based on WHO and Kenya Ministry of Health guidelines.\n\n"
+        "maternal health based on Kenya Ministry of Health materials.\n\n"
         "Important: This is educational information, not medical diagnosis. Always "
         "consult your healthcare provider for medical advice.\n\n"
         'Tip: save this number in your contacts as "Zeya" so you can find me easily.\n\n'
@@ -56,7 +56,7 @@ def main(input: str, **kwargs) -> str:
         "Karibu kwenye Chatbot ya Elimu ya Ujauzito! Niko hapa kukusaidia na "
         "habari kuhusu safari yako ya ujauzito.\n\n"
         "Hii ni chatbot ya utafiti inayotoa habari za kielimu kuhusu afya ya mama "
-        "kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya.\n\n"
+        "kulingana na machapisho ya Wizara ya Afya ya Kenya.\n\n"
         "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima "
         "wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
         'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.\n\n'
@@ -65,8 +65,8 @@ def main(input: str, **kwargs) -> str:
     )
     public_welcome_en = (
         "Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\n\n"
-        "I share educational information about maternal health based on WHO and Kenya Ministry "
-        "of Health guidelines.\n\n"
+        "I share educational information about maternal health based on Kenya Ministry "
+        "of Health materials.\n\n"
         "Important: This is educational information, not medical diagnosis. Always consult your "
         "healthcare provider for medical advice.\n\n"
         "Your messages are stored securely so that ZEYA can reply to you. "
@@ -76,7 +76,7 @@ def main(input: str, **kwargs) -> str:
     )
     public_welcome_sw = (
         "Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\n\n"
-        "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na "
+        "Ninatoa habari za kielimu kuhusu afya ya mama kulingana na machapisho ya "
         "Wizara ya Afya ya Kenya.\n\n"
         "Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na "
         "mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\n\n"
@@ -85,25 +85,17 @@ def main(input: str, **kwargs) -> str:
         'Kidokezo: hifadhi nambari hii kwenye anwani zako kama "Zeya" ili unipate kwa urahisi.\n\n'
         "Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA."
     )
+    # Week context for the AI, not a message to the participant. The topics are the
+    # NG24 p107 ANC teaching topics (National Guidelines on Quality Obstetrics and
+    # Perinatal Care, 2024), keyed by week. Approved in sign-off C3, 27 November 2026.
     gestational_guidance = [
-        (
-            1,
-            12,
-            "First trimester: Focus on nutrition (folate, iron), managing morning sickness, "
-            "first ANC visit importance, and avoiding harmful substances.",
-        ),
-        (
-            13,
-            26,
-            "Second trimester: Focus on balanced diet, fetal movement awareness, "
-            "anomaly screening, dental care, and preparing for birth.",
-        ),
-        (
-            27,
-            40,
-            "Third trimester: Focus on birth preparedness, recognizing labor signs, "
-            "danger signs awareness, breastfeeding preparation, and newborn care.",
-        ),
+        (1, 12, "First contact: history, examination and the ANC profile"),
+        (13, 20, "Why ANC matters, iron and folic acid, self care"),
+        (21, 26, "Danger signs in pregnancy, why to give birth in a health facility"),
+        (27, 30, "Birth plan, danger signs, exclusive breastfeeding"),
+        (31, 34, "Newborn care, breastfeeding position and attachment, family planning after birth"),
+        (35, 36, "Kangaroo mother care, keeping the newborn warm, cord care"),
+        (37, 42, "Signs of labour, newborn care recap"),
     ]
 
     language_choice_msg = "Please choose your language / Tafadhali chagua lugha yako:\n1. English\n2. Kiswahili"

@@ -8,7 +8,10 @@ The header and footer are the same as backend/app/services/danger_signs.py
 get_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is
 open to women anywhere in Kenya, so this lists national emergency numbers instead
 (methodological change 9). Each number must be confirmed by calling it before a
-release; see docs/ocs-migration.md.
+release; see docs/ocs-migration.md. The numbers below were verified by calling
+(docs/review/clinical-signoff.md, section D, 27 and 28 November 2026). The four Migori
+County ambulance dispatch numbers were confirmed by Stella Oiro on 28 November 2026. The Kiswahili text is
+a DRAFT, pending fluent-speaker and clinical review (answers K1, 27 November 2026).
 
 Language comes from participant data ``language_preference``; anything other than
 "sw" gets English, as in Zeya.
@@ -24,32 +27,29 @@ def main(input: str, **kwargs) -> str:
         "3. Do NOT wait to see if symptoms improve on their own.\n\n"
     )
     header_sw = (
-        "DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. "
-        "Tafadhali fanya yafuatayo mara moja:\n\n"
-        "1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.\n"
-        "2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.\n"
-        "3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.\n\n"
+        "DHARURA: Hii inaweza kuwa dalili ya hatari inayohitaji matibabu ya haraka. "
+        "Fanya yafuatayo sasa hivi:\n\n"
+        "1. Nenda kituo cha afya kilicho karibu nawe mara moja, au piga simu ya dharura.\n"
+        "2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kufika kituo cha afya.\n"
+        "3. USISUBIRI kuona kama dalili zitapungua zenyewe.\n\n"
     )
     footer_en = (
         "\n\nThis is educational information, not medical diagnosis. "
         "Always consult your healthcare provider for medical advice."
     )
-    footer_sw = (
-        "\n\nHii ni taarifa ya kielimu, si utambuzi wa kimatibabu. "
-        "Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu."
-    )
+    footer_sw = "\n\nHii ni taarifa ya kielimu, si utambuzi wa ugonjwa. Kwa ushauri, wasiliana na muhudumu wa afya."
 
     numbers_en = (
-        "Emergency numbers (anywhere in Kenya):\n"
+        "Emergency numbers:\n"
+        "- Ambulance: 922 (free)\n"
         "- Emergency services: 999 or 112\n"
-        "- National ambulance: 922\n"
-        "- Kenya Red Cross: 1199"
+        "- Migori County ambulance: 0740 587 479, 0740 588 519, 0740 588 853 or +254 724 024 296"
     )
     numbers_sw = (
-        "Nambari za dharura (popote nchini Kenya):\n"
+        "Nambari za dharura:\n"
+        "- Ambulensi: 922 (bila malipo)\n"
         "- Huduma za dharura: 999 au 112\n"
-        "- Ambulensi ya kitaifa: 922\n"
-        "- Shirika la Msalaba Mwekundu Kenya: 1199"
+        "- Ambulensi ya Kaunti ya Migori: 0740 587 479, 0740 588 519, 0740 588 853 au +254 724 024 296"
     )
 
     language = (get_participant_data() or {}).get("language_preference")
