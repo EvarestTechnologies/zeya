@@ -40,8 +40,16 @@ LLM_REPLY = "Eat a balanced diet, Mama."
 
 # Exact referral texts from ocs/nodes/knowledge_referral.py.
 # Never changed here; changing the node is the single source of truth.
-EN_REFERRAL = "I do not have reviewed information to answer that question. Please ask your healthcare provider."
-SW_REFERRAL = "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya."
+EN_REFERRAL = (
+    "I do not have reviewed information to answer that question. Please ask your healthcare provider.\n\n"
+    "To talk to a person, visit your nearest health facility or ask your community health promoter. "
+    "In an emergency, call 922, free from any phone."
+)
+SW_REFERRAL = (
+    "Sina taarifa iliyokaguliwa ya kujibu swali hilo. Tafadhali muulize muhudumu wa afya.\n\n"
+    "Ili kuzungumza na mtu, tembelea kituo cha afya kilicho karibu nawe au muulize muhudumu wa afya ya jamii. "
+    "Kwa dharura, piga 922 bila malipo."
+)
 
 REGISTERED = {
     "welcome_sent": True,
@@ -81,6 +89,10 @@ def fake_llm():
 
 @pytest.fixture()
 def pipeline(db):
+    return _import_pipeline()
+
+
+def _import_pipeline() -> object:
     provider = LlmProviderFactory.create()
     provider_model = LlmProviderModelFactory.create()
     pipeline = PipelineFactory.create()
@@ -96,8 +108,7 @@ def pipeline(db):
     return pipeline
 
 
-@pytest.fixture()
-def run(pipeline):
+def _make_run(pipeline):
     session = ExperimentSessionFactory.create()
     runnable = PipelineGraph.build_from_pipeline(pipeline).build_runnable()
     config = {"configurable": {"repo": ORMRepository(session=session)}}
@@ -107,6 +118,17 @@ def run(pipeline):
         return runnable.invoke(state, config=config)
 
     return _run
+
+
+@pytest.fixture()
+def run(pipeline):
+    return _make_run(pipeline)
+
+
+@pytest.fixture()
+def run_no_kb(db, all_pending_content):
+    """Runner for the shipped content with every KB entry and card marked pending."""
+    return _make_run(_import_pipeline())
 
 
 def _tags(output) -> list[str]:
@@ -187,7 +209,7 @@ def test_danger_message_during_partial_registration_recovery_gets_emergency(run,
     assert output["participant_data"]["registration_complete"] is False
 
 
-def test_safe_message_from_registered_user_default_no_kb_referral(run, fake_llm):
+def test_safe_message_from_registered_user_default_no_kb_referral(run_no_kb, fake_llm):
     """With all-pending KB content, a registered participant receives a fixed referral.
 
     New default-no-KB semantics: build_pipeline(approved-only) bakes KB_JSON='[]'.
@@ -200,7 +222,7 @@ def test_safe_message_from_registered_user_default_no_kb_referral(run, fake_llm)
     """
     llm, get_llm_service = fake_llm
 
-    output = run("What should I eat?", REGISTERED)
+    output = run_no_kb("What should I eat?", REGISTERED)
 
     reply = output["messages"][-1]
     assert reply == EN_REFERRAL, f"Expected EN referral, got: {reply!r}"
@@ -253,7 +275,7 @@ FULL_FLOW_CASES = [
 
 @pytest.mark.parametrize(("is_study", "language", "choice_reply", "consent_reply", "name", "weeks"), FULL_FLOW_CASES)
 def test_full_multiturn_registration_default_no_kb_referral(
-    run, fake_llm, is_study, language, choice_reply, consent_reply, name, weeks
+    run_no_kb, fake_llm, is_study, language, choice_reply, consent_reply, name, weeks
 ):
     """End-to-end multi-turn registration; final question returns language-specific referral.
 
@@ -274,14 +296,14 @@ def test_full_multiturn_registration_default_no_kb_referral(
     llm, get_llm_service = fake_llm
     seed = {"study_participant": True} if is_study else {}
 
-    choice_turn = run("Hello", seed)
+    choice_turn = run_no_kb("Hello", seed)
     assert choice_turn["messages"][-1] == (
         "Please choose your language / Tafadhali chagua lugha yako:\n1. English\n2. Kiswahili"
     )
     assert "welcome_sent" not in choice_turn["participant_data"]
     assert llm.calls == []
 
-    welcome_turn = run(choice_reply, choice_turn["participant_data"])
+    welcome_turn = run_no_kb(choice_reply, choice_turn["participant_data"])
     welcome_reply = welcome_turn["messages"][-1]
     assert welcome_turn["participant_data"]["language_preference"] == language
     assert welcome_turn["participant_data"]["welcome_sent"] is True
@@ -292,18 +314,18 @@ def test_full_multiturn_registration_default_no_kb_referral(
         assert welcome_reply.startswith("Karibu ZEYA!" if language == "sw" else "Welcome to ZEYA!")
     assert llm.calls == []
 
-    consent_turn = run(consent_reply, welcome_turn["participant_data"])
+    consent_turn = run_no_kb(consent_reply, welcome_turn["participant_data"])
     assert consent_turn["participant_data"]["consent_given"] is True
     assert "name" in consent_turn["messages"][-1].lower() or "jina" in consent_turn["messages"][-1].lower()
     assert llm.calls == []
 
-    name_turn = run(name, consent_turn["participant_data"])
+    name_turn = run_no_kb(name, consent_turn["participant_data"])
     assert name_turn["participant_data"]["name_collected"] is True
     assert name_turn["participant_data"]["name"] == name
     assert name in name_turn["messages"][-1]
     assert llm.calls == []
 
-    weeks_turn = run(str(weeks), name_turn["participant_data"])
+    weeks_turn = run_no_kb(str(weeks), name_turn["participant_data"])
     assert weeks_turn["participant_data"]["registration_complete"] is True
     assert weeks_turn["participant_data"]["gestational_age_at_enrollment"] == weeks
     assert "20" in weeks_turn["messages"][-1] or str(weeks) in weeks_turn["messages"][-1]
@@ -311,7 +333,7 @@ def test_full_multiturn_registration_default_no_kb_referral(
 
     # G202: exact fixed referral per saved language; zero model calls throughout.
     question = "Ninapaswa kula nini?" if language == "sw" else "What should I eat?"
-    answer_turn = run(question, weeks_turn["participant_data"])
+    answer_turn = run_no_kb(question, weeks_turn["participant_data"])
 
     expected_referral = SW_REFERRAL if language == "sw" else EN_REFERRAL
     reply = answer_turn["messages"][-1]
