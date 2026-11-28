@@ -178,17 +178,19 @@ class TestDangerSignDetection:
 class TestEmergencyResponse:
     """Tests for get_emergency_response function."""
 
-    def test_english_response(self):
-        response = get_emergency_response("en")
+    # get_emergency_response is async and takes the database session first, so the
+    # language must be passed by name and the call awaited.
+    async def test_english_response(self):
+        response = await get_emergency_response(language="en")
         assert "URGENT" in response
         assert "Migori County Referral Hospital" in response
         assert "educational information" in response
 
-    def test_swahili_response(self):
-        response = get_emergency_response("sw")
+    async def test_swahili_response(self):
+        response = await get_emergency_response(language="sw")
         assert "DHARURA" in response
         assert "Kaunti ya Migori" in response
 
-    def test_default_is_english(self):
-        response = get_emergency_response()
+    async def test_default_is_english(self):
+        response = await get_emergency_response()
         assert "URGENT" in response
