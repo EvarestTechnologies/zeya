@@ -10,6 +10,9 @@ rule 3). Run it after every deploy and on a schedule; it exits 1 on any differen
         https://openchatstudio.co.ke/a/evarest/pipelines/data/<pipeline id>/ > live.json
     python -m ocs.check_drift live.json --llm-provider-id 7 --llm-provider-model-id 31
 
+    # A rules-only version (#26) has no LLM node, so it takes no provider ids:
+    python -m ocs.check_drift live.json --rules-only
+
 Compared: node set, node types, edges (by node name and handle), all Python node
 code, router settings, the LLM prompt, history and model parameters.
 The LLM provider and model ids are specific to the instance, so the expected values are
@@ -24,6 +27,7 @@ import sys
 from ocs.build_pipeline import build_pipeline
 
 INSTANCE_PARAMS = ("llm_provider_id", "llm_provider_model_id")
+RULES_ONLY_NODE = "rules_only_reply"
 
 
 def _flow(document: dict) -> dict:
@@ -72,18 +76,27 @@ def find_drift(
     llm_provider_id: int | None = None,
     llm_provider_model_id: int | None = None,
     include_pending: bool = False,
+    rules_only: bool = False,
 ) -> list[str]:
     """Return human-readable differences between the live pipeline and the repository.
 
     include_pending=False (default): compare against the approved-only production build.
     include_pending=True: compare against a staging build that includes pending content.
     The staging flag must match what was used when the pipeline was deployed.
+    rules_only=True: compare against the rules-only build (#26), which has no LLM node.
     """
-    expected_flow = build_pipeline(0, 0, include_pending=include_pending)["data"]
+    expected_flow = build_pipeline(0, 0, include_pending=include_pending, rules_only=rules_only)["data"]
     expected_nodes, expected_edges = _describe(expected_flow)
     required_instance_params = _instance_param_requirements(expected_flow)
     live_nodes, live_edges = _describe(_flow(live_document))
     problems = []
+
+    # Name the likely cause first: checking one mode's version against the other build.
+    live_is_rules_only = RULES_ONLY_NODE in live_nodes
+    if live_is_rules_only and not rules_only:
+        problems.append("the live pipeline is the rules-only build; check it with --rules-only")
+    elif rules_only and not live_is_rules_only:
+        problems.append("the live pipeline is not the rules-only build; check it without --rules-only")
 
     for name in sorted(expected_nodes.keys() - live_nodes.keys()):
         problems.append(f"missing node: {name}")
@@ -118,19 +131,38 @@ def find_drift(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("live", help="JSON from GET /a/<team>/pipelines/data/<id>/ ('-' for stdin)")
-    parser.add_argument("--llm-provider-id", type=int, required=True, help="the Gemini provider id on the instance")
-    parser.add_argument("--llm-provider-model-id", type=int, required=True, help="the deployed model id")
+    parser.add_argument(
+        "--llm-provider-id", type=int, help="the Gemini provider id on the instance (required unless --rules-only)"
+    )
+    parser.add_argument(
+        "--llm-provider-model-id", type=int, help="the deployed model id (required unless --rules-only)"
+    )
     parser.add_argument(
         "--include-pending",
         action="store_true",
         default=False,
         help="compare against the staging build (pending content eligible); must match deployment flag",
     )
+    parser.add_argument(
+        "--rules-only",
+        action="store_true",
+        default=False,
+        help="compare against the rules-only build (#26), which has no LLM node and takes no provider ids",
+    )
     args = parser.parse_args(argv)
+    has_ids = args.llm_provider_id is not None or args.llm_provider_model_id is not None
+    if args.rules_only and has_ids:
+        parser.error("--rules-only takes no provider ids: the rules-only build has no LLM node")
+    if not args.rules_only and (args.llm_provider_id is None or args.llm_provider_model_id is None):
+        parser.error("--llm-provider-id and --llm-provider-model-id are required (a model switched in the UI is drift)")
 
     with sys.stdin if args.live == "-" else open(args.live, encoding="utf-8") as f:
         problems = find_drift(
-            json.load(f), args.llm_provider_id, args.llm_provider_model_id, include_pending=args.include_pending
+            json.load(f),
+            args.llm_provider_id,
+            args.llm_provider_model_id,
+            include_pending=args.include_pending,
+            rules_only=args.rules_only,
         )
 
     if problems:

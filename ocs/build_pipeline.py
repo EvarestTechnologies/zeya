@@ -11,6 +11,10 @@ Build the Zeya Open Chat Studio pipeline from the sources in this directory.
         Regenerate with pending KB/card content eligible (synthetic staging ONLY).
         Never used for production deployment; pending review_status is preserved.
 
+    python -m ocs.build_pipeline --rules-only --write
+        Regenerate ocs/pipeline/zeya_pipeline_rules_only.json: the same pipeline with
+        no LLM node (#26). Publish it as its own version; see docs/ocs-migration.md.
+
 The output is OCS FlowPipelineData (apps/pipelines/flow.py), the body accepted by
 POST /a/<team>/pipelines/data/<pk>/. See docs/ocs-migration.md for the shape.
 
@@ -36,6 +40,13 @@ Default approved-only build:
 Staging flag (--include-pending):
     Pending entries are eligible with an explicit runtime flag; pending review_status
     is never changed to 'approved'.  Use only for synthetic test fixtures.
+
+Rules-only build (--rules-only):
+    The llm node is removed, and the budget check's VALID route goes to a fixed reply
+    instead:
+                        VALID       -> rules_only_reply -> end
+    Every other node and edge is the same as in the normal build, so an over-budget
+    message still gets the knowledge referral.
 """
 
 import argparse
@@ -52,6 +63,7 @@ OCS_DIR = Path(__file__).resolve().parent
 NODES_DIR = OCS_DIR / "nodes"
 SYSTEM_PROMPT_FILE = OCS_DIR / "prompts" / "system_prompt.txt"
 COMMITTED_PIPELINE = OCS_DIR / "pipeline" / "zeya_pipeline.json"
+COMMITTED_RULES_ONLY_PIPELINE = OCS_DIR / "pipeline" / "zeya_pipeline_rules_only.json"
 
 REPO_ROOT = OCS_DIR.parent
 KB_FILE = REPO_ROOT / "docs" / "zeya-knowledge-base.md"
@@ -59,6 +71,9 @@ CARDS_FILE = REPO_ROOT / "docs" / "answer-cards.yaml"
 POLICY_FILE = REPO_ROOT / "docs" / "output-policy.json"
 
 PIPELINE_NAME = "Zeya antenatal education"
+
+# The only node that calls a model. The rules-only build drops it and nothing else.
+LLM_NODE = "llm"
 
 
 def _node(node_id: str, node_type: str, params: dict, x: int, y: int, flow_type: str = "pipelineNode") -> dict:
@@ -84,7 +99,12 @@ def _code(name: str) -> str:
     return (NODES_DIR / f"{name}.py").read_text()
 
 
-def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pending: bool = False) -> dict:
+def build_pipeline(
+    llm_provider_id: int,
+    llm_provider_model_id: int,
+    include_pending: bool = False,
+    rules_only: bool = False,
+) -> dict:
     """Build the full pipeline.
 
     include_pending=False (default / production): only approved KB entries and
@@ -94,6 +114,9 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
     include_pending=True (synthetic staging ONLY): pending entries carry an
         explicit eligible=True runtime flag without changing their review_status.
         Never deployed to production; used only for integration test fixtures.
+    rules_only=True: the LLM_NODE is removed and the budget check's VALID route goes
+        to the fixed rules_only_reply node, so the pipeline has no LLM node (#26). The
+        provider ids are then unused.
     """
     # Render knowledge-based nodes from their respective data sources.
     # check_drift compares the rendered code from these calls against the live
@@ -261,12 +284,36 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         _edge("llm", "output_guard"),
         _edge("output_guard", "end"),
     ]
+    if rules_only:
+        # Derived from the normal graph, so the two builds differ only where the model was.
+        nodes = [n for n in nodes if n["id"] != LLM_NODE]
+        nodes.append(
+            _node(
+                "rules_only_reply",
+                "CodeNode",
+                {"name": "rules_only_reply", "code": _code("rules_only_reply")},
+                3000,
+                600,
+            )
+        )
+        edges = [e for e in edges if LLM_NODE not in (e["source"], e["target"])]
+        edges += [
+            _edge("budget_router", "rules_only_reply", "output_1"),  # VALID → fixed reply, no model
+            _edge("rules_only_reply", "end"),
+        ]
     return {"name": PIPELINE_NAME, "data": {"nodes": nodes, "edges": edges}}
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--write", action="store_true", help=f"write {COMMITTED_PIPELINE.relative_to(OCS_DIR.parent)}")
+    parser.add_argument(
+        "--write",
+        action="store_true",
+        help=(
+            f"write {COMMITTED_PIPELINE.relative_to(REPO_ROOT)} "
+            f"(or {COMMITTED_RULES_ONLY_PIPELINE.relative_to(REPO_ROOT)} with --rules-only)"
+        ),
+    )
     parser.add_argument("--llm-provider-id", type=int, default=0)
     parser.add_argument("--llm-provider-model-id", type=int, default=0)
     parser.add_argument(
@@ -278,12 +325,23 @@ def main(argv: list[str] | None = None) -> int:
             "Never use for production deployment; pending review_status is preserved."
         ),
     )
+    parser.add_argument(
+        "--rules-only",
+        action="store_true",
+        default=False,
+        help="build without the LLM node: a question for the model gets a fixed reply (#26); provider ids are unused",
+    )
     args = parser.parse_args(argv)
 
-    pipeline = build_pipeline(args.llm_provider_id, args.llm_provider_model_id, include_pending=args.include_pending)
+    pipeline = build_pipeline(
+        args.llm_provider_id,
+        args.llm_provider_model_id,
+        include_pending=args.include_pending,
+        rules_only=args.rules_only,
+    )
     output = json.dumps(pipeline, indent=2, ensure_ascii=False) + "\n"
     if args.write:
-        COMMITTED_PIPELINE.write_text(output)
+        (COMMITTED_RULES_ONLY_PIPELINE if args.rules_only else COMMITTED_PIPELINE).write_text(output)
     else:
         sys.stdout.write(output)
     return 0

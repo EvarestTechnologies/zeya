@@ -1,0 +1,478 @@
+{
+  "name": "Zeya antenatal education",
+  "data": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "startNode",
+        "position": {
+          "x": 0,
+          "y": 200
+        },
+        "data": {
+          "id": "start",
+          "type": "StartNode",
+          "label": "",
+          "params": {
+            "name": "start"
+          }
+        }
+      },
+      {
+        "id": "danger_gate",
+        "type": "pipelineNode",
+        "position": {
+          "x": 300,
+          "y": 200
+        },
+        "data": {
+          "id": "danger_gate",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "danger_gate",
+            "code": "\"\"\"\nOpen Chat Studio Python node: deterministic obstetric danger-sign gate.\n\nSource of truth for the first node after Start in the Zeya pipeline. Do not edit\nthis node in the OCS UI; change this file, run ``make test-ocs`` and redeploy\n(see docs/ocs-migration.md).\n\nThe patterns are verbatim copies of DANGER_SIGN_PATTERNS in\nbackend/app/services/danger_signs.py, enforced by ocs/tests/test_danger_gate_parity.py.\nThey live inside ``main`` because OCS executes node code with separate locals, so\nmodule-level names are not visible to ``main``.\n\nOutputs (temp state):\n    danger_route: \"EMERGENCY\" or \"SAFE\", read by the Static Router that follows.\n    danger_categories: matched categories, in detection order.\n    danger_keywords: the matched text, one per category.\nReturns the user's message unchanged so the SAFE branch receives it.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import re\n\n    # Danger sign keyword patterns grouped by category.\n    # Each pattern is compiled as case-insensitive regex.\n    danger_sign_patterns = [\n        (\"bleeding\", [\n            re.compile(r\"\\b(heavy\\s+)?bleeding\\b\", re.IGNORECASE),\n            re.compile(r\"\\bexcessive\\s+blood\\b\", re.IGNORECASE),\n            re.compile(r\"\\bblood\\s+(clots?|loss)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bkutoka\\s+damu\\b\", re.IGNORECASE),  # Swahili: bleeding\n            re.compile(r\"\\bdamu\\s+nyingi\\b\", re.IGNORECASE),  # Swahili: heavy blood\n        ]),\n        (\"headache_vision\", [\n            re.compile(r\"\\bsevere\\s+headache\\b\", re.IGNORECASE),\n            re.compile(r\"\\bblurred?\\s+vision\\b\", re.IGNORECASE),\n            re.compile(r\"\\bvision\\s+(is\\s+)?blurred?\\b\", re.IGNORECASE),\n            re.compile(r\"\\bseeing\\s+(spots?|stars?)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bkichwa\\s+kuuma\\b\", re.IGNORECASE),  # Swahili: headache\n            re.compile(r\"\\bmacho\\s+kuona\\s+vibaya\\b\", re.IGNORECASE),  # Swahili: blurred vision\n        ]),\n        (\"fever\", [\n            re.compile(r\"\\bhigh\\s+fever\\b\", re.IGNORECASE),\n            re.compile(r\"\\bsevere\\s+fever\\b\", re.IGNORECASE),\n            re.compile(r\"\\bchills\\b\", re.IGNORECASE),\n            re.compile(r\"\\bhoma\\s+kali\\b\", re.IGNORECASE),  # Swahili: high fever\n            re.compile(r\"\\bbaridi\\s+mwilini\\b\", re.IGNORECASE),  # Swahili: chills\n        ]),\n        (\"fetal_movement\", [\n            re.compile(r\"\\breduced\\s+fetal\\s+movement\\b\", re.IGNORECASE),\n            re.compile(r\"\\bno\\s+(fetal\\s+)?movement\\b\", re.IGNORECASE),\n            re.compile(r\"\\bbaby\\s+(not\\s+moving|stopped?\\s+moving|isn'?t\\s+moving)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bcan'?t\\s+feel\\s+(the\\s+)?baby\\b\", re.IGNORECASE),\n            re.compile(r\"\\bmtoto\\s+ha(tembei|chezi)\\b\", re.IGNORECASE),  # Swahili: baby not moving\n        ]),\n        (\"abdominal_pain\", [\n            re.compile(r\"\\bsevere\\s+(abdominal\\s+)?pain\\b\", re.IGNORECASE),\n            re.compile(r\"\\bstomach\\s+pain\\b\", re.IGNORECASE),\n            re.compile(r\"\\bsharp\\s+pain\\b\", re.IGNORECASE),\n            re.compile(r\"\\btumbo\\s+kuuma\\s+sana\\b\", re.IGNORECASE),  # Swahili: severe stomach pain\n        ]),\n        (\"water_breaking\", [\n            re.compile(r\"\\bwater\\s+(break(ing|s)?|broke)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bfluid\\s+(leaking|leakage|gushing)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bleaking\\s+fluid\\b\", re.IGNORECASE),\n            re.compile(r\"\\bmaji\\s+ya(mekatika|kutoka)\\b\", re.IGNORECASE),  # Swahili: water breaking\n        ]),\n        (\"convulsions\", [\n            re.compile(r\"\\bconvulsion\\b\", re.IGNORECASE),\n            re.compile(r\"\\bseizure\\b\", re.IGNORECASE),\n            re.compile(r\"\\bloss\\s+of\\s+consciousness\\b\", re.IGNORECASE),\n            re.compile(r\"\\bfaint(ed|ing)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bpassed?\\s+out\\b\", re.IGNORECASE),\n            re.compile(r\"\\bdegedege\\b\", re.IGNORECASE),  # Swahili: convulsions\n            re.compile(r\"\\bkupoteza\\s+fahamu\\b\", re.IGNORECASE),  # Swahili: loss of consciousness\n        ]),\n        (\"swelling\", [\n            re.compile(r\"\\bsevere\\s+swelling\\b\", re.IGNORECASE),\n            re.compile(r\"\\bswollen\\s+(face|hands?|feet)\\b\", re.IGNORECASE),\n            re.compile(r\"\\bkuvimba\\s+sana\\b\", re.IGNORECASE),  # Swahili: severe swelling\n        ]),\n    ]\n\n    categories_found = []\n    keywords_found = []\n\n    for category, patterns in danger_sign_patterns:\n        for pattern in patterns:\n            match = pattern.search(input)\n            if match:\n                if category not in categories_found:\n                    categories_found.append(category)\n                keywords_found.append(match.group())\n                break  # One match per category is sufficient\n\n    set_temp_state_key(\"danger_route\", \"EMERGENCY\" if categories_found else \"SAFE\")\n    set_temp_state_key(\"danger_categories\", categories_found)\n    set_temp_state_key(\"danger_keywords\", keywords_found)\n\n    # Tags carry the detection into the OCS transcript export (see ocs/export_adapter.py).\n    # OCS tag names are limited to 100 characters.\n    # Keyword tags carry the category because OCS exports tags in alphabetical order.\n    for category in categories_found:\n        add_message_tag(\"danger_sign:\" + category)\n    for index in range(len(keywords_found)):\n        keyword = \" \".join(keywords_found[index].split())\n        add_message_tag((\"danger_keyword:\" + categories_found[index] + \":\" + keyword)[:100])\n\n    return input\n"
+          }
+        }
+      },
+      {
+        "id": "danger_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "data": {
+          "id": "danger_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "danger_router",
+            "data_source": "temp_state",
+            "route_key": "danger_route",
+            "keywords": [
+              "EMERGENCY",
+              "SAFE"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": true
+          }
+        }
+      },
+      {
+        "id": "emergency_response",
+        "type": "pipelineNode",
+        "position": {
+          "x": 900,
+          "y": 0
+        },
+        "data": {
+          "id": "emergency_response",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "emergency_response",
+            "code": "\"\"\"\nOpen Chat Studio Python node: emergency response for detected danger signs.\n\nRuns on the EMERGENCY branch of the danger router. There is no LLM on this branch,\nso the message never waits on model latency or availability.\n\nThe header and footer are the same as backend/app/services/danger_signs.py\nget_emergency_response(). Zeya listed five Migori facilities between them. ZEYA is\nopen to women anywhere in Kenya, so this lists national emergency numbers instead\n(methodological change 9). Each number must be confirmed by calling it before a\nrelease; see docs/ocs-migration.md.\n\nLanguage comes from participant data ``language_preference``; anything other than\n\"sw\" gets English, as in Zeya.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    header_en = (\n        \"URGENT: This sounds like it could be a danger sign that requires immediate \"\n        \"medical attention. Please do the following right away:\\n\\n\"\n        \"1. Go to your nearest health facility immediately or call emergency services.\\n\"\n        \"2. If you cannot travel, ask someone nearby to help you get to the hospital.\\n\"\n        \"3. Do NOT wait to see if symptoms improve on their own.\\n\\n\"\n    )\n    header_sw = (\n        \"DHARURA: Hii inaonekana kama dalili ya hatari inayohitaji matibabu ya haraka. \"\n        \"Tafadhali fanya yafuatayo mara moja:\\n\\n\"\n        \"1. Nenda hospitali iliyo karibu nawe mara moja au piga simu ya dharura.\\n\"\n        \"2. Ikiwa huwezi kusafiri, mwombe mtu aliye karibu akusaidie kwenda hospitalini.\\n\"\n        \"3. USISUBIRI kuona kama dalili zitaboreshwa zenyewe.\\n\\n\"\n    )\n    footer_en = (\n        \"\\n\\nThis is educational information, not medical diagnosis. \"\n        \"Always consult your healthcare provider for medical advice.\"\n    )\n    footer_sw = (\n        \"\\n\\nHii ni taarifa ya kielimu, si utambuzi wa kimatibabu. \"\n        \"Daima wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\"\n    )\n\n    numbers_en = (\n        \"Emergency numbers (anywhere in Kenya):\\n\"\n        \"- Emergency services: 999 or 112\\n\"\n        \"- National ambulance: 922\\n\"\n        \"- Kenya Red Cross: 1199\"\n    )\n    numbers_sw = (\n        \"Nambari za dharura (popote nchini Kenya):\\n\"\n        \"- Huduma za dharura: 999 au 112\\n\"\n        \"- Ambulensi ya kitaifa: 922\\n\"\n        \"- Shirika la Msalaba Mwekundu Kenya: 1199\"\n    )\n\n    language = (get_participant_data() or {}).get(\"language_preference\")\n    if language == \"sw\":\n        return header_sw + numbers_sw + footer_sw\n    return header_en + numbers_en + footer_en\n"
+          }
+        }
+      },
+      {
+        "id": "registration",
+        "type": "pipelineNode",
+        "position": {
+          "x": 900,
+          "y": 350
+        },
+        "data": {
+          "id": "registration",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "registration",
+            "code": "\"\"\"\nOpen Chat Studio Python node: study registration and LLM context.\n\nRuns on the SAFE branch, after the danger gate, so registration messages are\nalso checked for danger signs.\n\nPorts ConversationHandler._handle_registration (consent -> name -> gestational\nage) and AIEngine._build_context from the Zeya backend, using participant data in\nplace of the User table. Reply wording is unchanged for trial participants.\n\nAnyone in Kenya can use ZEYA. Only participants imported from the trial's enrolment\nlist have ``study_participant`` and get Zeya's study welcome and consent wording.\nEveryone else is asked to consent to using ZEYA and having messages stored.\n\nLanguage onboarding (Zeya #27): a participant without a valid stored/imported\nlanguage preference (``language_preference`` not \"en\"/\"sw\") is first shown a fixed,\ndeterministic bilingual choice -- no model call, and the triggering message's content\nis discarded, same as the old single-language first contact. Once they reply with a\nvalid choice (case-insensitive, whitespace-stripped \"1\"/\"English\" or\n\"2\"/\"Kiswahili\"/\"Swahili\"), the preference is persisted and the appropriate\nlanguage's welcome/consent (or, for a partially registered participant recovering a\nmissing/invalid preference, whatever prompt they were already waiting on) is sent as\na separate turn. The choice reply itself never grants consent or gets misread as a\npending name/weeks answer. An invalid/empty reply repeats the same choice without\nadvancing registration. A participant with an already-valid preference (explicit or\nimported) bypasses the choice entirely, and a fully registered participant is never\nsent back through it.\n\nThe Swahili wording below is a draft translation for fluent-speaker review. It is not\nclinically approved, and this change does not claim fluent-speaker or clinical sign-off.\n\nOutputs (temp state):\n    registration_route: \"REPLY\" (return this node's text to the user) or\n        \"REGISTERED\" (continue to the LLM with the user's message).\n    llm_context: context block for the LLM system prompt (REGISTERED only).\n\nRegistration replies are tagged \"registration\", and the first-contact turn also\n\"registration:first_contact\". Zeya never logged its registration replies or the\nfirst message, so ocs/export_adapter.py uses these tags to leave them out.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    welcome_en = (\n        \"Welcome to the Antenatal Education Chatbot! I am here to help you with \"\n        \"information about your pregnancy journey.\\n\\n\"\n        \"This is a research study chatbot that provides educational information about \"\n        \"maternal health based on WHO and Kenya Ministry of Health guidelines.\\n\\n\"\n        \"Important: This is educational information, not medical diagnosis. Always \"\n        \"consult your healthcare provider for medical advice.\\n\\n\"\n        'Tip: save this number in your contacts as \"Zeya\" so you can find me easily.\\n\\n'\n        \"Do you consent to participate in this study and receive antenatal education \"\n        \"messages? Please reply YES or NO.\"\n    )\n    welcome_sw = (\n        \"Karibu kwenye Chatbot ya Elimu ya Ujauzito! Niko hapa kukusaidia na \"\n        \"habari kuhusu safari yako ya ujauzito.\\n\\n\"\n        \"Hii ni chatbot ya utafiti inayotoa habari za kielimu kuhusu afya ya mama \"\n        \"kulingana na miongozo ya WHO na Wizara ya Afya ya Kenya.\\n\\n\"\n        \"Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima \"\n        \"wasiliana na mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\\n\\n\"\n        'Kidokezo: hifadhi nambari hii kwenye anwani zako kama \"Zeya\" ili unipate kwa urahisi.\\n\\n'\n        \"Je, unakubali kushiriki katika utafiti huu na kupokea ujumbe wa elimu ya \"\n        \"ujauzito? Tafadhali jibu NDIYO au HAPANA.\"\n    )\n    public_welcome_en = (\n        \"Welcome to ZEYA! I am here to help you with information about your pregnancy journey.\\n\\n\"\n        \"I share educational information about maternal health based on WHO and Kenya Ministry \"\n        \"of Health guidelines.\\n\\n\"\n        \"Important: This is educational information, not medical diagnosis. Always consult your \"\n        \"healthcare provider for medical advice.\\n\\n\"\n        \"Your messages are stored securely so that ZEYA can reply to you. \"\n        \"Privacy policy: https://evarestke.com/zeya/\\n\\n\"\n        'Tip: save this number in your contacts as \"Zeya\" so you can find me easily.\\n\\n'\n        \"Do you agree to use ZEYA and to have your messages stored? Please reply YES or NO.\"\n    )\n    public_welcome_sw = (\n        \"Karibu ZEYA! Niko hapa kukusaidia na habari kuhusu safari yako ya ujauzito.\\n\\n\"\n        \"Ninatoa habari za kielimu kuhusu afya ya mama kulingana na miongozo ya WHO na \"\n        \"Wizara ya Afya ya Kenya.\\n\\n\"\n        \"Muhimu: Hii ni habari ya kielimu, si utambuzi wa kimatibabu. Daima wasiliana na \"\n        \"mtoa huduma wako wa afya kwa ushauri wa kimatibabu.\\n\\n\"\n        \"Ujumbe wako huhifadhiwa kwa usalama ili ZEYA iweze kukujibu. \"\n        \"Sera ya faragha: https://evarestke.com/zeya/\\n\\n\"\n        'Kidokezo: hifadhi nambari hii kwenye anwani zako kama \"Zeya\" ili unipate kwa urahisi.\\n\\n'\n        \"Je, unakubali kutumia ZEYA na ujumbe wako kuhifadhiwa? Tafadhali jibu NDIYO au HAPANA.\"\n    )\n    gestational_guidance = [\n        (\n            1,\n            12,\n            \"First trimester: Focus on nutrition (folate, iron), managing morning sickness, \"\n            \"first ANC visit importance, and avoiding harmful substances.\",\n        ),\n        (\n            13,\n            26,\n            \"Second trimester: Focus on balanced diet, fetal movement awareness, \"\n            \"anomaly screening, dental care, and preparing for birth.\",\n        ),\n        (\n            27,\n            40,\n            \"Third trimester: Focus on birth preparedness, recognizing labor signs, \"\n            \"danger signs awareness, breastfeeding preparation, and newborn care.\",\n        ),\n    ]\n\n    language_choice_msg = \"Please choose your language / Tafadhali chagua lugha yako:\\n1. English\\n2. Kiswahili\"\n\n    def parse_language_choice(raw):\n        choice = (raw or \"\").strip().lower()\n        if choice in (\"1\", \"english\"):\n            return \"en\"\n        if choice in (\"2\", \"kiswahili\", \"swahili\"):\n            return \"sw\"\n        return None\n\n    consented_msg = {\n        (\"en\", True): \"Thank you for consenting to participate! What is your name?\",\n        (\"en\", False): \"Thank you! What is your name?\",\n        (\"sw\", True): \"Asante kwa kukubali kushiriki katika utafiti! Jina lako ni nani?\",\n        (\"sw\", False): \"Asante! Jina lako ni nani?\",\n    }\n    declined_msg = {\n        \"en\": \"Thank you for your response. You can message us anytime if you change your mind. Take care, Mama!\",\n        \"sw\": \"Asante kwa jibu lako. Unaweza kutuma ujumbe wakati wowote ukibadilisha mawazo. Jihadhari, Mama!\",\n    }\n    consent_retry_msg = {\n        (\"en\", True): \"Please reply YES or NO to consent to participate in the study.\",\n        (\"en\", False): \"Please reply YES to start using ZEYA, or NO if you do not want to.\",\n        (\"sw\", True): \"Tafadhali jibu NDIYO au HAPANA kukubali kushiriki katika utafiti.\",\n        (\"sw\", False): \"Tafadhali jibu NDIYO kuanza kutumia ZEYA, au HAPANA kama hutaki.\",\n    }\n    name_prompt_msg = {\n        \"en\": \"What is your name?\",\n        \"sw\": \"Jina lako ni nani?\",\n    }\n    name_greeting = {\n        \"en\": \"Nice to meet you, \",\n        \"sw\": \"Nimefurahi kukutana nawe, \",\n    }\n    weeks_prompt_tail = {\n        \"en\": \"How many weeks pregnant are you? Please reply with a number (for example: 20).\",\n        \"sw\": \"Una wiki ngapi za ujauzito? Tafadhali jibu kwa nambari (kwa mfano: 20).\",\n    }\n    ga_retry_msg = {\n        \"en\": \"Please enter a valid number of weeks (between 1 and 42). For example: 20\",\n        \"sw\": \"Tafadhali ingiza idadi sahihi ya wiki (kati ya 1 na 42). Kwa mfano: 20\",\n    }\n    fallback_completion_msg = {\n        \"en\": \"Just type your question and I will do my best to help you, Mama!\",\n        \"sw\": \"Andika swali lako tu nami nitafanya niwezalo kukusaidia, Mama!\",\n    }\n\n    data = get_participant_data() or {}\n    now = datetime.datetime.now(datetime.timezone.utc)\n    text = input or \"\"\n    text_lower = text.strip().lower()\n    is_study = data.get(\"study_participant\") is True\n\n    def reply(message):\n        set_temp_state_key(\"registration_route\", \"REPLY\")\n        add_message_tag(\"registration\")\n        return message\n\n    if data.get(\"registration_complete\"):\n        gestational_age = None\n        if data.get(\"gestational_age_at_enrollment\") is not None:\n            enrolled_at = datetime.datetime.fromisoformat(data[\"enrolled_at\"])\n            weeks_since_enrollment = (now - enrolled_at).days // 7\n            gestational_age = data[\"gestational_age_at_enrollment\"] + weeks_since_enrollment\n\n        parts = []\n        if gestational_age is not None:\n            parts.append(\"User's current gestational age: \" + str(gestational_age) + \" weeks.\")\n            for guidance in gestational_guidance:\n                if guidance[0] <= gestational_age <= guidance[1]:\n                    parts.append(\"Trimester guidance: \" + guidance[2])\n                    break\n        if data.get(\"language_preference\") == \"sw\":\n            parts.append(\"User prefers Swahili. Respond in Swahili.\")\n\n        set_temp_state_key(\"llm_context\", \"\\n\".join(parts) if parts else \"No additional context available.\")\n        set_temp_state_key(\"registration_route\", \"REGISTERED\")\n        return input\n\n    def welcome_for(language):\n        if is_study:\n            return welcome_sw if language == \"sw\" else welcome_en\n        return public_welcome_sw if language == \"sw\" else public_welcome_en\n\n    def pending_prompt(language):\n        # Resume wherever this (now-relanguaged) participant was already waiting, without\n        # consuming the language-choice reply as the answer to that step.\n        if not data.get(\"consent_given\"):\n            return consent_retry_msg[(language, is_study)]\n        if not data.get(\"name_collected\"):\n            return name_prompt_msg[language]\n        if data.get(\"gestational_age_at_enrollment\") is None:\n            return weeks_prompt_tail[language]\n        set_participant_data_key(\"registration_complete\", True)\n        return fallback_completion_msg[language]\n\n    stored_language = data.get(\"language_preference\")\n    has_valid_language = stored_language in (\"en\", \"sw\")\n\n    if data.get(\"language_choice_pending\") and has_valid_language:\n        # A stale pending flag (e.g. an invalid stored preference later corrected by an\n        # operator/re-import) must not override the now-valid preference and swallow the\n        # real reply underneath it. Clear the stale flag and fall through to normal\n        # processing of this message against the valid preference.\n        set_participant_data_key(\"language_choice_pending\", False)\n\n    if data.get(\"language_choice_pending\") and not has_valid_language:\n        selected = parse_language_choice(text)\n        if selected is None:\n            return reply(language_choice_msg)\n        set_participant_data_key(\"language_preference\", selected)\n        set_participant_data_key(\"language_choice_pending\", False)\n        if not data.get(\"welcome_sent\"):\n            set_participant_data_key(\"welcome_sent\", True)\n            set_participant_data_key(\"enrolled_at\", now.isoformat())\n            set_participant_data_key(\"consent_given\", False)\n            set_participant_data_key(\"registration_complete\", False)\n            set_participant_data_key(\"study_group\", data.get(\"study_group\") or \"intervention\")\n            return reply(welcome_for(selected))\n        return reply(pending_prompt(selected))\n\n    if not has_valid_language:\n        # New participant with no explicit/saved preference, or a stored value that is\n        # neither \"en\" nor \"sw\" (invalid imported data, or a partial registration missing\n        # it). Either way: show the choice, do not touch any other registration progress.\n        set_participant_data_key(\"language_choice_pending\", True)\n        message = reply(language_choice_msg)\n        if not data.get(\"welcome_sent\"):\n            add_message_tag(\"registration:first_contact\")\n        return message\n\n    language = stored_language\n\n    if not data.get(\"welcome_sent\"):\n        # First contact: enrol and send the consent request. Zeya ignored the content\n        # of this first message; here that already happened in the language-choice step,\n        # or the preference was imported/pre-set and this message is the first one seen.\n        set_participant_data_key(\"welcome_sent\", True)\n        set_participant_data_key(\"enrolled_at\", now.isoformat())\n        set_participant_data_key(\"consent_given\", False)\n        set_participant_data_key(\"registration_complete\", False)\n        set_participant_data_key(\"study_group\", data.get(\"study_group\") or \"intervention\")\n        message = reply(welcome_for(language))\n        add_message_tag(\"registration:first_contact\")\n        return message\n\n    if not data.get(\"consent_given\"):\n        if text_lower in (\"yes\", \"ndiyo\", \"ndio\"):\n            set_participant_data_key(\"consent_given\", True)\n            set_participant_data_key(\"consent_given_at\", now.isoformat())\n            set_participant_data_key(\"consent_declined\", False)\n            return reply(consented_msg[(language, is_study)])\n        if text_lower in (\"no\", \"hapana\"):\n            # Zeya deactivated the user here. We record the decision instead, so a later\n            # YES re-enrols them, as the reply promises.\n            set_participant_data_key(\"consent_declined\", True)\n            return reply(declined_msg[language])\n        return reply(consent_retry_msg[(language, is_study)])\n\n    # OCS merges participant.name into participant data as \"name\", so a name may already\n    # be present (e.g. from the channel). Track this step separately.\n    if not data.get(\"name_collected\"):\n        name = text.strip()\n        if not name:\n            # A message with no text (photo, voice note). Zeya ignored these; ask again.\n            return reply(name_prompt_msg[language])\n        set_participant_data_key(\"name\", name)\n        set_participant_data_key(\"name_collected\", True)\n        return reply(name_greeting[language] + name + \"! \" + weeks_prompt_tail[language])\n\n    if data.get(\"gestational_age_at_enrollment\") is None:\n        weeks = None\n        try:\n            weeks = int(text_lower.strip().split()[0])\n        except (ValueError, IndexError):\n            weeks = None\n        if weeks is None or weeks < 1 or weeks > 42:\n            return reply(ga_retry_msg[language])\n\n        expected_delivery_date = now.date() + datetime.timedelta(weeks=40 - weeks)\n        set_participant_data_key(\"gestational_age_at_enrollment\", weeks)\n        set_participant_data_key(\"expected_delivery_date\", expected_delivery_date.isoformat())\n        set_participant_data_key(\"registration_complete\", True)\n        if language == \"sw\":\n            return reply(\n                \"Umesajiliwa! Una wiki \" + str(weeks) + \" za ujauzito. \"\n                \"Tarehe yako inayotarajiwa ya kujifungua ni takriban \"\n                + expected_delivery_date.strftime(\"%B %d, %Y\")\n                + \".\\n\\n\"\n                \"Sasa unaweza kuniuliza swali lolote kuhusu ujauzito wako. Ninaweza kusaidia na:\\n\"\n                \"- Lishe na mlo\\n\"\n                \"- Dalili za hatari za kuangalia\\n\"\n                \"- Maandalizi ya kujifungua\\n\"\n                \"- Usumbufu wa kawaida\\n\"\n                \"- Miadi ya ANC\\n\"\n                \"- Huduma ya mtoto mchanga\\n\\n\" + fallback_completion_msg[\"sw\"]\n            )\n        return reply(\n            \"You are registered! You are \" + str(weeks) + \" weeks pregnant. \"\n            \"Your expected delivery date is approximately \" + expected_delivery_date.strftime(\"%B %d, %Y\") + \".\\n\\n\"\n            \"You can now ask me any questions about your pregnancy. \"\n            \"I can help with:\\n\"\n            \"- Nutrition and diet\\n\"\n            \"- Danger signs to watch for\\n\"\n            \"- Birth preparedness\\n\"\n            \"- Common discomforts\\n\"\n            \"- ANC appointments\\n\"\n            \"- Newborn care\\n\\n\" + fallback_completion_msg[\"en\"]\n        )\n\n    # Consent, name and gestational age are all set but registration_complete is not\n    # (for example, data imported by hand). Finish registration.\n    set_participant_data_key(\"registration_complete\", True)\n    return reply(fallback_completion_msg[language])\n"
+          }
+        }
+      },
+      {
+        "id": "registration_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 1200,
+          "y": 350
+        },
+        "data": {
+          "id": "registration_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "registration_router",
+            "data_source": "temp_state",
+            "route_key": "registration_route",
+            "keywords": [
+              "REPLY",
+              "REGISTERED"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "kb_context",
+        "type": "pipelineNode",
+        "position": {
+          "x": 1500,
+          "y": 350
+        },
+        "data": {
+          "id": "kb_context",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "kb_context",
+            "code": "\"\"\"\nOpen Chat Studio Python node: knowledge-base context selector.\n\nReads participant saved language preference and computes current gestational\nweek from enrollment data.  Selects approved (or explicitly staged-eligible)\nknowledge-base entries within the UTF-8 byte budget and writes three temp-state\nkeys for downstream nodes:\n\n  kb_section   – bounded concatenation of selected entry texts (str)\n  kb_ids       – stable IDs of selected entries (list[str])\n  kb_available – True when at least one entry was selected (bool)\n\nNo approved content => empty section and kb_available=False; the pipeline\nroutes to a fixed health-worker referral before any LLM call.\n\nParticipant data keys read (set by the registration node):\n  language_preference           'en' | 'sw'  — no silent default to either\n  gestational_age_at_enrollment int          — weeks pregnant at enrollment\n  enrolled_at                   str          — ISO-8601 UTC datetime of enrollment\n\nWeek computation mirrors registration.py:\n  current_week = gestational_age_at_enrollment + (now - enrolled_at).days // 7\n\nUnknown or uncomputable week => entries with any week bound are excluded;\ngeneral (unbounded) entries remain eligible.\n\nThe KB_JSON string is replaced by build_pipeline with the validated JSON\nexport of approved entries from docs/zeya-knowledge-base.md.\nUntil entries pass clinical and language review, KB_JSON is '[]'\nand the node will always set kb_available=False.\n\nReturns the original participant message unchanged.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    import json\n\n    # Approved knowledge-base entries injected by build_pipeline.\n    # All public entries require review_status == 'approved'.\n    # Pending entries are excluded at load time; this list is empty until\n    # entries pass clinical and language review.\n    # In synthetic staging, pending entries may carry eligible=True; the node\n    # checks both review_status and eligible without relabelling pending content.\n    KB_JSON = '[{\"id\": \"anc_purpose\", \"review_status\": \"approved\", \"language\": \"en\", \"text\": \"Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"anc\", \"pregnancy\", \"education\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"pregnancy_records\", \"review_status\": \"approved\", \"language\": \"en\", \"text\": \"Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"records\", \"pregnancy\", \"education\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"food_variety\", \"review_status\": \"approved\", \"language\": \"en\", \"text\": \"Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy\"], \"topics\": [\"nutrition\", \"food\", \"pregnancy\", \"education\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"food_safety\", \"review_status\": \"approved\", \"language\": \"en\", \"text\": \"Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy\"], \"topics\": [\"nutrition\", \"food\", \"safety\", \"education\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"birth_preparation\", \"review_status\": \"approved\", \"language\": \"en\", \"text\": \"Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"birth\", \"preparation\", \"planning\", \"education\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"anc_purpose\", \"review_status\": \"approved\", \"language\": \"sw\", \"text\": \"Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"anc\", \"ujauzito\", \"elimu\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"pregnancy_records\", \"review_status\": \"approved\", \"language\": \"sw\", \"text\": \"Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"rekodi\", \"ujauzito\", \"elimu\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"food_variety\", \"review_status\": \"approved\", \"language\": \"sw\", \"text\": \"Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy\"], \"topics\": [\"lishe\", \"chakula\", \"ujauzito\", \"elimu\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"food_safety\", \"review_status\": \"approved\", \"language\": \"sw\", \"text\": \"Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/eating-healthy-food-during-pregnancy\"], \"topics\": [\"lishe\", \"chakula\", \"usalama\", \"elimu\"], \"min_week\": null, \"max_week\": null}, {\"id\": \"birth_preparation\", \"review_status\": \"approved\", \"language\": \"sw\", \"text\": \"Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao.\", \"source_refs\": [\"https://www.who.int/tools/your-life-your-health/life-phase/pregnancy--birth-and-after-childbirth/getting-the-health-services-you-need-during-pregnancy\"], \"topics\": [\"kujifungua\", \"maandalizi\", \"mipango\", \"elimu\"], \"min_week\": null, \"max_week\": null}]'\n\n    entries = json.loads(KB_JSON)\n\n    # Read participant saved state; do not mutate it.\n    participant = get_participant_data()\n\n    # Language preference set by the registration node.\n    # No silent default: an absent or unsupported value means no entries match.\n    saved_language = participant.get(\"language_preference\")\n\n    # Compute current gestational week from enrollment data.\n    # Mirrors registration.py: (now - enrolled_at).days // 7 + ga_at_enrollment.\n    # On any parse or arithmetic error current_week stays None.\n    # None → exclude all week-ranged entries (unknown week must not include\n    # week-restricted content).\n    current_week = None\n    ga_raw = participant.get(\"gestational_age_at_enrollment\")\n    enrolled_at_str = participant.get(\"enrolled_at\")\n    if ga_raw is not None and enrolled_at_str is not None:\n        try:\n            ga = int(ga_raw)\n            enrolled_dt = datetime.datetime.fromisoformat(enrolled_at_str)\n            now_utc = datetime.datetime.now(datetime.timezone.utc)\n            days_since = (now_utc - enrolled_dt).days\n            if days_since >= 0:\n                current_week = ga + (days_since // 7)\n        except Exception:\n            current_week = None\n\n    # Select eligible entries: approved (or staged-eligible), matching language,\n    # within week range.  Exact UTF-8 byte count with separator bytes included.\n    max_context_bytes = 2000\n    used_bytes = 0\n    eligible_texts = []\n    eligible_ids = []\n\n    for entry in entries:\n        # Eligibility: approved status or explicit staging flag (eligible=True).\n        # Staging flag is added by render_kb_node(include_pending=True) without\n        # changing review_status; never relabels pending content as approved.\n        is_eligible = entry.get(\"review_status\") == \"approved\" or entry.get(\"eligible\") is True\n        if not is_eligible:\n            continue\n\n        if entry.get(\"language\") != saved_language:\n            continue\n\n        min_week = entry.get(\"min_week\")\n        max_week = entry.get(\"max_week\")\n\n        # Unknown week: exclude any entry that carries a week bound.\n        if current_week is None:\n            if min_week is not None or max_week is not None:\n                continue\n        else:\n            if min_week is not None and current_week < min_week:\n                continue\n            if max_week is not None and current_week > max_week:\n                continue\n\n        text = entry.get(\"text\", \"\")\n        # Exact UTF-8 byte count; separator '\\n\\n' = 2 bytes per join.\n        text_bytes = len(text.encode(\"utf-8\"))\n        sep_bytes = 2 if len(eligible_texts) > 0 else 0\n        if used_bytes + sep_bytes + text_bytes > max_context_bytes:\n            break\n\n        eligible_texts.append(text)\n        eligible_ids.append(entry.get(\"id\", \"\"))\n        used_bytes = used_bytes + sep_bytes + text_bytes\n\n    kb_section = \"\\n\\n\".join(eligible_texts)\n    kb_available = len(eligible_ids) > 0\n\n    set_temp_state_key(\"kb_section\", kb_section)\n    set_temp_state_key(\"kb_ids\", eligible_ids)\n    set_temp_state_key(\"kb_available\", kb_available)\n\n    return input\n"
+          }
+        }
+      },
+      {
+        "id": "kb_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 1800,
+          "y": 350
+        },
+        "data": {
+          "id": "kb_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "kb_router",
+            "data_source": "temp_state",
+            "route_key": "kb_available",
+            "keywords": [
+              "FALSE",
+              "TRUE"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "knowledge_referral",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2100,
+          "y": 150
+        },
+        "data": {
+          "id": "knowledge_referral",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "knowledge_referral",
+            "code": "\"\"\"\nOpen Chat Studio Python node: fixed health-worker referral when no approved KB content.\n\nReached via the kb_router FALSE output when kb_available=False — i.e. the approved\nknowledge base returned no entries eligible for this participant's language and\ngestational week.  Returns a fixed, source-free referral to the participant's\nhealthcare provider WITHOUT calling any AI model.\n\nNo model, network, file I/O or credentials.\nNo participant data mutation; reads saved language preference only.\nNon-sensitive route tag emitted for completed-observation evaluation (#28).\n\nLanguage copies:\n  English — suitable for review / production use.\n  Swahili  — DRAFT, pending fluent-speaker and clinical review.  Not approved\n              for public use; shown only while approved SW content is unavailable.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    # Read the participant's saved language preference.\n    # Set by the registration node; absent or unrecognised value → English default.\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\", \"en\")\n\n    if lang == \"sw\":\n        # Draft Swahili referral — pending fluent-speaker and clinical review.\n        referral = \"Sina taarifa iliyokaguliwa kujibu swali hilo. Tafadhali uliza mtoa huduma wako wa afya.\"\n    else:\n        # English referral — default for all non-Swahili or absent preferences.\n        referral = \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\"\n\n    set_temp_state_key(\"knowledge_referral_route\", \"REFERRAL\")\n    add_message_tag(\"route:knowledge_referral\")\n    return referral\n"
+          }
+        }
+      },
+      {
+        "id": "answer_match",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2100,
+          "y": 500
+        },
+        "data": {
+          "id": "answer_match",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "answer_match",
+            "code": "\"\"\"\nOpen Chat Studio Python node: deterministic answer-card matcher.\n\nReads kb_ids and kb_available written by the #22 kb_context node.  Returns the\nexact card answer text when a card is clearly matched, or routes to the LLM for\neverything else.\n\nCard data is injected at build time by render_answer_match() in\nocs/answer_cards.py, which replaces the ##CARDS_PLACEHOLDER## string literal\ninside main() with a double-encoded JSON string of the baked data structure:\n\n    {\"cards\": [...], \"allow_pending\": bool}\n\nThe runtime node unpacks this structure and independently re-checks\nreview_status so that eligibility cannot be bypassed in production:\n\n    allow_pending == True  (exact bool, explicit staging): pending cards eligible.\n    allow_pending == False (default / production): only approved cards eligible.\n\nPending review_status is never relabelled as approved.\n\nOutputs (returned value):\n    CARD route:   the exact card answer text (returned directly).\n    ASK_AI route: the original user input (passed through to downstream LLM).\n\nOutputs (temp state):\n    answer_route:  \"CARD\" or \"ASK_AI\".\n    matched_card:  stable card slug on CARD route; \"\" on ASK_AI.\n    card_text:     answer text on CARD route (not set on ASK_AI).\n\nOutputs (message tags — for completed-observation evaluator, see #28):\n    CARD:   answer_route:CARD  +  answer_card:<stable-slug>\n    ASK_AI: answer_route:ASK_AI  (all abstention paths)\n    No user text, no PII in tags.  Card ID is validated as a safe slug before\n    embedding so the tag cannot contain arbitrary content.\n\nMatching algorithm:\n    Pure-Python word overlap (Jaccard similarity) with light suffix stemming\n    (strips -ing, -tion, -ed, -ly, -es, -s) and English stopword removal.\n    \"pregnancy\" and \"dur\" (from \"during\") are treated as domain-agnostic\n    function-words in maternal health (they appear in almost every question\n    and add no topic discrimination) and are included in STOPWORDS.\n    Scores each card as the maximum Jaccard score over all its trigger strings.\n    Routes to CARD only when the best score > THRESHOLD (0.25, strict greater-\n    than) AND the gap between first and second best is >= TIE_MARGIN (0.10).\n\nLimitations (documented per contract):\n    - No semantic understanding.  Near-synonyms without shared word stems\n      (e.g. \"clinic\" vs \"ANC\") may miss without an explicit synonym trigger.\n    - Typos in content words reduce overlap but do not change routing unless\n      the score drops below threshold.\n    - Very short inputs (<2 raw tokens) are caught by the trivial-input guard.\n    - No Swahili or Sheng matching in v0; all starter cards are English-only\n      pending Kiswahili translation review.\n    - All five v0 cards are pending clinical review; the production build passes\n      include_pending=False so the node bakes in an empty list and always routes\n      ASK_AI until cards are explicitly approved.\n    - += is disallowed in RestrictedPython; use explicit a = a + 1.\n    - Known near-tie false positives are documented and tested in\n      TestMatcherKnownFalsePositives / TestFormerFalsePositivesNowRegressions.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    import json\n    import re\n\n    # ------------------------------------------------------------------\n    # Card data injected by render_answer_match() in ocs/answer_cards.py.\n    # Baked structure: {\"cards\": [...], \"allow_pending\": bool}.\n    # review_status is independently re-checked below.\n    # ------------------------------------------------------------------\n    baked_json = \"{\\\"cards\\\": [{\\\"id\\\": \\\"anc_purpose_en\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"en\\\", \\\"kb_ref\\\": \\\"anc_purpose\\\", \\\"topic_anchors\\\": [\\\"anc\\\", \\\"antenatal\\\", \\\"clinic\\\", \\\"prenatal\\\"], \\\"source_note\\\": \\\"Sourced from WHO starter KB v0.1 entry anc_purpose.\\\", \\\"triggers\\\": [\\\"Why should I go to ANC?\\\", \\\"What are pregnancy clinic visits for?\\\", \\\"Why should I attend antenatal care?\\\", \\\"What are antenatal visits for?\\\", \\\"What is the purpose of antenatal clinic visits when pregnant?\\\", \\\"Why should I attend antenatal care visits?\\\", \\\"Why do I need to attend antenatal visits?\\\"], \\\"answer\\\": \\\"Antenatal visits provide health care, information, advice and emotional support during pregnancy. Contact a health worker after confirming your pregnancy, and attend the visits they recommend.\\\"}, {\\\"id\\\": \\\"pregnancy_records_en\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"en\\\", \\\"kb_ref\\\": \\\"pregnancy_records\\\", \\\"topic_anchors\\\": [\\\"record\\\", \\\"documentation\\\"], \\\"source_note\\\": \\\"Sourced from WHO starter KB v0.1 entry pregnancy_records.\\\", \\\"triggers\\\": [\\\"Should I keep my pregnancy health records?\\\", \\\"Why keep a record of pregnancy care?\\\", \\\"Should I keep records of my pregnancy care?\\\", \\\"Why is it important to keep my pregnancy health records?\\\", \\\"Why should I keep records of my pregnancy health care?\\\", \\\"How should I manage my maternity health records?\\\"], \\\"answer\\\": \\\"Keep a record of your pregnancy health care and vaccines at home. Ask your health worker to explain information in your records that you do not understand.\\\"}, {\\\"id\\\": \\\"food_variety_en\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"en\\\", \\\"kb_ref\\\": \\\"food_variety\\\", \\\"topic_anchors\\\": [\\\"food\\\", \\\"eat\\\", \\\"diet\\\", \\\"vegetable\\\", \\\"fruit\\\", \\\"nutrition\\\"], \\\"source_note\\\": \\\"Sourced from WHO starter KB v0.1 entry food_variety.\\\", \\\"triggers\\\": [\\\"What kinds of food should I eat?\\\", \\\"What does a varied pregnancy diet include?\\\", \\\"What food should I eat during pregnancy?\\\", \\\"What kinds of food can I eat when pregnant?\\\", \\\"What varieties of food should I eat during pregnancy?\\\", \\\"What is a healthy varied diet for a pregnant woman?\\\"], \\\"answer\\\": \\\"Aim for a variety of foods, including vegetables, fruit, whole grains, beans and other protein foods. Ask your health worker for advice about any individual dietary needs.\\\"}, {\\\"id\\\": \\\"food_safety_en\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"en\\\", \\\"kb_ref\\\": \\\"food_safety\\\", \\\"topic_anchors\\\": [\\\"food\\\", \\\"eat\\\", \\\"diet\\\"], \\\"source_note\\\": \\\"Sourced from WHO starter KB v0.1 entry food_safety.\\\", \\\"triggers\\\": [\\\"Does food cleanliness matter in pregnancy?\\\", \\\"Should I make sure food is safe and clean during pregnancy?\\\", \\\"Is food safety important when pregnant?\\\", \\\"Should food be safe and clean during pregnancy?\\\", \\\"Why is clean and safe food important in pregnancy?\\\", \\\"How do I keep food safe during pregnancy?\\\"], \\\"answer\\\": \\\"Make sure the food you eat is safe and clean. Ask your health worker if you need more information about food safety during pregnancy.\\\"}, {\\\"id\\\": \\\"birth_preparation_en\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"en\\\", \\\"kb_ref\\\": \\\"birth_preparation\\\", \\\"topic_anchors\\\": [\\\"birth\\\", \\\"delivery\\\", \\\"deliver\\\", \\\"childbirth\\\"], \\\"source_note\\\": \\\"Sourced from WHO starter KB v0.1 entry birth_preparation.\\\", \\\"triggers\\\": [\\\"What should I discuss when planning for birth?\\\", \\\"Should I plan where I will give birth?\\\", \\\"How should I prepare for childbirth?\\\", \\\"Should I plan and prepare for where I will give birth?\\\", \\\"What is a birth preparedness plan?\\\", \\\"How do I plan for birth and complications?\\\"], \\\"answer\\\": \\\"Discuss where you will receive care for childbirth with your health worker. Make a birth-preparedness and complication-readiness plan with their guidance.\\\"}, {\\\"id\\\": \\\"anc_purpose_sw\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"sw\\\", \\\"kb_ref\\\": \\\"anc_purpose\\\", \\\"topic_anchors\\\": [\\\"anc\\\", \\\"ujauzito\\\", \\\"kliniki\\\", \\\"ziara\\\"], \\\"source_note\\\": \\\"Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (anc_purpose).\\\", \\\"triggers\\\": [\\\"Niende kliniki ya ujauzito kwa nini?\\\", \\\"Ziara za ujauzito ni kwa nini?\\\", \\\"Niende ANC kwa sababu gani?\\\", \\\"Huduma ya kabla ya kujifungua ni kwa nini?\\\", \\\"Nini lengo la ziara za ANC?\\\", \\\"Kwa nini ninahitaji kuhudhuria ziara za kabla ya kujifungua?\\\"], \\\"answer\\\": \\\"Ziara za kabla ya kujifungua hutoa huduma ya afya, taarifa, ushauri na msaada wa kihisia wakati wa ujauzito. Wasiliana na mfanyakazi wa afya baada ya kuthibitisha ujauzito wako, na uhudhurie ziara wanazopendekeza.\\\"}, {\\\"id\\\": \\\"pregnancy_records_sw\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"sw\\\", \\\"kb_ref\\\": \\\"pregnancy_records\\\", \\\"topic_anchors\\\": [\\\"rekodi\\\", \\\"kumbukumbu\\\", \\\"hifadhi\\\"], \\\"source_note\\\": \\\"Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (pregnancy_records).\\\", \\\"triggers\\\": [\\\"Je, nihifadhi rekodi zangu za ujauzito?\\\", \\\"Kwa nini nishike kumbukumbu za huduma ya ujauzito?\\\", \\\"Vipi niandike rekodi za afya ya ujauzito wangu?\\\", \\\"Ni muhimu kushika rekodi za ujauzito?\\\", \\\"Kwa nini kuweka rekodi ya afya ya ujauzito ni muhimu?\\\", \\\"Ninahifadhije rekodi zangu za afya ya uzazi?\\\"], \\\"answer\\\": \\\"Hifadhi rekodi ya huduma yako ya afya ya ujauzito na chanjo nyumbani. Muulize mfanyakazi wako wa afya akueleze taarifa katika rekodi zako ambazo huelewi.\\\"}, {\\\"id\\\": \\\"food_variety_sw\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"sw\\\", \\\"kb_ref\\\": \\\"food_variety\\\", \\\"topic_anchors\\\": [\\\"chakula\\\", \\\"kula\\\", \\\"lishe\\\", \\\"mboga\\\", \\\"matunda\\\"], \\\"source_note\\\": \\\"Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_variety).\\\", \\\"triggers\\\": [\\\"Ninapaswa kula chakula gani wakati wa ujauzito?\\\", \\\"Nini lishe nzuri kwa mjamzito?\\\", \\\"Nini chakula cha aina mbalimbali kwa mjamzito?\\\", \\\"Ninaweza kula nini wakati wa ujauzito?\\\", \\\"Nini inajumuishwa katika lishe ya aina mbalimbali ya ujauzito?\\\", \\\"Ni lishe gani nzuri ya mjamzito?\\\"], \\\"answer\\\": \\\"Jaribu kuwa na aina mbalimbali za vyakula, ikiwemo mboga, matunda, nafaka zisizokobolewa, maharagwe na vyakula vingine vya protini. Muulize mfanyakazi wako wa afya ushauri kuhusu mahitaji yoyote ya lishe ya kibinafsi.\\\"}, {\\\"id\\\": \\\"food_safety_sw\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"sw\\\", \\\"kb_ref\\\": \\\"food_safety\\\", \\\"topic_anchors\\\": [\\\"chakula\\\", \\\"kula\\\", \\\"lishe\\\"], \\\"source_note\\\": \\\"Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (food_safety).\\\", \\\"triggers\\\": [\\\"Je, usafi wa chakula ni muhimu wakati wa ujauzito?\\\", \\\"Ninahakikishaje chakula ni salama na safi wakati wa ujauzito?\\\", \\\"Usalama wa chakula ni muhimu kwa mjamzito?\\\", \\\"Chakula kiwe salama na safi wakati wa ujauzito?\\\", \\\"Kwa nini chakula salama na safi ni muhimu katika ujauzito?\\\", \\\"Ninahifadhije usalama wa chakula wakati wa ujauzito?\\\"], \\\"answer\\\": \\\"Hakikisha chakula unachokula ni salama na safi. Muulize mfanyakazi wako wa afya ikiwa unahitaji taarifa zaidi kuhusu usalama wa chakula wakati wa ujauzito.\\\"}, {\\\"id\\\": \\\"birth_preparation_sw\\\", \\\"review_status\\\": \\\"approved\\\", \\\"language\\\": \\\"sw\\\", \\\"kb_ref\\\": \\\"birth_preparation\\\", \\\"topic_anchors\\\": [\\\"kujifungua\\\", \\\"mpango\\\", \\\"maandalizi\\\", \\\"uzazi\\\"], \\\"source_note\\\": \\\"Imetafsiriwa kutoka entry ya KB ya WHO v0.1 (birth_preparation).\\\", \\\"triggers\\\": [\\\"Ninapaswa kujadili nini kuhusu mipango ya kujifungua?\\\", \\\"Je, nipange mahali pa kujifungua?\\\", \\\"Nijiandaeje kwa kujifungua?\\\", \\\"Nini mpango wa kujiandaa kwa kujifungua?\\\", \\\"Nijiandaeje kwa kujifungua na matatizo yanayoweza kutokea?\\\", \\\"Nini maandalizi ya kujifungua?\\\"], \\\"answer\\\": \\\"Jadili na mfanyakazi wako wa afya mahali ambapo utapata huduma ya kujifungua. Fanya mpango wa kujiandaa kwa kujifungua na mpango wa kukabiliana na matatizo kwa mwongozo wao.\\\"}], \\\"allow_pending\\\": false}\"\n    baked = json.loads(baked_json)\n    cards = baked[\"cards\"]\n    allow_pending = baked.get(\"allow_pending\", False)\n\n    # ------------------------------------------------------------------\n    # Read KB context written by the #22 kb_context node.\n    # ------------------------------------------------------------------\n    kb_ids = get_temp_state_key(\"kb_ids\") or []\n    kb_available = get_temp_state_key(\"kb_available\") or False\n\n    if not kb_available or not kb_ids:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # ------------------------------------------------------------------\n    # Participant language from registration data.\n    # ------------------------------------------------------------------\n    data = get_participant_data() or {}\n    language = data.get(\"language_preference\") or \"en\"\n\n    # ------------------------------------------------------------------\n    # Independent runtime eligibility:\n    #   - kb_ref must be in selected KB IDs\n    #   - language must match participant\n    #   - review_status must be \"approved\", OR \"pending\" with allow_pending == True\n    #     (exact bool True — not just truthy — only the production-baked bool passes)\n    # ------------------------------------------------------------------\n    eligible = []\n    for c in cards:\n        if c.get(\"kb_ref\") not in kb_ids:\n            continue\n        if c.get(\"language\") != language:\n            continue\n        status = c.get(\"review_status\")\n        if status == \"approved\":\n            pass\n        elif status == \"pending\" and allow_pending == True:  # noqa: E712 — strict bool check\n            pass\n        else:\n            continue\n        eligible.append(c)\n\n    if not eligible:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # ------------------------------------------------------------------\n    # Pure-Python word-overlap matcher\n    # ------------------------------------------------------------------\n\n    STOPWORDS = {\n        \"the\",\n        \"and\",\n        \"for\",\n        \"are\",\n        \"was\",\n        \"you\",\n        \"this\",\n        \"that\",\n        \"with\",\n        \"have\",\n        \"not\",\n        \"can\",\n        \"what\",\n        \"why\",\n        \"how\",\n        \"should\",\n        \"would\",\n        \"could\",\n        \"will\",\n        \"when\",\n        \"where\",\n        \"who\",\n        \"which\",\n        \"from\",\n        \"into\",\n        \"out\",\n        \"its\",\n        \"your\",\n        \"our\",\n        \"their\",\n        \"about\",\n        \"also\",\n        \"been\",\n        \"does\",\n        \"did\",\n        \"get\",\n        \"got\",\n        \"had\",\n        \"has\",\n        \"her\",\n        \"him\",\n        \"his\",\n        \"just\",\n        \"let\",\n        \"may\",\n        \"more\",\n        \"much\",\n        \"must\",\n        \"now\",\n        \"one\",\n        \"own\",\n        \"she\",\n        \"than\",\n        \"then\",\n        \"they\",\n        \"too\",\n        \"two\",\n        \"use\",\n        \"yet\",\n        # Domain-agnostic maternal-health function-words: appear in almost every\n        # maternal question/trigger without discriminating between card topics.\n        \"pregnancy\",  # universal context word; replaced by topic-specific vocabulary\n        \"dur\",  # stem of \"during\" (preposition); adds no content information\n    }\n\n    def stem_word(word):\n        # Light suffix stripping — preserves medical vocabulary roots.\n        for suffix in (\"ing\", \"tion\", \"ed\", \"ly\", \"es\", \"s\"):\n            if len(word) > len(suffix) + 2 and word.endswith(suffix):\n                return word[: -len(suffix)]\n        return word\n\n    def topic_eligible(q_toks, card_anchors):\n        \"\"\"Return True if at least one stemmed anchor appears in q_toks.\n\n        Each anchor string from card['topic_anchors'] is stemmed with the same\n        stem_word function used on question tokens.  Generic words like 'safe',\n        'pregnancy', or 'during' that are not in any card's anchor list cannot\n        confer eligibility, regardless of their Jaccard score against triggers.\n        An empty anchor list always returns False (absent topic abstains).\n        \"\"\"\n        if not card_anchors:\n            return False\n        for anchor in card_anchors:\n            if stem_word(anchor.lower()) in q_toks:\n                return True\n        return False\n\n    def tokenize(text):\n        raw = re.findall(r\"[a-z]+\", text.lower())\n        tokens = set()\n        for w in raw:\n            if len(w) > 2:\n                s = stem_word(w)\n                if s not in STOPWORDS:\n                    tokens.add(s)\n        return tokens\n\n    def jaccard_score(a_tokens, b_tokens):\n        if not a_tokens or not b_tokens:\n            return 0.0\n        overlap = 0\n        for x in a_tokens:\n            if x in b_tokens:\n                overlap = overlap + 1  # += disallowed in RestrictedPython\n        union = len(a_tokens) + len(b_tokens) - overlap\n        return overlap / union if union > 0 else 0.0\n\n    # Threshold: strict greater-than (scores == THRESHOLD are rejected as\n    # insufficiently confident, preventing borderline vocabulary-overlap matches\n    # on domain-agnostic words like \"safe\" appearing in unrelated questions).\n    THRESHOLD = 0.25\n    TIE_MARGIN = 0.10\n\n    # Guard on raw (pre-stopword) token count to catch truly empty/trivial inputs\n    # without discarding short but specific questions like \"Why should I go to ANC?\"\n    # (which produces only {\"anc\"} after stopword removal but is a clear question).\n    raw_tokens = re.findall(r\"[a-z]+\", input.lower())\n    if len(raw_tokens) < 2:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    q_tokens = tokenize(input)\n    if not q_tokens:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Topic eligibility: at least one stemmed anchor from the card's topic_anchors\n    # must appear in q_tokens before the card is scored.\n    # This prevents generic words like \"safe\", \"pregnancy\", or \"during\" from\n    # conferring eligibility solely through Jaccard overlap on trigger text.\n    # A card with absent/unrecognised anchors abstains (topic_eligible returns False).\n    topic_checked = []\n    for card in eligible:\n        if topic_eligible(q_tokens, card.get(\"topic_anchors\", [])):\n            topic_checked.append(card)\n\n    if not topic_checked:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Score each topic-eligible card as max Jaccard over all its triggers.\n    best_score = 0.0\n    best_card = None\n    second_score = 0.0\n\n    for card in topic_checked:\n        card_best = 0.0\n        for trigger in card.get(\"triggers\", []):\n            t_tokens = tokenize(trigger)\n            s = jaccard_score(q_tokens, t_tokens)\n            if s > card_best:\n                card_best = s\n        if card_best > best_score:\n            second_score = best_score\n            best_score = card_best\n            best_card = card\n        elif card_best > second_score:\n            second_score = card_best\n\n    # Low confidence — strict threshold: scores exactly at THRESHOLD are rejected.\n    if best_score <= THRESHOLD or best_card is None:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Ambiguous tie — no match.\n    if best_score - second_score < TIE_MARGIN:\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    # Clear match — validate card ID is a safe slug before embedding in tag.\n    # Defence-in-depth: validate_cards enforces the slug at load time;\n    # this prevents any malformed ID from reaching the OCS message tag.\n    card_id = best_card.get(\"id\", \"\")\n    if not re.match(r\"^[a-z0-9_-]+$\", card_id):\n        # Slug check failed: fail closed, do not emit a potentially unsafe tag.\n        set_temp_state_key(\"answer_route\", \"ASK_AI\")\n        set_temp_state_key(\"matched_card\", \"\")\n        add_message_tag(\"answer_route:ASK_AI\")\n        return input\n\n    set_temp_state_key(\"answer_route\", \"CARD\")\n    set_temp_state_key(\"matched_card\", card_id)\n    set_temp_state_key(\"card_text\", best_card[\"answer\"])\n    add_message_tag(\"answer_route:CARD\")\n    add_message_tag(\"answer_card:\" + card_id)\n    return best_card[\"answer\"]\n"
+          }
+        }
+      },
+      {
+        "id": "answer_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2400,
+          "y": 500
+        },
+        "data": {
+          "id": "answer_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "answer_router",
+            "data_source": "temp_state",
+            "route_key": "answer_route",
+            "keywords": [
+              "CARD",
+              "ASK_AI"
+            ],
+            "default_keyword_index": 1,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "llm_input",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2700,
+          "y": 600
+        },
+        "data": {
+          "id": "llm_input",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "llm_input",
+            "code": "\"\"\"\nOpen Chat Studio Python node: privacy-preserving LLM input.\n\nSanitizes the question before it reaches the language model by removing:\n  - The exact saved participant name (whole-word, case-insensitive)\n  - Phone numbers: any +CC international prefix, plus Kenya-local prefixes\n    254 / 07 / 01 without +, contiguous or with space/hyphen/parenthesis\n    separators, fullwidth digit encoding, or zero-width characters inserted\n    between groups\n  - Email addresses (RFC-5321 local-part @ domain pattern)\n\nOrdinary text, pregnancy-week numbers, dates, and all other content are\npreserved. Fullwidth ASCII digits (U+FF10–U+FF19) are normalised to ASCII\nbefore matching; zero-width characters (U+200B/C/D, U+FEFF, U+00AD) are\nstripped before matching and do not appear in the output.\n\nLIMITATIONS — this is best-effort sanitization, not a universal PII filter:\n  - Name: only the exact value stored in participant_data.name is matched.\n    Names shared verbally but not registered, names corrected by an operator\n    after registration, common words that happen to equal the saved name,\n    and very short names may cause under- or over-removal.\n  - Phone: the generic +CC branch covers any number starting with +.\n    Kenya-local bare prefixes (254, 07, 01) are also covered.\n    Numbers written without any country-code or local prefix are not matched.\n  - Email: basic pattern; unusual local-part quoting not covered.\n  - Historical turns already in LLM node context are not re-sanitized.\n    See docs/review/system-prompt.md for the history_type=none requirement\n    that eliminates that channel.\n\nNo temp-state keys are written. Participant data is read-only.\nAllowed imports: re (stdlib, in OCS allowed set).\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import re\n\n    text = input or \"\"\n    data = get_participant_data() or {}\n\n    # --- 1. Normalise fullwidth ASCII digits (U+FF10–U+FF19 → 0–9) ---\n    # Chain of .replace() calls avoids str.translate / str.maketrans.\n    text = (\n        text.replace(\"\\uff10\", \"0\")\n        .replace(\"\\uff11\", \"1\")\n        .replace(\"\\uff12\", \"2\")\n        .replace(\"\\uff13\", \"3\")\n        .replace(\"\\uff14\", \"4\")\n        .replace(\"\\uff15\", \"5\")\n        .replace(\"\\uff16\", \"6\")\n        .replace(\"\\uff17\", \"7\")\n        .replace(\"\\uff18\", \"8\")\n        .replace(\"\\uff19\", \"9\")\n    )\n\n    # --- 2. Strip zero-width characters ---\n    # U+200B zero-width space, U+200C ZWNJ, U+200D ZWJ,\n    # U+FEFF BOM/ZWNBSP, U+00AD soft hyphen\n    text = re.sub(r\"[\\u200b\\u200c\\u200d\\ufeff\\u00ad]\", \"\", text)\n\n    # --- 3. Name sanitisation ---\n    # Removes exact saved name only (whole-word, case-insensitive).\n    # Empty or missing name: skip entirely.\n    name = (data.get(\"name\") or \"\").strip()\n    if name:\n        text = re.sub(r\"(?i)\\b\" + re.escape(name) + r\"\\b\", \"[name]\", text)\n\n    # --- 4. Phone sanitisation ---\n    #\n    # Two branches in one compiled pattern:\n    #\n    # Branch A — generic +CC international:\n    #   (?<!\\w)                not preceded by a word character\n    #   \\+\\d{1,3}              + followed by 1-3 digit country code (greedy)\n    #   (?:[\\s\\-\\(\\)]*\\d){6,13} 6-13 more digit positions; zero-or-more\n    #                          space/hyphen/paren separators allowed before\n    #                          each digit to handle \"+1 (202) 555-0100\"\n    #   (?!\\d)                 not followed by a digit\n    #\n    # Branch B — Kenya local bare prefix (no +):\n    #   (?<!\\w)\n    #   (?:254|07|01)          Kenya prefix without +\n    #   (?:[\\s\\-]?\\d){7,11}   7-11 more digit positions, one optional sep\n    #   (?!\\d)\n    #\n    # +254 is covered by Branch A (the \\d{1,3} matches \"254\").\n    #\n    # Preservation guarantee (both branches):\n    #   \"+20 weeks\"   → '+20' prefix; ' w' fails [\\s\\-\\(\\)]*\\d → 0 reps < 6\n    #   \"+2024\"       → greedy takes '+202'; '4' = 1 rep < 6 → no match\n    #   \"07 weeks\"    → '07' prefix; ' w' fails [\\s\\-]?\\d → no match\n    #   \"07/08/2025\"  → '/' not in [\\s\\-]; no match\n    #   \"(Kisumu)\"    → no matching prefix → no match\n    #\n    # Callback strips separators/+ then requires ≥8 total digits so short\n    # sequences (PIN codes, etc.) are not affected.\n    phone_re = re.compile(\n        r\"(?<!\\w)\"\n        r\"(?:\"\n        r\"\\+\\d{1,3}(?:[\\s\\-\\(\\)]*\\d){6,13}\"\n        r\"|\"\n        r\"(?:254|07|01)(?:[\\s\\-]?\\d){7,11}\"\n        r\")\"\n        r\"(?!\\d)\"\n    )\n\n    def replace_phone(m):\n        clean = re.sub(r\"[\\s\\-+\\(\\)]\", \"\", m.group())\n        return \"[phone]\" if len(clean) >= 8 else m.group()\n\n    text = phone_re.sub(replace_phone, text)\n\n    # --- 5. Email sanitisation ---\n    text = re.sub(\n        r\"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}\",\n        \"[email]\",\n        text,\n    )\n\n    return text\n"
+          }
+        }
+      },
+      {
+        "id": "prompt_budget",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 750
+        },
+        "data": {
+          "id": "prompt_budget",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "prompt_budget",
+            "code": "def main(input, **kwargs):\n    import re\n\n    # System prompt template baked in at build time by ocs/prompt_budget.py.\n    # Changes to ocs/prompts/system_prompt.txt are picked up at next build.\n    SYSTEM_PROMPT = 'You are a maternal health education assistant for ZEYA, serving pregnant women in Kenya.\\n\\nAnswer using ONLY the knowledge entries supplied below. If a question is not covered, reply: \"I do not have reviewed information to answer that question. Please ask your healthcare provider.\" Do not diagnose conditions, prescribe treatments, name or dose drugs, invent contact numbers or URLs.\\n\\nIf the participant describes any sign of physical distress or urgency, advise them to seek care promptly even if not a recognised danger sign.\\n\\n{temp_state.kb_section}\\n\\n{temp_state.llm_context}\\n\\nKeep replies under 120 words. Respond in the participant\\'s stored language ({participant_data.language_preference}). These rules are behavioural guidance; a separate output guard reviews the final reply before it is sent.\\n'\n    BUDGET_BYTES = 4000\n\n    if not isinstance(input, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"invalid_question\")\n        return input\n\n    question = input\n\n    # Fail-closed: blank sanitised question (whitespace or empty string).\n    if not question.strip():\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"blank_question\")\n        return input\n\n    # Read runtime values — no defaults, no silent coercion.\n    kb_section = get_temp_state_key(\"kb_section\")\n    llm_context = get_temp_state_key(\"llm_context\")\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\", \"\")\n\n    # Fail-closed: kb_section absent or not a string.\n    if not isinstance(kb_section, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_kb_section\")\n        return input\n\n    # Fail-closed: llm_context absent or not a string.\n    if not isinstance(llm_context, str):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_llm_context\")\n        return input\n\n    # Fail-closed: language preference absent, empty, unsupported locale, or\n    # wrong type (bool/int).  Only exactly \"en\" or \"sw\" is accepted; any other\n    # value — including \"fr\", whitespace strings, True, 42 — routes OVER_BUDGET\n    # without raising a TypeError.\n    if lang not in (\"en\", \"sw\"):\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_bytes\", 0)\n        set_temp_state_key(\"budget_reason\", \"missing_language\")\n        return input\n\n    # One-pass substitution: replace each {source.key} placeholder exactly once.\n    # Using re.sub with a callback avoids sequential replace which could\n    # re-interpret placeholder-like text inserted from KB or context values.\n    ts_lookup = {\"kb_section\": kb_section, \"llm_context\": llm_context}\n    pd_lookup = {\"language_preference\": lang}\n\n    def do_sub(m):\n        source = m.group(1)\n        key = m.group(2)\n        if source == \"temp_state\":\n            val = ts_lookup.get(key)\n            return val if val is not None else m.group(0)\n        if source == \"participant_data\":\n            val = pd_lookup.get(key)\n            return val if val is not None else m.group(0)\n        return m.group(0)\n\n    rendered = re.sub(\n        r\"\\{(temp_state|participant_data)\\.([^}]+)\\}\",\n        do_sub,\n        SYSTEM_PROMPT,\n    )\n\n    total_bytes = len(rendered.encode(\"utf-8\")) + len(question.encode(\"utf-8\"))\n    set_temp_state_key(\"budget_bytes\", total_bytes)\n\n    if total_bytes > BUDGET_BYTES:\n        set_temp_state_key(\"budget_route\", \"OVER_BUDGET\")\n        set_temp_state_key(\"budget_reason\", \"over_cap\")\n    else:\n        set_temp_state_key(\"budget_route\", \"VALID\")\n        set_temp_state_key(\"budget_reason\", \"\")\n\n    return input"
+          }
+        }
+      },
+      {
+        "id": "budget_router",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3300,
+          "y": 750
+        },
+        "data": {
+          "id": "budget_router",
+          "type": "StaticRouterNode",
+          "label": "",
+          "params": {
+            "name": "budget_router",
+            "data_source": "temp_state",
+            "route_key": "budget_route",
+            "keywords": [
+              "OVER_BUDGET",
+              "VALID"
+            ],
+            "default_keyword_index": 0,
+            "tag_output_message": false
+          }
+        }
+      },
+      {
+        "id": "output_guard",
+        "type": "pipelineNode",
+        "position": {
+          "x": 2700,
+          "y": 300
+        },
+        "data": {
+          "id": "output_guard",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "output_guard",
+            "code": "\"\"\"\nOpen Chat Studio Python node: output guard.\n\nGenerated by render_output_guard.  Do not edit this file directly.\nChange docs/output-policy.json and re-run render_output_guard to update.\n\nClassifier source embedded from ocs/guard_classifier.py -- the same predicate\nused for host-side referral validation (source reuse, not hand-copy).\n\nScope limits (do not remove):\n  - Medicine patterns: conservative starter set, protocol list not supplied.\n  - Sheng slang not covered; no equivalences without source.\n  - Unicode hostname lookalikes not caught.\n  - Short helpline set finite and review-pending.\n  - ZW normalisation covers six specific chars; not exhaustive.\n\nGuard constraints:\n  - No model, network, file I/O or credentials.\n  - Non-sensitive reason codes only; no raw input in tags/logs.\n  - Does not mutate participant data.\n  - Applies to AI/card output only.\n\"\"\"\n\n\ndef main(input: str, **kwargs) -> str:\n    import json\n\n    # Embedded policy (re-generate via render_output_guard)\n    gpolicy = json.loads(\n        '{\"max_words\": 120, \"verified_phone_allow'\n        'list\": [], \"verified_url_allowlist\": [],'\n        ' \"blocked_referral_en\": \"I can\\'t share m'\n        \"ore details safely. Please speak with yo\"\n        'ur health worker.\", \"blocked_referral_sw'\n        '\": \"Sina maelezo zaidi ya kushiriki kwa '\n        \"usalama. Zungumza na mhudumu wa afya wak\"\n        'o.\", \"never_say_patterns\": [\"\\\\\\\\b(diagnos'\n        '\\\\\\\\w*|prescri\\\\\\\\w*)\\\\\\\\b\", \"\\\\\\\\b(utambuzi)\\\\\\\\b'\n        '\"], \"medicine_patterns\": [\"\\\\\\\\b(metronida'\n        \"zole|flagyl|amoxicillin|ampicillin|co-tr\"\n        \"imoxazole|cotrimoxazole|azithromycin|dox\"\n        \"ycycline|gentamicin|ceftriaxone|benzylpe\"\n        \"nicillin|benzathine|clindamycin|erythrom\"\n        \"ycin|tetracycline|ciprofloxacin|fluconaz\"\n        \"ole|nystatin|mebendazole|albendazole|ive\"\n        \"rmectin|chloroquine|artemether|lumefantr\"\n        \"ine|artesunate|quinine|mefloquine|fansid\"\n        'ar|pyrimethamine)\\\\\\\\b\", \"\\\\\\\\b(magnesium\\\\\\\\s'\n        \"+sul[fp]hate|oxytocin|misoprostol|ergome\"\n        \"trine|methyldopa|labetalol|nifedipine|hy\"\n        \"dralazine|furosemide|dexamethasone|betam\"\n        \"ethasone|phenobarbital|diazepam|phenytoi\"\n        'n|heparin|salbutamol)\\\\\\\\b\", \"\\\\\\\\b(aspirin|'\n        \"ibuprofen|paracetamol|acetaminophen|tram\"\n        'adol|morphine|pethidine)\\\\\\\\b\", \"\\\\\\\\b(ferro'\n        \"us\\\\\\\\s+sul[fp]hate|iron\\\\\\\\s+tablets?|iron\\\\\"\n        \"\\\\s+supplements?|folic\\\\\\\\s+acid\\\\\\\\s+tablets\"\n        \"?|zinc\\\\\\\\s+tablets?|oral\\\\\\\\s+rehydration\\\\\\\\\"\n        's+salts?|ors\\\\\\\\s+sachets?)\\\\\\\\b\"], \"dose_pa'\n        'tterns\": [\"\\\\\\\\b\\\\\\\\d+\\\\\\\\s*(mg|ml|mcg|g\\\\\\\\b|iu'\n        '|units?|tabs?|capsules?)\\\\\\\\b\", \"\\\\\\\\b(once\\\\'\n        \"\\\\s+daily|twice\\\\\\\\s+daily|three\\\\\\\\s+times\\\\\\\\\"\n        \"s+daily|four\\\\\\\\s+times\\\\\\\\s+daily|every\\\\\\\\s+\"\n        '\\\\\\\\d+\\\\\\\\s+hours?)\\\\\\\\b\"], \"diagnosis_pattern'\n        's\": [\"\\\\\\\\b(you\\\\\\\\s+are\\\\\\\\s+diagnosed|diagno'\n        \"sed\\\\\\\\s+with|diagnosis\\\\\\\\s+is|you\\\\\\\\s+are\\\\\\\\\"\n        \"s+suffering\\\\\\\\s+from|your\\\\\\\\s+condition\\\\\\\\s\"\n        '+is)\\\\\\\\b\", \"\\\\\\\\b(umepata\\\\\\\\s+ugonjwa|una\\\\\\\\s'\n        '+ugonjwa\\\\\\\\s+wa\\\\\\\\s+\\\\\\\\w+)\\\\\\\\b\"], \"suspiciou'\n        's_url_patterns\": [\"hxxps?://\", \"\\\\\\\\b(?:ft'\n        'p|ftps|sftp)://\", \"\\\\\\\\b(?:data|javascript'\n        '|vbscript):\", \"\\\\\\\\[.+?\\\\\\\\]\\\\\\\\(https?://[^)]'\n        '+\\\\\\\\)\", \"(?:https?://)[^/\\\\\\\\s]*@\", \"\\\\\\\\b(?:'\n        \"bit\\\\\\\\.ly|goo\\\\\\\\.gl|tinyurl\\\\\\\\.com|t\\\\\\\\.co|i\"\n        's\\\\\\\\.gd|ow\\\\\\\\.ly)/\", \"(?<![./\\\\\\\\-:@])\\\\\\\\b\\\\\\\\w'\n        \"[\\\\\\\\w-]{2,}\\\\\\\\.(?:com|org|net|gov|edu|info\"\n        '|int|io|ly|ke|tz|ug)(?:/\\\\\\\\S*)?\\\\\\\\b\"], \"sh'\n        'ort_helpline_patterns\": [\"\\\\\\\\b(?:999|112|'\n        '922|1199|911|116)\\\\\\\\b\"]}'\n    )\n\n    # Embedded classifier from ocs/guard_classifier.py\n    def guard_classify(text, policy):\n        \"\"\"Classify text against the guard policy.\n\n        Parameters\n        ----------\n        text : str\n            The AI/card output or fixed referral text to classify.\n        policy : dict\n            A validated policy dict from load_output_policy.  All required keys\n            must be present; this function does not re-validate the schema.\n\n        Returns\n        -------\n        dict with keys ``blocked`` (bool) and ``reason`` (str).\n            ``blocked`` is True if the text should be blocked.\n            ``reason`` is a short non-sensitive code; ``\"PASS\"`` when not\n            blocked, otherwise: ``empty_output``, ``too_long``, ``never_say``,\n            ``medicine_name``, ``dose_pattern``, ``diagnosis_wording``,\n            ``suspicious_url``, ``unverified_phone``, ``url_with_credentials``,\n            ``unverified_url``.\n        \"\"\"\n        import re  # noqa: PLC0415\n\n        # ------------------------------------------------------------------\n        # 0. Zero-width character normalisation\n        # Strips U+200B ZWSP, U+200C ZWNJ, U+200D ZWJ, U+2060 WJ,\n        # U+FEFF BOM/ZWNBSP, U+00AD soft-hyphen before all pattern checks.\n        # ------------------------------------------------------------------\n        t = re.sub(\"[\\u200b\\u200c\\u200d\\u2060\\ufeff\\u00ad]\", \"\", text if text is not None else \"\")\n\n        # 1. Empty / whitespace\n        if not t.strip():\n            return {\"blocked\": True, \"reason\": \"empty_output\"}\n\n        # 2. Word count (fail-closed on > max_words)\n        if len(t.split()) > policy[\"max_words\"]:\n            return {\"blocked\": True, \"reason\": \"too_long\"}\n\n        # 3. Never-say patterns\n        for pat in policy[\"never_say_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"never_say\"}\n\n        # 4. Medicine / drug name check\n        for pat in policy[\"medicine_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"medicine_name\"}\n\n        # 5. Dose / dosage pattern\n        for pat in policy[\"dose_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"dose_pattern\"}\n\n        # 6. Diagnostic wording\n        for pat in policy[\"diagnosis_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"diagnosis_wording\"}\n\n        # 7. Suspicious URL patterns (always blocked; not allowlist-checked)\n        # Covers hxxps://, ftp/data/js schemes, Markdown links, URL shorteners,\n        # bare domain references and credential-bearing URLs.\n        for pat in policy[\"suspicious_url_patterns\"]:\n            if re.search(pat, t, re.IGNORECASE):\n                return {\"blocked\": True, \"reason\": \"suspicious_url\"}\n\n        # 8. Short helpline / emergency number check (finite set; review-pending)\n        # Emergency response text bypasses this guard on its own pipeline branch.\n        for pat in policy[\"short_helpline_patterns\"]:\n            for num in re.findall(pat, t):\n                digits = re.sub(r\"\\D\", \"\", num)\n                phone_ok = any(re.sub(r\"\\D\", \"\", str(v)) == digits for v in policy[\"verified_phone_allowlist\"])\n                if not phone_ok:\n                    return {\"blocked\": True, \"reason\": \"unverified_phone\"}\n\n        # 9. Long-format phone check (9-15 digits)\n        # () added to separator class for international formats +1 (202) 555-0100.\n        # Negative lookahead/lookbehind prevents partial match inside overlong\n        # digit sequences (e.g. a 20-digit batch reference number).\n        for raw in re.findall(r\"(?<!\\d)\\+?\\d[\\d\\s\\-\\.\\(\\)]{7,15}\\d(?!\\d)\", t):\n            digits = re.sub(r\"\\D\", \"\", raw)\n            if len(digits) < 9 or len(digits) > 15:\n                continue\n            phone_ok = any(re.sub(r\"\\D\", \"\", str(v)) == digits for v in policy[\"verified_phone_allowlist\"])\n            if not phone_ok:\n                return {\"blocked\": True, \"reason\": \"unverified_phone\"}\n\n        # 10. URL check\n        # Canonicalisation: lowercase scheme+host only; preserve path/query case;\n        # preserve path slashes; strip fragment and trailing punctuation.\n        # Only https:// URLs are ever allowable; non-HTTPS is always blocked.\n\n        def gcanon(raw):\n            \"\"\"Return canonical URL string or None for non-HTTPS / malformed.\"\"\"\n            # Strip common trailing punctuation not part of URL\n            url = re.sub(r\"[.,;:!?)>'\\\"]+$\", \"\", raw)\n            # Discard fragment\n            frag = url.find(\"#\")\n            if frag != -1:\n                url = url[:frag]\n            # Parse: require https:// scheme\n            m = re.match(r\"^(https://)([^/?#]*)(/[^?#]*)?(\\?.*)?$\", url, re.IGNORECASE)\n            if not m:\n                return None\n            host = m.group(2).lower()  # host: case-insensitive -> lowercase\n            if not host or \"@\" in host:  # reject empty host or credentials\n                return None\n            path = m.group(3) or \"\"\n            query = m.group(4) or \"\"\n            return \"https://\" + host + path + query\n\n        for raw_url in re.findall(r\"(?:https?://|www\\.)[^\\s]+\", t, re.IGNORECASE):\n            canon = gcanon(raw_url)\n            if canon is None:\n                # Non-HTTPS or malformed (includes www. without https://)\n                return {\"blocked\": True, \"reason\": \"unverified_url\"}\n            # Exact allowlist match against canonicalised entry\n            allowed = False\n            for entry in policy[\"verified_url_allowlist\"]:\n                ec = gcanon(str(entry))\n                if ec is not None and canon == ec:\n                    allowed = True\n                    break\n            if not allowed:\n                return {\"blocked\": True, \"reason\": \"unverified_url\"}\n\n        return {\"blocked\": False, \"reason\": \"PASS\"}\n\n    # Participant language (read-only)\n    gparticipant = get_participant_data() or {}\n    glang = gparticipant.get(\"language_preference\", \"en\")\n    greferral = gpolicy[\"blocked_referral_sw\"] if glang == \"sw\" else gpolicy[\"blocked_referral_en\"]\n\n    gtext = input if input is not None else \"\"\n\n    gresult = guard_classify(gtext, gpolicy)\n    if gresult[\"blocked\"]:\n        set_temp_state_key(\"guard_route\", \"guard_blocked\")\n        add_message_tag(\"route:guard_blocked\")\n        add_message_tag(\"guard_blocked_reason:\" + gresult[\"reason\"])\n        return greferral\n\n    set_temp_state_key(\"guard_route\", \"PASS\")\n    return input\n"
+          }
+        }
+      },
+      {
+        "id": "end",
+        "type": "endNode",
+        "position": {
+          "x": 3300,
+          "y": 300
+        },
+        "data": {
+          "id": "end",
+          "type": "EndNode",
+          "label": "",
+          "params": {
+            "name": "end"
+          }
+        }
+      },
+      {
+        "id": "rules_only_reply",
+        "type": "pipelineNode",
+        "position": {
+          "x": 3000,
+          "y": 600
+        },
+        "data": {
+          "id": "rules_only_reply",
+          "type": "CodeNode",
+          "label": "",
+          "params": {
+            "name": "rules_only_reply",
+            "code": "\"\"\"\nOpen Chat Studio Python node: fixed reply in place of the AI answer (rules-only mode, #26).\n\nPresent only in the rules-only build (python -m ocs.build_pipeline --rules-only), which\nhas no LLM node. It takes the budget check's VALID route, the one that leads to the\nmodel in the normal build, so a question that no answer card covers gets this fixed\ntext instead of a model answer. Everything before that point is the same as in the\nnormal build, including the budget check: an over-budget message still gets the\nknowledge referral.\n\nAn operator turns the mode on by making the published rules-only version the default\nversion in OCS, and off by making the normal version the default again. No WhatsApp\nmessage can change it. See docs/ocs-migration.md, \"Rules-only mode\".\n\nNo model, network, file I/O or credentials.\nNo participant data mutation; reads saved language preference only.\nNon-sensitive route tag so operators can count rules-only turns.\n\nLanguage copies (suggested copy from #26):\n  English — draft wording from the issue.\n  Swahili — DRAFT, pending fluent-speaker review.\nA preference that is neither \"en\" nor \"sw\" gets both, English first, because the\nlanguage is unknown. Today such a participant never gets here: kb_context finds no\nentries for that language and sends the turn to knowledge_referral. Both copies are\nkept so the reply stays safe if that changes.\n\"\"\"\n\n\ndef main(input, **kwargs):\n    data = get_participant_data() or {}\n    lang = data.get(\"language_preference\")\n\n    english = (\n        \"Sorry, ZEYA couldn’t answer your question right now. Please try again later. \"\n        \"For pregnancy concerns, contact your healthcare provider.\"\n    )\n    # Draft Swahili — pending fluent-speaker review.\n    swahili = (\n        \"Samahani, ZEYA imeshindwa kujibu swali lako kwa sasa. Tafadhali jaribu tena baadaye. \"\n        \"Kwa maswali kuhusu ujauzito, wasiliana na mtoa huduma wako wa afya.\"\n    )\n\n    if lang == \"en\":\n        reply = english\n    elif lang == \"sw\":\n        reply = swahili\n    else:\n        reply = english + \"\\n\\n\" + swahili\n\n    set_temp_state_key(\"rules_only_route\", \"RULES_ONLY\")\n    add_message_tag(\"route:rules_only\")\n    return reply\n"
+          }
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "start:output->danger_gate",
+        "source": "start",
+        "target": "danger_gate",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "danger_gate:output->danger_router",
+        "source": "danger_gate",
+        "target": "danger_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "danger_router:output_0->emergency_response",
+        "source": "danger_router",
+        "target": "emergency_response",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "danger_router:output_1->registration",
+        "source": "danger_router",
+        "target": "registration",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "emergency_response:output->end",
+        "source": "emergency_response",
+        "target": "end",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "registration:output->registration_router",
+        "source": "registration",
+        "target": "registration_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "registration_router:output_0->end",
+        "source": "registration_router",
+        "target": "end",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "registration_router:output_1->kb_context",
+        "source": "registration_router",
+        "target": "kb_context",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_context:output->kb_router",
+        "source": "kb_context",
+        "target": "kb_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_router:output_0->knowledge_referral",
+        "source": "kb_router",
+        "target": "knowledge_referral",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "kb_router:output_1->answer_match",
+        "source": "kb_router",
+        "target": "answer_match",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "knowledge_referral:output->end",
+        "source": "knowledge_referral",
+        "target": "end",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_match:output->answer_router",
+        "source": "answer_match",
+        "target": "answer_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_router:output_0->output_guard",
+        "source": "answer_router",
+        "target": "output_guard",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "answer_router:output_1->llm_input",
+        "source": "answer_router",
+        "target": "llm_input",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "llm_input:output->prompt_budget",
+        "source": "llm_input",
+        "target": "prompt_budget",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "prompt_budget:output->budget_router",
+        "source": "prompt_budget",
+        "target": "budget_router",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "budget_router:output_0->knowledge_referral",
+        "source": "budget_router",
+        "target": "knowledge_referral",
+        "sourceHandle": "output_0",
+        "targetHandle": "input"
+      },
+      {
+        "id": "output_guard:output->end",
+        "source": "output_guard",
+        "target": "end",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      },
+      {
+        "id": "budget_router:output_1->rules_only_reply",
+        "source": "budget_router",
+        "target": "rules_only_reply",
+        "sourceHandle": "output_1",
+        "targetHandle": "input"
+      },
+      {
+        "id": "rules_only_reply:output->end",
+        "source": "rules_only_reply",
+        "target": "end",
+        "sourceHandle": "output",
+        "targetHandle": "input"
+      }
+    ]
+  }
+}
