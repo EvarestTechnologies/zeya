@@ -39,7 +39,7 @@ def main(input: str, **kwargs) -> str:
                 rx(r"tok(a|wa)\s+(na\s+)?damu\b"),
                 rx(r"\bdamu\s+(ina|ime)?(toka|vuja|tiririka)"),
                 rx(r"\bdamu\s+(kwenye|ukeni)\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\b(passing|passed)\s+(blood\s+)?clots?\b"),
                 rx(r"\b(red|bloody|bright\s+red)\b.{0,20}\b(discharge|toilet\s+paper|pad|underwear)\b"),
                 rx(r"\bdamu\s+i?na\w*toka\b"),
@@ -79,7 +79,7 @@ def main(input: str, **kwargs) -> str:
                 # blood pressure 160/110 or above (BOP p15)
                 rx(r"\b(1[6-9]\d|2\d\d)\s*(/|over)\s*\d{2,3}\b"),
                 rx(r"\b\d{2,3}\s*(/|over)\s*(1[1-9]\d)\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\bworst\s+headache\b"),
                 rx(r"\bheadache\b.{0,10}\b(mbaya|sana)\b"),
                 rx(r"\b(seeing|see)\s+(black\s+)?(spots|flashes|flashing\s+lights)\b|\beyes\b.{0,15}\bflash(es|ing)\b"),
@@ -109,7 +109,7 @@ def main(input: str, **kwargs) -> str:
                 rx(r"pumua\s+kwa\s+shida\b"),
                 rx(r"\bkizunguzungu\b.{0,40}\b(moyo|pumua|mweupe|nimechoka|kila\s+siku|kila\s+mara|sana)\b"),
                 rx(r"\bmoyo\b.{0,15}\b(unadunda|unapiga)\b.{0,15}\b(kasi|haraka)\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\bwhite\s+as\s+(paper|chalk|a\s+sheet)\b"),
             ],
         ),
@@ -134,7 +134,7 @@ def main(input: str, **kwargs) -> str:
                 rx(
                     r"\b(uchafu|ute|majimaji)\b.{0,25}\b(unanuka|unaonuka|harufu)\b|\bharufu\s+mbaya\b.{0,25}\b(uchafu|ute|ukeni)\b"
                 ),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\bburning\s+up\b"),
                 rx(r"\b(body|i\s+am|i'?m)\b.{0,10}\b(very|so)\s+hot\b"),
             ],
@@ -158,7 +158,7 @@ def main(input: str, **kwargs) -> str:
                 rx(r"\bha(ja)?move\b"),
                 rx(r"\bbaby\b.{0,15}\b(hasn'?t|has\s+not|hadn'?t|not|didn'?t)\s+(kicked|moved)\b"),
                 rx(r"\b(don'?t|do\s+not|can'?t|cannot|no\s+longer)\s+feel\s+(the\s+|my\s+)?baby\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\b(haven'?t|have\s+not|not|didn'?t)\s+(felt|feel)\s+(any\s+)?(movement|movements|kicks?)\b"),
                 rx(r"\bno\s+kicks?\b"),
                 rx(r"\b(bebi|mtoi)\b.{0,20}\b(hachezi|hajacheza|hajamove|hamove)\b"),
@@ -194,7 +194,7 @@ def main(input: str, **kwargs) -> str:
                     r"\btumbo\b.{0,20}\b(\w*uma|\w*umwa|maumivu)\b.{0,20}\bvibaya\b|\b(\w*uma|\w*umwa|maumivu)\b.{0,20}\btumbo\b.{0,20}\bvibaya\b"
                 ),
                 rx(r"\bmaumivu\b.{0,20}\bmbavu\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(
                     r"\bcramps?\b.{0,25}\b(won'?t\s+(go|stop)|severe|sharp|bad|unbearable)\b|\b(severe|sharp|bad)\s+cramps?\b"
                 ),
@@ -217,7 +217,7 @@ def main(input: str, **kwargs) -> str:
                     r"\b(wet|water|fluid|liquid)\b.{0,30}\b(running|gushing|dripping|pouring|trickling)\b.{0,20}\b(legs?|down)\b"
                 ),
                 rx(r"\bmaji\b.{0,10}\bya\w*toka\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\bsoaked\b.{0,20}\b(water|fluid|wet)\b"),
                 rx(r"\bmaji\b.{0,10}\b(imevunja|imevunjika|imepasuka)\b"),
             ],
@@ -242,7 +242,7 @@ def main(input: str, **kwargs) -> str:
                 rx(r"\bcollaps(e|ed|es|ing)\b"),
                 rx(r"\bjerking\b|\b(not|isn'?t)\s+(answering|responding|waking)\b|\bunresponsive\b"),
                 rx(r"poteza\s+fahamu\b|\bamezimia\b|\balizimia\b"),
-                # near miss, pending sign-off A14
+                # near miss, approved in sign-off A14
                 rx(r"\bconvuls(ing|ed|es)\b"),
                 rx(r"\b(ako|yuko|ana|niko|nina)\s+na\s+fits?\b"),
                 rx(r"\bfoam(ing)?\s+at\s+the\s+mouth\b"),
@@ -271,7 +271,7 @@ def main(input: str, **kwargs) -> str:
         rx(r"\b(what|which)\s+(are|is)\s+(the\s+)?(\w+\s+)?signs\b"),
         rx(r"\bsigns\s+of\b"),
         rx(r"\bis\s+(it\s+|\w+\s+){0,3}normal\b"),
-        # near miss, pending sign-off A14
+        # near miss, approved in sign-off A14
         rx(r"\bis\s+(it\s+|\w+\s+){0,2}(dangerous|serious)\b"),
         rx(r"\bcan\s+(a|an)\s+\w+\s+harm\b"),
         rx(r"\bhow\s+(can|do)\s+i\s+(avoid|prevent|know|stop)\b"),
@@ -308,7 +308,7 @@ def main(input: str, **kwargs) -> str:
     vaginal_words = rx(r"\b(vagina\w*|ukeni|down\s+there|pad|chupi|toilet)\b")
     # Signs that it is happening to her now: these keep the emergency route.
     happening_now = [
-        # near miss, pending sign-off A14: someone with her, happening now
+        # near miss, approved in sign-off A14: someone with her, happening now
         rx(r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+is\b"),
         rx(r"\b(i'?m|i\s+am|i\s+have|i'?ve|i\s+had|i\s+feel|i\s+see|i\s+can'?t|i\s+haven'?t|i\s+look)\b"),
         rx(
@@ -319,7 +319,7 @@ def main(input: str, **kwargs) -> str:
         rx(r"\bnime\w+|\bnili\w+"),
     ]
 
-    # Typo tolerance (pending sign-off A13). A word one letter away from a danger word of
+    # Typo tolerance (approved in sign-off A13). A word one letter away from a danger word of
     # six or more letters is read as that word, for pattern matching only. Shorter danger
     # words are left out because ordinary words sit one letter away from them
     # ("flood" and "blood", "later" and "water", "home" and "homa").

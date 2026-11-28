@@ -38,6 +38,12 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
         re.compile(r"tok(a|wa)\s+(na\s+)?damu\b", re.IGNORECASE),
         re.compile(r"\bdamu\s+(ina|ime)?(toka|vuja|tiririka)", re.IGNORECASE),
         re.compile(r"\bdamu\s+(kwenye|ukeni)\b", re.IGNORECASE),
+        re.compile(r"\b(passing|passed)\s+(blood\s+)?clots?\b", re.IGNORECASE),
+        re.compile(
+            r"\b(red|bloody|bright\s+red)\b.{0,20}\b(discharge|toilet\s+paper|pad|underwear)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(r"\bdamu\s+i?na\w*toka\b", re.IGNORECASE),
     ],
     "headache_vision": [
         re.compile(r"\bsevere\s+headache\b", re.IGNORECASE),
@@ -84,6 +90,14 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
         ),
         re.compile(r"\b(1[6-9]\d|2\d\d)\s*(/|over)\s*\d{2,3}\b", re.IGNORECASE),
         re.compile(r"\b\d{2,3}\s*(/|over)\s*(1[1-9]\d)\b", re.IGNORECASE),
+        re.compile(r"\bworst\s+headache\b", re.IGNORECASE),
+        re.compile(r"\bheadache\b.{0,10}\b(mbaya|sana)\b", re.IGNORECASE),
+        re.compile(
+            r"\b(seeing|see)\s+(black\s+)?(spots|flashes|flashing\s+lights)\b|\beyes\b.{0,15}\bflash(es|ing)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(r"\bkichwa\b.{0,30}\bkupita\s+kiasi\b", re.IGNORECASE),
+        re.compile(r"\b(hayaoni|haoni)\s+vizuri\b", re.IGNORECASE),
     ],
     "pallor_anaemia": [
         re.compile(
@@ -138,6 +152,7 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             r"\bmoyo\b.{0,15}\b(unadunda|unapiga)\b.{0,15}\b(kasi|haraka)\b",
             re.IGNORECASE,
         ),
+        re.compile(r"\bwhite\s+as\s+(paper|chalk|a\s+sheet)\b", re.IGNORECASE),
     ],
     "fever": [
         re.compile(r"\bhigh\s+fever\b", re.IGNORECASE),
@@ -166,6 +181,8 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             r"\b(uchafu|ute|majimaji)\b.{0,25}\b(unanuka|unaonuka|harufu)\b|\bharufu\s+mbaya\b.{0,25}\b(uchafu|ute|ukeni)\b",
             re.IGNORECASE,
         ),
+        re.compile(r"\bburning\s+up\b", re.IGNORECASE),
+        re.compile(r"\b(body|i\s+am|i'?m)\b.{0,10}\b(very|so)\s+hot\b", re.IGNORECASE),
     ],
     "fetal_movement": [
         re.compile(r"\breduced\s+fetal\s+movement\b", re.IGNORECASE),
@@ -210,6 +227,15 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             r"\b(don'?t|do\s+not|can'?t|cannot|no\s+longer)\s+feel\s+(the\s+|my\s+)?baby\b",
             re.IGNORECASE,
         ),
+        re.compile(
+            r"\b(haven'?t|have\s+not|not|didn'?t)\s+(felt|feel)\s+(any\s+)?(movement|movements|kicks?)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(r"\bno\s+kicks?\b", re.IGNORECASE),
+        re.compile(
+            r"\b(bebi|mtoi)\b.{0,20}\b(hachezi|hajacheza|hajamove|hamove)\b",
+            re.IGNORECASE,
+        ),
     ],
     "abdominal_pain": [
         re.compile(r"\bsevere\s+(abdominal\s+)?pain\b", re.IGNORECASE),
@@ -249,6 +275,10 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             re.IGNORECASE,
         ),
         re.compile(r"\bmaumivu\b.{0,20}\bmbavu\b", re.IGNORECASE),
+        re.compile(
+            r"\bcramps?\b.{0,25}\b(won'?t\s+(go|stop)|severe|sharp|bad|unbearable)\b|\b(severe|sharp|bad)\s+cramps?\b",
+            re.IGNORECASE,
+        ),
     ],
     "water_breaking": [
         re.compile(r"\bwater\s+(break(ing|s)?|broke)\b", re.IGNORECASE),
@@ -272,6 +302,10 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             re.IGNORECASE,
         ),
         re.compile(r"\bmaji\b.{0,10}\bya\w*toka\b", re.IGNORECASE),
+        re.compile(r"\bsoaked\b.{0,20}\b(water|fluid|wet)\b", re.IGNORECASE),
+        re.compile(
+            r"\bmaji\b.{0,10}\b(imevunja|imevunjika|imepasuka)\b", re.IGNORECASE
+        ),
     ],
     "convulsions": [
         re.compile(r"\bconvulsion\b", re.IGNORECASE),
@@ -293,6 +327,9 @@ DANGER_SIGN_PATTERNS: dict[str, list[re.Pattern]] = {
             re.IGNORECASE,
         ),
         re.compile(r"poteza\s+fahamu\b|\bamezimia\b|\balizimia\b", re.IGNORECASE),
+        re.compile(r"\bconvuls(ing|ed|es)\b", re.IGNORECASE),
+        re.compile(r"\b(ako|yuko|ana|niko|nina)\s+na\s+fits?\b", re.IGNORECASE),
+        re.compile(r"\bfoam(ing)?\s+at\s+the\s+mouth\b", re.IGNORECASE),
     ],
     "swelling": [
         re.compile(r"\bsevere\s+swelling\b", re.IGNORECASE),
@@ -320,6 +357,7 @@ INFO_QUESTION_PATTERNS: list[re.Pattern] = [
     re.compile(r"\b(what|which)\s+(are|is)\s+(the\s+)?(\w+\s+)?signs\b", re.IGNORECASE),
     re.compile(r"\bsigns\s+of\b", re.IGNORECASE),
     re.compile(r"\bis\s+(it\s+|\w+\s+){0,3}normal\b", re.IGNORECASE),
+    re.compile(r"\bis\s+(it\s+|\w+\s+){0,2}(dangerous|serious)\b", re.IGNORECASE),
     re.compile(r"\bcan\s+(a|an)\s+\w+\s+harm\b", re.IGNORECASE),
     re.compile(r"\bhow\s+(can|do)\s+i\s+(avoid|prevent|know|stop)\b", re.IGNORECASE),
     re.compile(r"\bkuzui\w*|\bnawezaje\b", re.IGNORECASE),
@@ -360,6 +398,10 @@ NOT_OBSTETRIC_BLOOD_PATTERNS: list[re.Pattern] = [
 # Signs that it is happening to her now.
 HAPPENING_NOW_PATTERNS: list[re.Pattern] = [
     re.compile(
+        r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+is\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
         r"\b(i'?m|i\s+am|i\s+have|i'?ve|i\s+had|i\s+feel|i\s+see|i\s+can'?t|i\s+haven'?t|i\s+look)\b",
         re.IGNORECASE,
     ),
@@ -381,6 +423,51 @@ HAPPENING_NOW_PATTERNS: list[re.Pattern] = [
 VAGINAL_WORDS = re.compile(
     r"\b(vagina\w*|ukeni|down\s+there|pad|chupi|toilet)\b", re.IGNORECASE
 )
+
+# Typo tolerance (sign-off A13): danger words of six or more letters that a word one letter
+# away is read as, for pattern matching only.
+TYPO_VOCABULARY: list[str] = [
+    "bleeding",
+    "headache",
+    "severe",
+    "terrible",
+    "blurred",
+    "blurry",
+    "vision",
+    "flashes",
+    "feverish",
+    "chills",
+    "shivering",
+    "stomach",
+    "abdominal",
+    "swollen",
+    "swelling",
+    "moving",
+    "movement",
+    "movements",
+    "kicking",
+    "broken",
+    "leaking",
+    "convulsion",
+    "convulsions",
+    "seizure",
+    "seizures",
+    "fainted",
+    "fainting",
+    "unconscious",
+    "breathless",
+    "dizziness",
+    "kinauma",
+    "hachezi",
+    "hajacheza",
+    "degedege",
+    "yamevunjika",
+    "yamepasuka",
+    "umevimba",
+    "vimevimba",
+    "linauma",
+    "kutokwa",
+]
 
 # Emergency response templates (without hardcoded facilities)
 EMERGENCY_RESPONSE_HEADER_EN = (
@@ -445,6 +532,37 @@ class DangerSignResult:
         return self.detected
 
 
+def _one_edit(word: str, target: str) -> bool:
+    """True when ``word`` is one insertion, deletion, substitution or swap away from ``target``."""
+    if word == target or abs(len(word) - len(target)) > 1:
+        return False
+    if len(word) == len(target):
+        diffs = [i for i in range(len(word)) if word[i] != target[i]]
+        if len(diffs) == 1:
+            return True
+        return (
+            len(diffs) == 2
+            and diffs[1] == diffs[0] + 1
+            and word[diffs[0]] == target[diffs[1]]
+            and word[diffs[1]] == target[diffs[0]]
+        )
+    short, long = (word, target) if len(word) < len(target) else (target, word)
+    return any(long[:i] + long[i + 1 :] == short for i in range(len(long)))
+
+
+def _typo_corrected(message: str) -> str:
+    words = []
+    for word in re.findall(r"[a-z']+|[^a-z']+", message.lower()):
+        replacement = word
+        if len(word) >= 5 and word not in TYPO_VOCABULARY:
+            for target in TYPO_VOCABULARY:
+                if _one_edit(word, target):
+                    replacement = target
+                    break
+        words.append(replacement)
+    return "".join(words)
+
+
 def detect_danger_signs(message: str) -> DangerSignResult:
     """
     Scan a message for danger sign keywords.
@@ -452,11 +570,15 @@ def detect_danger_signs(message: str) -> DangerSignResult:
     Returns a DangerSignResult with detection status, matched categories,
     the specific keywords found, and whether the match is a general question.
     """
+    corrected = _typo_corrected(message)
+    use_corrected = corrected != message.lower()
     categories_found: list[str] = []
     keywords_found: list[str] = []
     for category, patterns in DANGER_SIGN_PATTERNS.items():
         for pattern in patterns:
             match = pattern.search(message)
+            if not match and use_corrected:
+                match = pattern.search(corrected)
             if match:
                 if category not in categories_found:
                     categories_found.append(category)

@@ -16,18 +16,17 @@ python -m ocs.eval.score_heldout --details
 
 Full detail: [docs/review/danger-gate.md](review/danger-gate.md), section 0.
 
-| Measure | Before (gate on `main`) | After sign-off (live) |
-|---|---|---|
-| **Held-out set C, emergencies caught (39)** | **4 (10%)** | **14 (36%)** |
-| **Held-out set B, emergencies caught (30)** | **0 (0%)** | **15 (50%)** |
-| Held-out routine false alarms, B and C (35) | 0 | 2 |
-| Held-out question false alarms, C (9) | 1 | 1 |
-| Corpus, emergencies caught (132) | 14 (11%) | 108 (82%) |
-| Corpus, v2 only (40) | 2 (5%) | 16 (40%) |
-| Corpus routine false alarms (140) | 5 (4%) | 0 |
-| Corpus questions sent to emergency (22) | 4 (18%) | 0 |
+| Measure | Gate on `main` | After A1 to A12 | After A13 and A14 (live) |
+|---|---|---|---|
+| **Held-out set D, emergencies caught (39), untuned** | n/a | **28 (72%)** | **33 (85%)** |
+| Held-out set C, emergencies caught (39), used for A14 | 4 (10%) | 14 (36%) | 37 (95%) |
+| Held-out set B, emergencies caught (30) | 0 (0%) | 15 (50%) | 29 (97%) |
+| Corpus, emergencies caught (132) | 14 (11%) | 108 (82%) | 118 (89%) |
+| Corpus routine false alarms (140) | 5 (4%) | 0 | 0 |
+| Held-out set D routine false alarms (12) | n/a | 0 | 0 |
+| Held-out set D question false alarms (10) | n/a | 3 | 3 |
 
-The work order target is at least 95% recall with under 10% false alarms. The held-out numbers show it is not met.
+The work order target is at least 95% recall with under 10% false alarms. On untuned set D the gate reaches 85%, so the target is not yet met on wording it has never seen.
 
 ## Answer cards
 

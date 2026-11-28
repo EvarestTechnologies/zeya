@@ -63,13 +63,13 @@ python -m ocs.eval.score_gate
 
 ---
 
-## 0b. Typo tolerance and near misses (28 November 2026, draft only)
+## 0b. Typo tolerance and near misses (28 November 2026, live)
 
-Drafted in `ocs/eval/proposed_danger_gate.py` and awaiting sign-off items A13 and A14. The live gate is unchanged.
+Approved in sign-off items A13 and A14 by Stella Oiro on 28 November 2026. Applied to both `ocs/nodes/danger_gate.py` and `backend/app/services/danger_signs.py`: 152 patterns, with parity tests covering each one.
 - **Set D** (61 messages) was written and committed before these changes, so it is the fair test.
 - **Set C** was used to choose the near-miss patterns, so its new score is not evidence.
 
-| Set | Live gate | Draft with A13 and A14 |
+| Set | Before A13 and A14 | After A13 and A14 (live) |
 |---|---|---|
 | **D, emergencies caught (39)** | **28 (72%)** | **33 (85%)** |
 | D, routine false alarms (12) | 0 | 0 |

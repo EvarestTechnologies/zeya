@@ -45,6 +45,11 @@ def main(input: str, **kwargs) -> str:
                 re.compile(r"tok(a|wa)\s+(na\s+)?damu\b", re.IGNORECASE),
                 re.compile(r"\bdamu\s+(ina|ime)?(toka|vuja|tiririka)", re.IGNORECASE),
                 re.compile(r"\bdamu\s+(kwenye|ukeni)\b", re.IGNORECASE),
+                re.compile(r"\b(passing|passed)\s+(blood\s+)?clots?\b", re.IGNORECASE),
+                re.compile(
+                    r"\b(red|bloody|bright\s+red)\b.{0,20}\b(discharge|toilet\s+paper|pad|underwear)\b", re.IGNORECASE
+                ),
+                re.compile(r"\bdamu\s+i?na\w*toka\b", re.IGNORECASE),
             ],
         ),
         (
@@ -90,6 +95,14 @@ def main(input: str, **kwargs) -> str:
                 re.compile(r"\b(naona|ninaona)\s+(giza|ukungu|nyota|vibaya)\b|\bsioni\s+vizuri\b", re.IGNORECASE),
                 re.compile(r"\b(1[6-9]\d|2\d\d)\s*(/|over)\s*\d{2,3}\b", re.IGNORECASE),
                 re.compile(r"\b\d{2,3}\s*(/|over)\s*(1[1-9]\d)\b", re.IGNORECASE),
+                re.compile(r"\bworst\s+headache\b", re.IGNORECASE),
+                re.compile(r"\bheadache\b.{0,10}\b(mbaya|sana)\b", re.IGNORECASE),
+                re.compile(
+                    r"\b(seeing|see)\s+(black\s+)?(spots|flashes|flashing\s+lights)\b|\beyes\b.{0,15}\bflash(es|ing)\b",
+                    re.IGNORECASE,
+                ),
+                re.compile(r"\bkichwa\b.{0,30}\bkupita\s+kiasi\b", re.IGNORECASE),
+                re.compile(r"\b(hayaoni|haoni)\s+vizuri\b", re.IGNORECASE),
             ],
         ),
         (
@@ -123,6 +136,7 @@ def main(input: str, **kwargs) -> str:
                     re.IGNORECASE,
                 ),
                 re.compile(r"\bmoyo\b.{0,15}\b(unadunda|unapiga)\b.{0,15}\b(kasi|haraka)\b", re.IGNORECASE),
+                re.compile(r"\bwhite\s+as\s+(paper|chalk|a\s+sheet)\b", re.IGNORECASE),
             ],
         ),
         (
@@ -148,6 +162,8 @@ def main(input: str, **kwargs) -> str:
                     r"\b(uchafu|ute|majimaji)\b.{0,25}\b(unanuka|unaonuka|harufu)\b|\bharufu\s+mbaya\b.{0,25}\b(uchafu|ute|ukeni)\b",
                     re.IGNORECASE,
                 ),
+                re.compile(r"\bburning\s+up\b", re.IGNORECASE),
+                re.compile(r"\b(body|i\s+am|i'?m)\b.{0,10}\b(very|so)\s+hot\b", re.IGNORECASE),
             ],
         ),
         (
@@ -182,6 +198,12 @@ def main(input: str, **kwargs) -> str:
                 re.compile(
                     r"\b(don'?t|do\s+not|can'?t|cannot|no\s+longer)\s+feel\s+(the\s+|my\s+)?baby\b", re.IGNORECASE
                 ),
+                re.compile(
+                    r"\b(haven'?t|have\s+not|not|didn'?t)\s+(felt|feel)\s+(any\s+)?(movement|movements|kicks?)\b",
+                    re.IGNORECASE,
+                ),
+                re.compile(r"\bno\s+kicks?\b", re.IGNORECASE),
+                re.compile(r"\b(bebi|mtoi)\b.{0,20}\b(hachezi|hajacheza|hajamove|hamove)\b", re.IGNORECASE),
             ],
         ),
         (
@@ -221,6 +243,10 @@ def main(input: str, **kwargs) -> str:
                     re.IGNORECASE,
                 ),
                 re.compile(r"\bmaumivu\b.{0,20}\bmbavu\b", re.IGNORECASE),
+                re.compile(
+                    r"\bcramps?\b.{0,25}\b(won'?t\s+(go|stop)|severe|sharp|bad|unbearable)\b|\b(severe|sharp|bad)\s+cramps?\b",
+                    re.IGNORECASE,
+                ),
             ],
         ),
         (
@@ -242,6 +268,8 @@ def main(input: str, **kwargs) -> str:
                     re.IGNORECASE,
                 ),
                 re.compile(r"\bmaji\b.{0,10}\bya\w*toka\b", re.IGNORECASE),
+                re.compile(r"\bsoaked\b.{0,20}\b(water|fluid|wet)\b", re.IGNORECASE),
+                re.compile(r"\bmaji\b.{0,10}\b(imevunja|imevunjika|imepasuka)\b", re.IGNORECASE),
             ],
         ),
         (
@@ -265,6 +293,9 @@ def main(input: str, **kwargs) -> str:
                     r"\bjerking\b|\b(not|isn'?t)\s+(answering|responding|waking)\b|\bunresponsive\b", re.IGNORECASE
                 ),
                 re.compile(r"poteza\s+fahamu\b|\bamezimia\b|\balizimia\b", re.IGNORECASE),
+                re.compile(r"\bconvuls(ing|ed|es)\b", re.IGNORECASE),
+                re.compile(r"\b(ako|yuko|ana|niko|nina)\s+na\s+fits?\b", re.IGNORECASE),
+                re.compile(r"\bfoam(ing)?\s+at\s+the\s+mouth\b", re.IGNORECASE),
             ],
         ),
         (
@@ -295,6 +326,7 @@ def main(input: str, **kwargs) -> str:
         re.compile(r"\b(what|which)\s+(are|is)\s+(the\s+)?(\w+\s+)?signs\b", re.IGNORECASE),
         re.compile(r"\bsigns\s+of\b", re.IGNORECASE),
         re.compile(r"\bis\s+(it\s+|\w+\s+){0,3}normal\b", re.IGNORECASE),
+        re.compile(r"\bis\s+(it\s+|\w+\s+){0,2}(dangerous|serious)\b", re.IGNORECASE),
         re.compile(r"\bcan\s+(a|an)\s+\w+\s+harm\b", re.IGNORECASE),
         re.compile(r"\bhow\s+(can|do)\s+i\s+(avoid|prevent|know|stop)\b", re.IGNORECASE),
         re.compile(r"\bkuzui\w*|\bnawezaje\b", re.IGNORECASE),
@@ -331,6 +363,10 @@ def main(input: str, **kwargs) -> str:
     # Signs that it is happening to her now.
     happening_now = [
         re.compile(
+            r"\b(she|he|my\s+(wife|sister|mother|daughter|friend|neighbou?r|cousin)(\s+in\s+law)?)\s+is\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
             r"\b(i'?m|i\s+am|i\s+have|i'?ve|i\s+had|i\s+feel|i\s+see|i\s+can'?t|i\s+haven'?t|i\s+look)\b", re.IGNORECASE
         ),
         re.compile(
@@ -342,11 +378,90 @@ def main(input: str, **kwargs) -> str:
         re.compile(r"\bnime\w+|\bnili\w+", re.IGNORECASE),
     ]
 
+    # Typo tolerance (sign-off A13). A word one letter away from a danger word of six or
+    # more letters is read as that word, for pattern matching only.
+    typo_vocabulary = [
+        "bleeding",
+        "headache",
+        "severe",
+        "terrible",
+        "blurred",
+        "blurry",
+        "vision",
+        "flashes",
+        "feverish",
+        "chills",
+        "shivering",
+        "stomach",
+        "abdominal",
+        "swollen",
+        "swelling",
+        "moving",
+        "movement",
+        "movements",
+        "kicking",
+        "broken",
+        "leaking",
+        "convulsion",
+        "convulsions",
+        "seizure",
+        "seizures",
+        "fainted",
+        "fainting",
+        "unconscious",
+        "breathless",
+        "dizziness",
+        "kinauma",
+        "hachezi",
+        "hajacheza",
+        "degedege",
+        "yamevunjika",
+        "yamepasuka",
+        "umevimba",
+        "vimevimba",
+        "linauma",
+        "kutokwa",
+    ]
+
+    def one_edit(word, target):
+        if word == target or abs(len(word) - len(target)) > 1:
+            return False
+        if len(word) == len(target):
+            diffs = [i for i in range(len(word)) if word[i] != target[i]]
+            if len(diffs) == 1:
+                return True
+            return (
+                len(diffs) == 2
+                and diffs[1] == diffs[0] + 1
+                and word[diffs[0]] == target[diffs[1]]
+                and word[diffs[1]] == target[diffs[0]]
+            )
+        short = word if len(word) < len(target) else target
+        long = target if len(word) < len(target) else word
+        for i in range(len(long)):
+            if long[:i] + long[i + 1 :] == short:
+                return True
+        return False
+
+    corrected_words = []
+    for word in re.findall(r"[a-z']+|[^a-z']+", input.lower()):
+        replacement = word
+        if len(word) >= 5 and word not in typo_vocabulary:
+            for target in typo_vocabulary:
+                if one_edit(word, target):
+                    replacement = target
+                    break
+        corrected_words.append(replacement)
+    corrected = "".join(corrected_words)
+    use_corrected = corrected != input.lower()
+
     categories_found = []
     keywords_found = []
     for category, patterns in danger_sign_patterns:
         for pattern in patterns:
             match = pattern.search(input)
+            if not match and use_corrected:
+                match = pattern.search(corrected)
             if match:
                 if category not in categories_found:
                     categories_found.append(category)
