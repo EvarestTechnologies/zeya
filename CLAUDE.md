@@ -40,7 +40,7 @@ python -m ocs.check_drift live.json --rules-only     # when the rules-only versi
 python -m ocs.seed_participants --zeya-users users.csv --out ocs_participants.csv
 
 python -m ocs.eval.score_gate                      # danger gate on the 310-message corpus
-python -m ocs.eval.score_heldout --details         # danger gate on held-out sets B, C and D
+python -m ocs.eval.score_heldout --details         # danger gate on held-out sets B to E
 ```
 
 The legacy backend still has `make up`, `make test` and the rest (see `make help`), but those are not the release path.
@@ -96,7 +96,7 @@ The registration tests also read the welcome messages and week context from `bac
 
 - **Test sets:**
   - Corpus: `ocs/tests/danger_eval_corpus.csv`, 310 messages.
-  - Held-out sets: `ocs/eval/heldout.py`. Set B. Set C, which was used to choose the near-miss rules. Set D, untuned: the fair test.
+  - Held-out sets: `ocs/eval/heldout.py`. Set B. Set C, which was used to choose the near-miss rules. Set D, untuned: the fair test overall. Set E, untuned, written for A15 and A16 (history versus now, typo misreads).
 - **Results:** `docs/scores.md` and section 0 of `docs/review/danger-gate.md`.
 - **Reporting:** always report held-out recall next to tuned recall.
 - **New patterns:** write a new held-out set before tuning them, then score them on it.
