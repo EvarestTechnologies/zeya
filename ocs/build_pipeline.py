@@ -55,6 +55,8 @@ OCS_DIR = Path(__file__).resolve().parent
 NODES_DIR = OCS_DIR / "nodes"
 SYSTEM_PROMPT_FILE = OCS_DIR / "prompts" / "system_prompt.txt"
 COMMITTED_PIPELINE = OCS_DIR / "pipeline" / "zeya_pipeline.json"
+# Rules-only build (#26): no AI node. Publish it as an OCS version if the AI provider fails.
+COMMITTED_RULES_ONLY_PIPELINE = OCS_DIR / "pipeline" / "zeya_pipeline_rules_only.json"
 
 REPO_ROOT = OCS_DIR.parent
 KB_FILE = REPO_ROOT / "docs" / "zeya-knowledge-base.md"
@@ -87,7 +89,9 @@ def _code(name: str) -> str:
     return (NODES_DIR / f"{name}.py").read_text()
 
 
-def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pending: bool = False) -> dict:
+def build_pipeline(
+    llm_provider_id: int, llm_provider_model_id: int, include_pending: bool = False, rules_only: bool = False
+) -> dict:
     """Build the full pipeline.
 
     include_pending=False (default / production): only approved KB entries and
@@ -304,6 +308,16 @@ def build_pipeline(llm_provider_id: int, llm_provider_model_id: int, include_pen
         # Fixed line first when the gate flagged a danger-sign question (sign-off A4 (c)).
         _edge("danger_question_line", "end"),
     ]
+    if rules_only:
+        # Issue #26, manual rules-only mode: remove every node that leads to the AI, and send
+        # questions with no answer card to the approved fixed reply (sign-off C2 and C2a).
+        # Emergencies, the access gate, registration, cards and the clip are unchanged.
+        ai_nodes = {"llm_input", "prompt_budget", "budget_router", "llm"}
+        nodes = [n for n in nodes if n["id"] not in ai_nodes]
+        edges = [e for e in edges if e["source"] not in ai_nodes and e["target"] not in ai_nodes]
+        edges.append(_edge("answer_router", "knowledge_referral", "output_1"))
+        return {"name": PIPELINE_NAME + " (rules only)", "data": {"nodes": nodes, "edges": edges}}
+
     return {"name": PIPELINE_NAME, "data": {"nodes": nodes, "edges": edges}}
 
 
@@ -321,12 +335,23 @@ def main(argv: list[str] | None = None) -> int:
             "Never use for production deployment; pending review_status is preserved."
         ),
     )
+    parser.add_argument(
+        "--rules-only",
+        action="store_true",
+        default=False,
+        help="Build the rules-only pipeline (#26): no AI node; unanswered questions get the fixed reply.",
+    )
     args = parser.parse_args(argv)
 
-    pipeline = build_pipeline(args.llm_provider_id, args.llm_provider_model_id, include_pending=args.include_pending)
+    pipeline = build_pipeline(
+        args.llm_provider_id,
+        args.llm_provider_model_id,
+        include_pending=args.include_pending,
+        rules_only=args.rules_only,
+    )
     output = json.dumps(pipeline, indent=2, ensure_ascii=False) + "\n"
     if args.write:
-        COMMITTED_PIPELINE.write_text(output)
+        (COMMITTED_RULES_ONLY_PIPELINE if args.rules_only else COMMITTED_PIPELINE).write_text(output)
     else:
         sys.stdout.write(output)
     return 0
