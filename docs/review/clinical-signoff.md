@@ -264,6 +264,49 @@ Some other real words are misread only in "my water is …" (leaving, leading, l
 - [x] Approve the ticked words
 - [ ] Leave out
 
+
+**A17. Wording the gate still misses. Pending. In the draft gate only (`ocs/eval/proposed_danger_gate.py`); neither runtime gate is changed.** Each pattern below was written from a message that held-out set D or set E missed, and each traces to a sign in HB p14. Approve or reject each row.
+
+| # | Catches | Missed message it came from | Category (source) | Approve |
+|---|---|---|---|---|
+| 1 | "headache" followed by unbearable, won't stop, too much, or is so / very / really bad | "my headache is unbearable and the light hurts my eyes" (D) | headache_vision (HB p14, severe headache) | [ ] |
+| 2 | "feva", "fiva" | "i hav a feva" (D) | fever (HB p14) | [ ] |
+| 3 | "hakick", "hajakick", "hajakicki" | "Manze bebi hajakick siku mbili" (D) | fetal_movement (HB p14) | [ ] |
+| 4 | "water(s) just / has just / have just / already / suddenly broke, broken or burst" | "my water just broke" (D) | water_breaking (HB p14) | [ ] |
+| 5 | "wter", "watr", "wata", "warer" with broke, broken or burst | "my wter broke" (D) | water_breaking (HB p14) | [ ] |
+| 6 | "maji … imetoka" | "Maji imetoka" (D) | water_breaking (HB p14) | [ ] |
+| 7 | "swelling / swelled of, in or on (my / the) face, hands, fingers or eyes" | "I have swelling of my face and hands, same as last year" (E) | swelling (HB p14) | [ ] |
+| 8 | Question check: "what does … mean" counts as a question | Added after row 7 turned the corpus question R093, "what does swelling of the face mean?", into a false alarm | question | [ ] |
+
+**Not added:** "light hurts my eyes". It is not in HB, NG24 or BOP as a danger sign, so it is recorded in `docs/clinical/gaps.md`. The set D message is still caught by row 1, through "headache is unbearable".
+
+**Measured on 28 November 2026 against the draft gate.** Held-out set F (`ocs/eval/heldout.py`, 48 messages) was written and committed before any of these patterns.
+
+| Set | Live gate | With A17 |
+|---|---|---|
+| **F, emergencies caught (28), untuned** | **18 (64%)** | **22 (79%)** |
+| F, routine false alarms (12) | 1 | 1 |
+| F, question false alarms (8) | 2 | 2 |
+| D (39), the source of rows 1 to 6, so not evidence | 33 (85%) | 39 (100%) |
+| E (26), the source of row 7, so not evidence | 25 (96%) | 26 (100%) |
+| B and C | 29/30, 37/39 | unchanged |
+| Corpus, emergencies caught (132) | 118 (89%) | 118 (89%) |
+| Corpus, routine false alarms (140) | 1 | 1 |
+| Corpus, question false alarms (22) | 0 | 0 |
+
+**How set F was used.** Set F was scored twice. The first draft had "maji … inatoka" in row 6 and no row 8. That draft turned two corpus messages into false alarms: S025, "Natapika kila kitu, hata maji inatoka nje", which is about vomiting, and R093. Row 6 was narrowed and row 8 added because of those corpus messages, not because of set F, and set F's score did not change. Nothing else was tuned.
+
+**Set F still misses:**
+- "my waters have just gone"
+- "fluid is gushing out of me"
+- "bledin alot" and "hedake mbaya sana" (misspellings too far from the word for typo tolerance)
+- "Niko na headache noma"
+- "Maji imebreak"
+
+They were left out so that set F stays fair. A new set has to be written before patterns for them.
+
+- [ ] Approve the ticked rows
+- [ ] Leave out
 ---
 
 ## B. Which content Zeya answers from

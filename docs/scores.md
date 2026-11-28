@@ -10,6 +10,7 @@ Rerun:
 ```
 python -m ocs.eval.score_gate --report docs/eval/danger-gate-draft.md
 python -m ocs.eval.score_heldout --details
+python -m ocs.eval.score_heldout --node ocs/eval/proposed_danger_gate.py --details   # draft, with pending A17
 ```
 
 ## Danger gate
@@ -32,6 +33,8 @@ Full detail: [docs/review/danger-gate.md](review/danger-gate.md), section 0.
 **Set E is narrow.** It was written for the messages A15 and A16 change: history mixed with what is happening now, other people's emergencies, and ordinary words that typo tolerance misread. Its 96% shows the fix works on wording it was not written from. Use set D (85%) for the gate overall.
 
 The new corpus false alarm is R083, "will the nurse check if I am pale?". A15 lets "I am" win over the "nurse … check" history rule.
+
+**Pending, not live: A17.** On held-out set F, which was written before the A17 patterns, the draft gate catches 22 of 28 emergencies (79%), against 18 (64%) for the live gate, with no new false alarms. Details are in sign-off item A17.
 
 The work order target is at least 95% recall with under 10% false alarms. On untuned set D the gate reaches 85%, so the target is not yet met on wording it has never seen.
 

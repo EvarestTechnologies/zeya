@@ -14,6 +14,7 @@ Things Zeya needs that are not in the three Ministry of Health documents (HB, NG
 | What the baby's position on a scan means | Test message R018 | None identified |
 | Bleeding gums | Test message R101 | None identified |
 | Self-harm and perinatal mental health crisis | Issue #40 | None identified |
+| Light hurting the eyes as a danger sign | Held-out set D ("the light hurts my eyes"), set F; not added to the danger gate in A17 | None identified |
 
 ## Approved labels that no longer have a written source
 

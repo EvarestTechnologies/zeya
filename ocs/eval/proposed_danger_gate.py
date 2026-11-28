@@ -85,6 +85,8 @@ def main(input: str, **kwargs) -> str:
                 rx(r"\b(seeing|see)\s+(black\s+)?(spots|flashes|flashing\s+lights)\b|\beyes\b.{0,15}\bflash(es|ing)\b"),
                 rx(r"\bkichwa\b.{0,30}\bkupita\s+kiasi\b"),
                 rx(r"\b(hayaoni|haoni)\s+vizuri\b"),
+                # pending sign-off A17: in this draft only, not in either runtime gate
+                rx(r"\bhead\s*ache\b.{0,20}\b(unbearable|won'?t\s+stop|too\s+much|is\s+(so|very|really)\s+bad)\b"),
             ],
         ),
         (
@@ -136,6 +138,8 @@ def main(input: str, **kwargs) -> str:
                 ),
                 # near miss, approved in sign-off A14
                 rx(r"\bburning\s+up\b"),
+                # pending sign-off A17: in this draft only, not in either runtime gate
+                rx(r"\b(feva|fiva)\b"),
                 rx(r"\b(body|i\s+am|i'?m)\b.{0,10}\b(very|so)\s+hot\b"),
             ],
         ),
@@ -162,6 +166,8 @@ def main(input: str, **kwargs) -> str:
                 rx(r"\b(haven'?t|have\s+not|not|didn'?t)\s+(felt|feel)\s+(any\s+)?(movement|movements|kicks?)\b"),
                 rx(r"\bno\s+kicks?\b"),
                 rx(r"\b(bebi|mtoi)\b.{0,20}\b(hachezi|hajacheza|hajamove|hamove)\b"),
+                # pending sign-off A17: in this draft only, not in either runtime gate
+                rx(r"\bha(ja)?kicki?\b"),
             ],
         ),
         (
@@ -220,6 +226,10 @@ def main(input: str, **kwargs) -> str:
                 # near miss, approved in sign-off A14
                 rx(r"\bsoaked\b.{0,20}\b(water|fluid|wet)\b"),
                 rx(r"\bmaji\b.{0,10}\b(imevunja|imevunjika|imepasuka)\b"),
+                # pending sign-off A17: in this draft only, not in either runtime gate
+                rx(r"\bwaters?\s+(just|has\s+just|have\s+just|already|suddenly)\s+(broke|broken|burst)\b"),
+                rx(r"\b(wter|watr|wata|warer)\b.{0,15}\b(broke|broken|burst)\b"),
+                rx(r"\bmaji\b.{0,10}\bimetoka\b"),
             ],
         ),
         (
@@ -262,6 +272,8 @@ def main(input: str, **kwargs) -> str:
                 rx(
                     r"\b(uso|mikono|vidole|macho)\b.{0,20}\b(umevimba|imevimba|vimevimba|yamevimba|kuvimba|umefura|imefura|vimefura|kufura)\b"
                 ),
+                # pending sign-off A17: in this draft only, not in either runtime gate
+                rx(r"\bswell(ing|ed)\s+(of|in|on)\s+(my\s+|the\s+)?(face|hands?|fingers|eyes)\b"),
             ],
         ),
     ]
@@ -273,6 +285,8 @@ def main(input: str, **kwargs) -> str:
         rx(r"\bis\s+(it\s+|\w+\s+){0,3}normal\b"),
         # near miss, approved in sign-off A14
         rx(r"\bis\s+(it\s+|\w+\s+){0,2}(dangerous|serious)\b"),
+        # pending sign-off A17: in this draft only, not in either runtime gate
+        rx(r"\bwhat\s+does\b.{0,40}\bmean\b"),
         rx(r"\bcan\s+(a|an)\s+\w+\s+harm\b"),
         rx(r"\bhow\s+(can|do)\s+i\s+(avoid|prevent|know|stop)\b"),
         rx(r"\bkuzui\w*|\bnawezaje\b"),
